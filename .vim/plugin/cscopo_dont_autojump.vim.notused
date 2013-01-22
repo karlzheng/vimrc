@@ -1,0 +1,241 @@
+""/*---------------------------------------------------------------------------
+"" *   文件名称:   cscope.vim
+"" *   内容摘要:   自定义cscope查找和显示,用于替代原有VIM里面白CSCOPE
+"" *
+"" *   修改纪录：   
+"" *   修改人:   苏桂能    日 期:   2009-8-20
+"" *   描  述:
+"" *
+"" *   Copyright (c) 2009, XINO.FZ.FJ.CN
+"" *---------------------------------------------------------------------------*/
+"" *
+"" *http://forum.ubuntu.org.cn/viewtopic.php?f=68&t=219931&start=0
+"" *
+"" *
+
+
+" 防止插件文件多次加载
+if exists("s:m_CSCOPE_VIM_")
+	finish
+endif
+let s:m_CSCOPE_VIM_ = 1
+
+
+"/*-----------------------------------------------------------------------------
+"   增加一些全局的环境配置变量
+" *-----------------------------------------------------------------------------*/
+" 配置所使用CSCOPE的程序名字
+if !exists("g:CfgCsAppName")
+	let g:CfgCsAppName = "cscope.exe"
+endif
+
+" 是否后台生成CSCOPE数据厍,默认使用后台生成, 目前还没有在LINUX平台下进行测试,只有在WINDOWS下测试通过
+if !exists("g:CfgBgGenCsDB")
+	let g:CfgBgGenCsDB = 1
+endif
+
+" 自动打开查找结果
+if !exists("g:CfgAutoDisplayResult")
+	let g:CfgAutoDisplayResult = 1
+endif
+
+"控制是否跳转第一个查找结果
+if !exists("g:CfgAutoJumpToFirst")
+	let g:CfgAutoJumpToFirst = 0
+endif
+
+"/*-----------------------------------------------------------------------------*/
+
+
+"/*-----------------------------------------------------------------------------
+"    脚本变量控制
+" *-----------------------------------------------------------------------------*/
+" 生成数据厍的变量
+let s:mCsGenDatabaseApp = g:CfgCsAppName." -b "
+
+let s:mCsFindApp = g:CfgCsAppName." -C -d -f "
+
+" 后台运行相关字符串
+if has("win32")
+	let s:mCsBgRunStr = "start /min "
+else
+	let s:mCsBgRunStr = "&"
+endif
+
+"/*-----------------------------------------------------------------------------*/
+
+
+"/*---------------------------------------------------------------------------
+" *   函数名称:    CS_UpdateDatabase
+" *   功能描述:    更新CS数据厍
+" *
+" *   输入参数:    fSrcListFile   源文件列表文件
+"         fCsDatabase   CSCOPE的数据厍文件
+" *   输出参数:    无
+" *   返 回 值:     无
+" *
+" *   历史纪录：
+" *   修改人      日期          日志
+" *   苏桂能   2009-8-21             
+" *---------------------------------------------------------------------------*/
+function CS_UpdateDatabase( fSrcListFile, fCsDatabase )
+	" 判断源文件列表文件是否存在
+	if !filereadable( a:fSrcListFile )
+		return
+	endif
+
+	" 创建并执行命令
+	let strGenDatabaseCmd = s:mCsGenDatabaseApp." -i ".a:fSrcListFile." -f ".a:fCsDatabase
+	if g:CfgBgGenCsDB == 1
+		if has("win32")
+			let strGenDatabaseCmd = s:mCsBgRunStr.strGenDatabaseCmd
+		else
+			let strGenDatabaseCmd = strGenDatabaseCmd.s:mCsBgRunStr
+		endif
+	endif
+	silent! execute "!".strGenDatabaseCmd
+endfunction
+
+
+"/*---------------------------------------------------------------------------
+" *   函数名称:    CS_RunCsopeFindCmd
+" *   功能描述:    运行CSCOPE查找命令进行
+" *
+" *   输入参数:    fCsDatabase   CS数据厍
+"          fCsFindType   要查找的类型
+"          fCsFindStr   要查找的字符串
+" *   输出参数:    
+" *   返 回 值:     返回命令运行的结果
+" *
+" *   历史纪录：
+" *   修改人      日期          日志
+" *   苏桂能   2009-8-21             
+" *---------------------------------------------------------------------------*/
+function CS_RunCsopeFindCmd( fCsDatabase, fCsFindType, fCsFindStr )
+	let strFindResult = ""
+	"参数合法性
+	if !filereadable(a:fCsDatabase)
+		echo "CS_RunCsopeFindCmd( fCsDatabase , fCsFindType, fCsFindStr ): fCsDatabasec Error"
+		return strFindResult
+	endif
+
+	" 设置查找类型
+	let strCsFindType = ""
+	if a:fCsFindType == '0' || a:fCsFindType == 's'
+		let strCsFindType = " -L -0 " 
+	elseif a:fCsFindType == '1' || a:fCsFindType == 'g'
+		let strCsFindType = " -L -1 " 
+	elseif a:fCsFindType == '2' || a:fCsFindType == 'd'
+		let strCsFindType = " -L -2 " 
+	elseif a:fCsFindType == '3' || a:fCsFindType == 'c'
+		let strCsFindType = " -L -3 " 
+	elseif a:fCsFindType == '4' || a:fCsFindType == 't'
+		let strCsFindType = " -L -4 " 
+	elseif a:fCsFindType == '6' || a:fCsFindType == 'e'
+		let strCsFindType = " -L -6 " 
+	elseif a:fCsFindType == '7' || a:fCsFindType == 'f'
+		let strCsFindType = " -L -7 " 
+	elseif a:fCsFindType == '8' || a:fCsFindType == 'i'
+		let strCsFindType = " -L -8 " 
+	else
+		echo "CS_RunCsopeFindCmd( fCsDatabase , fCsFindType, fCsFindStr ): fCsFindType Error"
+		return strFindResult
+	endif
+
+	" 判断字符串是否为空
+	if a:fCsFindStr == ""
+		echo "CS_RunCsopeFindCmd( fCsDatabase , fCsFindType, fCsFindStr ): fCsFindStr Error"
+		return strFindResult
+	endif
+
+	let strFindCmdStr = s:mCsFindApp.a:fCsDatabase.strCsFindType.a:fCsFindStr
+	let strFindResult = system(shellescape(strFindCmdStr))
+
+	return strFindResult
+
+endfunction
+
+
+"/*---------------------------------------------------------------------------
+" *   函数名称:    CS_FindSymbol
+" *   功能描述:    查找CSCOPE查找符号
+" *
+" *   输入参数:    fCsDatabase   CS数据厍
+"          fCsFindType   要查找的类型
+"          fCsFindStr   要查找的字符串
+" *   输出参数:    
+" *   返 回 值:     
+" *
+" *   历史纪录：
+" *   修改人      日期          日志
+" *   苏桂能   2009-8-21             
+" *---------------------------------------------------------------------------*/
+function CS_FindSymbol( fCsDatabase, fCsFindType, fCsFindStr )
+
+	let strCsDatabase = a:fCsDatabase
+	if strCsDatabase == ""
+		let strCsDatabase = "cscope.out"
+	endif
+
+	let strFindResult = CS_RunCsopeFindCmd( strCsDatabase, a:fCsFindType,a:fCsFindStr )
+
+
+	" 临时文件
+	let CsFindTempFile = tempname()
+	let CsQuickFixTempFile = tempname()
+
+	execute "redir! > ".CsFindTempFile
+	silent echo strFindResult
+	redir END
+
+	let strCsFindType = ""
+	if a:fCsFindType == '0' || a:fCsFindType == 's'
+		let strCsFindType = "查找符号" 
+	elseif a:fCsFindType == '1' || a:fCsFindType == 'g'
+		let strCsFindType = "查找定义" 
+	elseif a:fCsFindType == '2' || a:fCsFindType == 'd'
+		let strCsFindType = "查找本函数调用的函数" 
+	elseif a:fCsFindType == '3' || a:fCsFindType == 'c'
+		let strCsFindType = "查找调用本函数的函数 " 
+	elseif a:fCsFindType == '4' || a:fCsFindType == 't'
+		let strCsFindType = "查找字符串" 
+	elseif a:fCsFindType == '6' || a:fCsFindType == 'e'
+		let strCsFindType = "查找egrep 模式" 
+	elseif a:fCsFindType == '7' || a:fCsFindType == 'f'
+		let strCsFindType = "查找文件" 
+	elseif a:fCsFindType == '8' || a:fCsFindType == 'i'
+		let strCsFindType = "查找包含本文件的文件" 
+	else
+		let strCsFindType = "" 
+	endif
+
+	execute "redir! > ".CsQuickFixTempFile
+	let a:Line = ""
+	silent! echo "===================================================================================="
+	silent! echo "|\t".strCsFindType."[ ".a:fCsFindStr." ]"
+	silent! echo "===================================================================================="
+	for a:Line in readfile( CsFindTempFile )
+		let strCmdOut = substitute( a:Line,"\\(.*\\) \\([0-9]\\+\\) \\(.*\\)$","\\2-\\1\t\\3","g")
+		silent! echo strCmdOut
+	endfor
+	redir END
+
+	let old_efm = &efm
+	set efm=%l-%f\ %m
+	if g:CfgAutoJumpToFirst
+		execute "silent! cfile ".CsQuickFixTempFile
+	else
+		execute "silent! cgetfile ".CsQuickFixTempFile
+	endif
+
+	if g:CfgAutoDisplayResult
+		copen
+	endif
+
+	let &efm = old_efm
+
+	" 删除临时文件
+	call delete(CsFindTempFile)
+	call delete(CsQuickFixTempFile)
+endfunction
+

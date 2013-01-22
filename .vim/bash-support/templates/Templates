@@ -1,0 +1,19 @@
+§
+§ =============================================================
+§ ========== USER MACROS ======================================
+§ =============================================================
+§
+|AUTHOR|    = Karl Zheng
+$|AUTHORREF| = http://blog.csdn.net/zhengkarl;http://www.weibo.com/zhengkarl
+|EMAIL|     = ZhengKarl#gmail.com
+|COMPANY|   = Meizu
+$|COPYRIGHT| = Copyright (c) |YEAR|, |AUTHOR|
+§
+§ =============================================================
+§ ========== FILE INCLUDES ====================================
+§ =============================================================
+§
+|includefile| = bash.comments.template
+$|includefile| = bash.statements.template
+$|includefile| = bash.paramsub.template
+§

@@ -1,0 +1,2 @@
+supertab.vba: call delete('/home/zkl/.vim/doc/supertab.txt')|call delete('/home/zkl/.vim/plugin/supertab.vim')
+winmanager.vba: call delete('/home/zkl/.vim/doc/winmanager.txt')|call delete('/home/zkl/.vim/plugin/start.gnome')|call delete('/home/zkl/.vim/plugin/start.kde')|call delete('/home/zkl/.vim/plugin/winfileexplorer.vim')|call delete('/home/zkl/.vim/plugin/winmanager.vim')|call delete('/home/zkl/.vim/plugin/wintagexplorer.vim')
