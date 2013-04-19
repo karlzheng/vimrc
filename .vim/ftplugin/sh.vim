@@ -293,6 +293,6 @@ nnoremap    <buffer>   ""   ciW""<Esc>P
 "nnoremap   <buffer>   {{   ciw{}<Esc>PF{
 "
 if !exists("g:BASH_Ctrl_j") || ( exists("g:BASH_Ctrl_j") && g:BASH_Ctrl_j != 'off' )
-  nmap    <buffer>  <silent>  <C-j>   i<C-R>=BASH_JumpCtrlJ()<CR>
+  "nmap    <buffer>  <silent>  <C-j>   i<C-R>=BASH_JumpCtrlJ()<CR>
   imap    <buffer>  <silent>  <C-j>    <C-R>=BASH_JumpCtrlJ()<CR>
 endif

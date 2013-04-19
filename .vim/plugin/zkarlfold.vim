@@ -30,8 +30,12 @@ function! ZKarlFindStartLine(curline, maxline)
 	while l:line <= a:maxline
 		if (getline(l:line) =~ '^\s*$' || getline(l:line) =~ '^\s*#ifdef' || getline(l:line) =~ '^\s\*#define' || getline(l:line) =~ '^\s\*#endif')
 			let l:line += 1
+			break
+		elseif (getline(l:line) =~ 'while.*{\s*$' || getline(l:line) =~ 'for.*{\s*$' || getline(l:line) =~ 'if.*{\s*$')
+			break
 		elseif getline(l:line) =~ '\s*\w*.*(.*)' && getline(l:line + 1) =~ '{\s*'
 			let l:line += 1
+			break
 		else
 			break
 		endif
@@ -49,7 +53,7 @@ function! ZKarlFindCurrentLine(curline, maxline)
 		return l:line
 	endif
 	while l:line <= a:maxline
-		if (getline(l:line) =~ '^\s*$' || getline(l:line) =~ '^\s*#ifdef' || getline(l:line) =~ '^\s\*#define' || getline(l:line) =~ '^\s\*#endif')
+		if (getline(l:line) =~ '$\s*$' || getline(l:line) =~ '^\s*$' || getline(l:line) =~ '^\s*#ifdef' || getline(l:line) =~ '^\s\*#define' || getline(l:line) =~ '^\s\*#endif')
 			let l:line += 1
 		else
 			break
@@ -70,6 +74,7 @@ function! ZKarlFindNextLine(curline, maxline)
 	while l:line <= a:maxline
 		if (getline(l:line) =~ '^\s*$' || getline(l:line) =~ '^\s*#ifdef' || getline(l:line) =~ '^\s\*#define' || getline(l:line) =~ '^\s\*#endif')
 			let l:line += 1
+			break
 		else
 			break
 		endif
@@ -83,12 +88,19 @@ endfunction
 function! ZKarlBlockFoldFunc()
 	let	foldmethod_save	= &foldmethod
 		
+	let l:startline = line('.')
 	let l:curline = line('.')
 	let l:maxline = line('$')
 	
 	let l:curline = ZKarlFindStartLine(l:curline, l:maxline)
 
-	if getline(l:curline) =~ '{\s*$'
+	if getline(l:startline) =~ '#ifdef' || getline(l:startline) =~ '#if defined' || getline(l:startline) =~ '#if '
+		normal ]#
+		let l:start_line = l:curline
+		let l:end_line = line('.') - 1
+		normal zd
+		exe ":".l:start_line.",".l:end_line."fo"
+	elseif getline(l:curline) =~ '{\s*$'
 		exe ":".l:curline
 		normal $zfi{
 	elseif getline(l:curline) =~ '}\s*$'
