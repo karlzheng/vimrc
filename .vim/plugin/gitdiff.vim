@@ -100,6 +100,12 @@ function! GitDiffLog()
 	"echo g:mymsg
 endfunc
 
+function! GitDiffLog_and_bcompare()
+	GitDiffLog()
+	exec "!patch2dir.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+endfunc
+
+"nnoremap <leader>gb :call GitDiffLog_and_bcompare()<cr>
 nnoremap <leader>gd :call GitDiffLog()<cr>
 
 function! <SID>GitEditFileInLine()

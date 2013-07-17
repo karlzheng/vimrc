@@ -17,7 +17,7 @@
 "	 1. global common settings
 "	 2. function defition for calling
 "	 3. plugin settings
-"	 4. key re map 
+"	 4. key re map
 "	 5. misc.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -37,6 +37,8 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader=","
 let g:use_gtags=0
+"let g:use_gtags=1
+let g:BASH_Ctrl_j='on'
 
 set nocompatible
 "au BufRead ft=Help set nu
@@ -105,8 +107,13 @@ else
 	set t_Co=256
 endif
 
-let g:root_work_path = escape(getcwd(), " ")
+if ! exists("g:root_work_path")
+    let g:root_work_path = escape(getcwd(), " ")
+endif
 
+if ! exists("g:whoami")
+    let g:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
+endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " my functions
@@ -123,9 +130,9 @@ let g:root_work_path = escape(getcwd(), " ")
 	" path operate related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	function! My_SaveVimFilePath()
-		let str = expand("%:p:h")
-		let str = s:Escape(str)
-		execute ":!echo '".str."' > /dev/shm/vim_cur_file_path"
+		let l:str = expand("%:p:h")
+		let l:str = s:Escape(str)
+		execute ":!echo '".l:str."' > /dev/shm/".g:whoami."/vim_cur_file_path"
 	endfunction
 	nmap <leader>cdv :call My_SaveVimFilePath()<cr><cr>
 
@@ -151,7 +158,65 @@ let g:root_work_path = escape(getcwd(), " ")
 		endif
 	endfunction
 	nmap <silent> <c-s> :call My_FilePath_Switch_Func()<cr>
+	
+	function! Edit_FilePath()
+		let l:filepath = s:Escape(expand("%:p:h"))
+		execute "e ".l:filepath
+	endfunction
+	nmap <silent> <leader>ep :call Edit_FilePath()<cr>
 
+	func! EditConfig()
+	    let l:has_dot_config = 0
+	    let l:has_arm_config = 0
+	    if filereadable(".config")
+		let l:has_dot_config = 1
+	    endif
+	    if isdirectory("arch/arm/configs/")
+		let l:has_arm_config = 1
+	    endif
+	    
+	    if l:has_dot_config && l:has_arm_config
+		let l:ans= confirm("1.edit .config; 2.edit arm configs dir?", "&1 for .config \n&2 for arch/arm/configs")
+		if l:ans == 1
+		    e .config
+		endif
+		if l:ans == 2
+		    e arch/arm/configs
+		endif
+	    else
+		if l:has_arm_config
+		    e arch/arm/configs
+		endif
+		if l:has_dot_config
+		    e .config
+		endif
+	    endif
+	endf
+	nmap <leader>ec :call EditConfig()<cr>
+
+	function! Edit_Kconfig()
+		let l:filepath = expand("%:p:h")
+		let l:kconfig = s:Escape(l:filepath)."/Kconfig"
+		if filereadable(l:kconfig)
+		    execute "e ".l:kconfig
+		endif
+	endfunction
+	nmap <silent> <leader>ek :call Edit_Kconfig()<cr>
+	
+	function! Edit_Makefile()
+		let l:filepath = expand("%:p:h")
+		let l:makefile = s:Escape(l:filepath)."/Makefile"
+		if filereadable(l:makefile)
+		    execute "e ".l:makefile
+		else
+			let l:makefile = s:Escape(l:filepath)."/Android.mk"
+			if filereadable(l:makefile)
+				execute "e ".l:makefile
+			endif
+		endif
+	endfunction
+	nmap <silent> <leader>em :call Edit_Makefile()<cr>
+	
 	function! My_Save_CurrentFileName()
 		let l:str = expand("%:p")
 		let l:str = s:Escape(str)
@@ -195,6 +260,17 @@ let g:root_work_path = escape(getcwd(), " ")
 		unlet l:cmd_text
 	endfunction
 	"nmap <silent> <leader>bb :call Compare_to_selected()<cr>
+	
+	function! DoGitBeyondCompare()
+		let l:ext = expand("%:e")
+		if l:ext == "log"
+		    call GitDiffLog()
+		    exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+		else
+		    exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
+		endif
+	endfunction
+	nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
 
 function! My_Python4CompareToFileName()
 	if has("python")
@@ -233,28 +309,60 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	function! SaveCurrentFileNameRelativePath()
 		let l:_f_ = expand("%")
-		let l:_cmd_ = 'echo ' . '"' . l:_f_ . '" > /dev/shm/vim_cur_edit_file_relative_path'
+		if (l:_f_ != "")
+		    let l:_f_ = substitute(l:_f_, '^/tmp/a/', "", "")
+		    let l:_f_ = substitute(l:_f_, '^/tmp/b/', "", "")
+		    let l:_f_ = substitute(l:_f_, '^a/', "", "")
+		    let l:_f_ = substitute(l:_f_, '^b/', "", "")
+		    let l:_cmd_ = 'echo ' . '"' . l:_f_ . '" > /dev/shm/vim_cur_edit_file_relative_path'
+		    let l:_resp = system(l:_cmd_)
+		else
+		    echo "Current file is noname."
+		endif
+	endfunction
+	
+	function! SaveFile2Tar()
+		let l:_f_ = expand("%")
+		let l:_cmd_ = 'tar cf /tmp/file.tar "'. l:_f_ .'"'
 		let l:_resp = system(l:_cmd_)
 	endfunction
 
 	function! SaveCurrentFileNameAbsolutePath()
 		let l:_f_ = expand("%:p")
-		let l:_cmd_ = 'echo ' . '"' . l:_f_ . '" > /dev/shm/vim_cur_edit_file_absolute_path'
-		let l:_resp = system(l:_cmd_)
+		if (l:_f_ != "")
+		    let l:_cmd_ = 'echo ' . '"' . l:_f_ . '" > /dev/shm/vim_cur_edit_file_absolute_path'
+		    let l:_resp = system(l:_cmd_)
+		else
+		    echo "Current file is noname."
+		endif
 	endfunction
 
 	function! Edit_vim_cur_edit_file_relative_path()
-		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_relative_path'
+		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_relative_path | tr -d "\r" | tr -d "\n"'
 		let l:_resp = system(l:_cmd_)
-		exec "e ".l:_resp
-	endfunction
-	
-	function! Edit_vim_cur_edit_file_absolute_path()
-		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_absolute_path'
-		let l:_resp = system(l:_cmd_)
-		exec "e ".l:_resp
+		if filereadable(l:_resp)
+			exec "e ".l:_resp
+		else
+			echo "has no file". l:_resp
+		endif
 	endfunction
 
+	function! Edit_vim_cur_edit_file_absolute_path()
+		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_absolute_path | tr -d "\r" | tr -d "\n"'
+		let l:_resp = system(l:_cmd_)
+		if filereadable(l:_resp)
+			exec "e ".l:_resp
+		else
+			echo "has no file". l:_resp
+		endif
+	endfunction
+
+	function! Vim_cd_absolute_path()
+		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/filename'
+		let l:_resp = system(l:_cmd_)
+		exec "cd ".l:_resp
+		exec "pwd"
+	endfunction
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" lookupfile functions
@@ -353,9 +461,24 @@ else:
 EEOOFF
 endif
 	let g:use_LookupFile_FullNameTagExpr = 1
+	if l:filename == ""
+	    let l:filename = expand("<cword>")
+	endif
 	exec "LUTags ".l:filename
 endf
 command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
+
+func! LookupPartFilenameTag(line, bang)
+	let g:use_LookupFile_FullNameTagExpr = 0
+	exec "LUTags"
+endf
+command! -nargs=* -complete=tag -bang LookupPartFilenameTag :call LookupPartFilenameTag("<args>", "<bang>")
+
+func! LookupFullFilenameTag(line, bang)
+	let g:use_LookupFile_FullNameTagExpr = 1
+	exec "LUTags"
+endf
+command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFilenameTag("<args>", "<bang>")
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" buffer functions
@@ -377,7 +500,39 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 			echoerr v:errmsg
 		endif
 	endfunction
-	
+
+	function! GoPreBuffer()
+	    if &diff
+		exec "normal [c"
+	    else
+		bp
+		if &ft == "qf"
+			bp
+		endif
+	    endif
+	endfunction
+	function! GoNextBuffer()
+	    if &diff
+		exec "normal ]c"
+	    else
+		bn
+		if &ft == "qf"
+			bn
+		endif
+	    endif
+	endfunction
+	nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
+	nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
+
+	function! GoPreQuickfix()
+		cp
+	endfunction
+	function! GoNextQuickfix()
+		cn
+	endfunction
+	nnoremap <silent> n :call GoNextQuickfix()<cr>
+	nnoremap <silent> p :call GoPreQuickfix()<cr>
+
 	" Switch to buffer according to file name
 	function! SwitchToBuf(filename)
 		"let fullfn = substitute(a:filename, "^\\~/", $HOME . "/", "")
@@ -430,6 +585,13 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 
 		if buflisted(l:alternateBufNum)
 			buffer #
+			if &ft == 'qf'
+				bnext
+			    else
+				if bufname('#') == "__Tag_List__"
+				    bnext
+				endif
+			endif
 		else
 			bnext
 		endif
@@ -450,7 +612,9 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	endfunction
 	command! Bwipe  call <SID>BufcloseCloseIt(1)
 	command! Bclose call <SID>BufcloseCloseIt(0)
+	nmap <c-x><c-d> :Bclose<cr>
 	nmap <leader>bd :Bclose<cr>
+	nmap <c-x><c-w> :Bwipe<cr>
 	nmap <leader>bw :Bwipe<cr>
 
 	"close draft window and quickfix window
@@ -474,12 +638,13 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 			endtry
 		endif
 	endfunction
-	
+
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" functions for Visual mode
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" From an idea by Michael Naumann
 	function! MySpecialSearch(direction, is_VisualSearch)
+		"execute "set hls"
 		let l:saved_reg = @"
 		if a:is_VisualSearch
 			execute "normal! vgvy"
@@ -488,15 +653,21 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		endif
 		let l:pattern = escape(@", '\\/.*$^~[]')
 		let l:pattern = substitute(l:pattern, "\n$", "", "")
-		let @/ = l:pattern
 		if a:direction == 'b'
-			call search(l:pattern, 'bn')
+			"exec "normal ?" . l:pattern."?"
+			execute "normal ?" . l:pattern . "^M"
+			"exec "normal ?"
+			"exec "normal! N"
+			"call search(l:pattern, 'bn')
 		else
 			exec "normal! /" . l:pattern
+			"exec "normal! N"
+			"call search(l:pattern, 'n')
 		endif
+		let @/ = l:pattern
 		let @" = l:saved_reg
 	endfunction
-
+	
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" c file edit functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -523,7 +694,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		exec "!gcc ".expand("%")
 	  endif
 	endfunction
-	
+
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" svn related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -534,7 +705,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 			exec "!git checkout %"
 		endif
 	endfunc
-	
+
 	function! SvnDiffCurrentFile()
 		if isdirectory('.svn')
 			exec "!svn diff %"
@@ -542,7 +713,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 			exec "!git diff %"
 		endif
 	endfunc
-	
+
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" git related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -625,37 +796,124 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		"exe "map <M-0> :call BufPos_ActivateBuffer(10)<CR>"
 	endfunction
 	autocmd VimEnter * call BufPos_Initialize()
-	
+
 	func! BwipeCurrentBuffer()
 		let l:currentBufNum = bufnr("%")
 		echo l:currentBufNum
 		exec "normal! \<C-o>"
 		exec("bwipe ".  l:currentBufNum)
 	endf
-	nmap <c-q> :call BwipeCurrentBuffer()<cr>
 
-	func! AddDebugLine()
-	    let l:msg = ''
-	    if &ft == "c"
-		if isdirectory(g:root_work_path."/arch/arm/configs")
-		    let l:msg = 'pr_err("mzdbg %s %d\n", __func__, __LINE__);'
-		else
-		    let l:msg = 'printf("mzdbg %s %d\n", __func__, __LINE__);'
+	func! QuickfixToggle()
+	    if Is_quickfix_visual()
+		cclose
+	    else
+		call OpenQuickfixBuf()
+	    endif
+	endf
+	nmap <c-q> :call QuickfixToggle()<cr>
+	
+	"http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
+	function! Is_quickfix_visual()
+	    let l:is_quickfix_visual = 0
+	    redir => l:buflist
+	    silent! ls
+	    redir END
+	    "for bufnum in filter(split(g:buflist, '\n'), 'v:val =~ "Quickfix List"')
+		""let g:mynr = str2nr(matchstr(bufnum, "\\d\\+"))
+		"let l:is_quickfix_visual = 1
+	    "endfor
+	    "http://rickey-nctu.blogspot.com/2009/02/vim-quickfix.html
+	    if match(l:buflist, "[Quickfix List") != -1
+		let l:is_quickfix_visual = 1
+	    endif
+	    return l:is_quickfix_visual
+	endfunction
+
+	func! QuitAllBuffers()
+	    let l:has_modified_buffer = 0
+	    for i in range(1, bufnr("$"))
+		if buflisted(i)
+		    try
+			exec "b".i
+		    catch
+			continue
+		    endtry
+		    if  &modified != 0
+			let l:has_modified_buffer = 1
+		    endif
 		endif
+	    endfor
+	    if l:has_modified_buffer != 0
+		let l:ans = confirm("Save all and quit ?", "&Yes\n&No")
+		if l:ans == 1
+		    exec "wqa"
+		endif
+	    else
+		"let l:ans = confirm("Quit all buf ?", "&Yes\n&No")
+		if isdirectory('/dev/shm/'.g:whoami)
+		    let l:cmd = "mks! /dev/shm/".g:whoami."/vimedit.vim"
+		    exec l:cmd
+		endif
+		exec "qa"
 	    endif
-	    if &ft == "make"
-		let l:msg = '$(warning "mzdbg")'
+	endf
+	nmap <c-x><c-c> :call QuitAllBuffers()<cr>
+	
+	command! -nargs=* -complete=file -bang SS :call SourceSession("<args>", "<bang>")
+	function! SourceSession(name, bang)
+		if isdirectory('/dev/shm/'.g:whoami)
+		    let l:cmd = "source /dev/shm/".g:whoami."/vimedit.vim"
+		    exec l:cmd
+		endif
+	endfunction
+	
+	func! QuitAllBuffers_key()
+	    "http://rickey-nctu.blogspot.com/2009/02/vim-quickfix.html
+	    redir => l:buflist
+	    silent! ls
+	    redir END
+	    if match(l:buflist, "\\d\\+.*\+") != -1
+		echo "has modified"
+	    else
+		exec "qa"
 	    endif
-	    if &ft == "python"
-		let l:msg = 'import inspect;print ("mzdbg %s %d" %(__file__, inspect.currentframe().f_lineno))'
-	    endif
-	    if &ft == "sh"
-		let l:msg ='echo mzdbg $(basename $0) $LINENO'
-	    endif
-	    if l:msg != ''
-		call append(line('.'), l:msg)
-		exec "normal Vj=j"
-	    endif
+	endf
+	nmap <c-d> :call QuitAllBuffers_key()<cr>
+	
+	func! AddDebugLine()
+		let l:msg = ''
+		if &ft == "c"
+			if isdirectory(g:root_work_path."/arch/arm/configs")
+				let l:msg = 'pr_err("karldbg %s %d\n", __func__, __LINE__);'
+			else
+				if (filereadable(g:root_work_path."/build/envsetup.sh") || filereadable(g:root_work_path."/Android.mk") || filereadable(g:root_work_path."/is_android.txt"))
+					let l:msg = 'ALOGE("karldbg %s %d", __func__, __LINE__);'
+				else
+					let l:msg = 'printf("karldbg %s %d\n", __func__, __LINE__);'
+				endif
+			endif
+		endif
+		if &ft == "cpp"
+			if (filereadable(g:root_work_path."/build/envsetup.sh") || filereadable(g:root_work_path."/Android.mk") || filereadable(g:root_work_path."/is_android.txt"))
+				let l:msg = 'ALOGE("karldbg %s %d", __func__, __LINE__);'
+			else
+				let l:msg = 'printf("karldbg %s %d\n", __func__, __LINE__);'
+			endif
+		endif
+		if &ft == "make"
+			let l:msg = '$(warning "karldbg")'
+		endif
+		if &ft == "python"
+			let l:msg = 'import inspect;print ("karldbg %s %d" %(__file__, inspect.currentframe().f_lineno))'
+		endif
+		if &ft == "sh"
+			let l:msg ='echo karldbg $(basename $0) $LINENO'
+		endif
+		if l:msg != ''
+			call append(line('.'), l:msg)
+			exec "normal Vj=j"
+		endif
 	endfunction
 	nmap <silent> <leader>al :call AddDebugLine()<cr>
 
@@ -669,13 +927,27 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		\	endif
 	endif
 
+	function! C_file_shiftwidth_setting()
+	    if isdirectory(g:root_work_path."/arch/arm/configs")
+		set shiftwidth=8
+		set tabstop=8
+	    else
+		set shiftwidth=4
+		set tabstop=4
+	    endif
+	    set iskeyword-=-,>()
+	    set fo-=l
+	    set textwidth=80
+	endfunction
+
 	autocmd! bufwritepost .vimrc source ~/.vimrc
 
 	au BufRead,BufNewFile *.txt setlocal ft=txt
 	au BufRead,BufNewFile *.rc setlocal ft=make
 	au FileType help set nu
-	au FileType c,cpp,h,hpp set shiftwidth=8 |set tabstop=8 | set iskeyword-=-,>()
-	au FileType c,cpp,h,hpp set fo-=l | set textwidth=80
+	au FileType c,cpp,h,hpp call C_file_shiftwidth_setting()
+	"au FileType c,cpp,h,hpp set shiftwidth=8 |set tabstop=8 | set iskeyword-=-,>()
+	"au FileType c,cpp,h,hpp set fo-=l | set textwidth=80
 	"http://easwy.com/blog/archives/advanced-vim-skills-advanced-move-method/
 	"autocmd FileType c,cpp setl fdm=syntax | setl fen
 	"autocmd FileType c,cpp set shiftwidth=4 | set expandtab | set iskeyword -=-
@@ -797,7 +1069,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 			exe s:mycstags
 		endif
 		if filereadable("newcscope.out")
-			let s:mycstags="cs add " . "newcscope.out" 
+			let s:mycstags="cs add " . "newcscope.out"
 			exe s:mycstags
 		endif
 	endif
@@ -810,7 +1082,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		nmap [g :cscope find g <cword><CR>
 		nmap [i :cscope find i <cword><CR>
 		nmap [I :cscope find i %:t<CR>
-		nmap [s :cscope find s <cword><CR>
+		nmap [s :cscope find s <cword><CR><c-q><cr><c-q><cr>
 		nmap [t :cscope find t <cword><CR>
 	endif
 
@@ -835,6 +1107,13 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	endfunction
 	"autocmd BufWrite *.cpp,*.h,*.c call UPDATE_Cscope()
 	nmap <leader>uc :call UPDATE_Cscope()<cr>
+	
+	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+	" SrcExpl settings
+	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+	let g:SrcExpl_isUpdateTags = 0
+	let g:SrcExpl_gobackKey = ""
+	let g:SrcExpl_pluginList = ["Source_Explorer"]
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" lookupfile setting
@@ -880,13 +1159,15 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 
 		" Show the matches for what is typed so far.
 		let files = map(tags, 'v:val["filename"]')
-		let g:use_LookupFile_FullNameTagExpr = 0
+		"let g:use_LookupFile_FullNameTagExpr = 0
 		return files
 	endfunction
 
 	"nmap <silent> <leader>lf :LUTags <C-R>=expand("<cword>")<cr><cr>
-	nmap <silent> <leader>lt :LUTags<cr>
-	nmap <silent> <leader>lf :call ParseFilenameTag("", "")<CR>
+	nmap <silent> <leader>lf :call LookupFullFilenameTag("", "")<CR>
+	"nmap <silent> <leader>lt :LUTags<cr>
+	nmap <silent> <leader>lt :LookupPartFilenameTag<cr>
+	nmap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
 	nmap <silent> <leader>lb :LUBufs<cr>
 	nmap <silent> <leader>lw :LUWalk<cr>
 
@@ -894,16 +1175,15 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	"Quickfix
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	function! ReadQuickfixFile()
-		let l:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
-		if filereadable("/home/karlzheng/241/quickfix.txt")
-			"exe 'cg /home/karlzheng/241/quickfix.txt'
-			let l:_resp = system('rsync -avurP /home/karlzheng/241/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
-			let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt /home/karlzheng/241/quickfix.txt')
+		if filereadable("/home/karlzheng/dev/quickfix.txt")
+			"exe 'cg /home/karlzheng/dev/quickfix.txt'
+			let l:_resp = system('rsync -avurP /home/karlzheng/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
+			let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt /home/karlzheng/dev/quickfix.txt')
 		endif
-		exe 'cg /dev/shm/'.l:whoami.'/quickfix.txt'
+		exe 'cg /dev/shm/'.g:whoami.'/quickfix.txt'
 		call OpenQuickfixBuf()
 	endfunc
-	
+
 	"http://vim.1045645.n5.nabble.com/Saving-the-Quickfix-List-td1179523.html
 	function! SaveQuickfixToFile()
 	    let l:qflist = getqflist()
@@ -919,26 +1199,25 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		    endif
 		endif
 	    endfor
-	    let l:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
-	    call writefile(l:qf_data_list, "/dev/shm/".l:whoami."/quickfix.txt")
+	    call writefile(l:qf_data_list, "/dev/shm/".g:whoami."/quickfix.txt")
 	    if ! isdirectory('/home/karlzheng/')
 		call writefile(l:qf_data_list, $HOME."/quickfix.txt")
 	    endif
-	    if filereadable($HOME.'/241/quickfix.txt')
-		call writefile(l:qf_data_list, $HOME."/241/quickfix.txt")
+	    if filereadable($HOME.'/dev/quickfix.txt')
+		call writefile(l:qf_data_list, $HOME."/dev/quickfix.txt")
 	    endif
 	endfunc
 	nmap <leader>sq :call SaveQuickfixToFile()<cr>
-	
+
 	function! EditQuickfixList()
-	    if filereadable("/home/karlzheng/241/quickfix.txt")
-		exe 'e /home/karlzheng/241/quickfix.txt'
+	    if filereadable("/home/karlzheng/dev/quickfix.txt")
+		exe 'e /home/karlzheng/dev/quickfix.txt'
 	    else
-		exe 'e /dev/shm/karlzheng/quickfix.txt'
+		exe 'e /dev/shm/'.g:whoami.'/quickfix.txt'
 	    endif
 	endfunc
 	nmap <leader>eq :call EditQuickfixList()<cr>
-	
+
 	"http://vim.wikia.com/wiki/Automatically_sort_Quickfix_list
 	func! s:CompareQuickfixEntries(i1, i2)
 	    let l:currentBufNum = bufnr('%')
@@ -986,7 +1265,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 		endif
 		cclose | vert copen 45
 	endf
-	
+
 	function! OpenQuickfixBuf()
 		if ((&ft == 'qf') && (bufname("%") == ""))
 			let l:wn = winnr()
@@ -1093,7 +1372,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	" minibuffer setting
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	"let loaded_minibufexplorer = 1         " *** Enable minibuffer plugin
-	let g:miniBufExplorerMoreThanOne = 2   " Display when more than 2 buffers
+	let g:miniBufExplorerMoreThanOne = 0   " Display when more than 2 buffers
 	let g:miniBufExplSplitToEdge = 1       " Always at top
 	let g:miniBufExplMaxSize = 3           " The max height is 3 lines
 	let g:miniBufExplMinSize = 1
@@ -1123,7 +1402,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " key remap of all modes.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	
+
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" pre defined of macro of key strobe actions.
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1172,7 +1451,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	nnoremap ,, ,
 	nnoremap - "_dd
 	nnoremap <Esc><Esc> :q<cr>
-	
+
 	nmap <silent> ,32 f vt "xx$"xp
 	nmap <silent> <leader>ba :call My_Save_CompareFileName()<cr><cr>
 	nmap <silent> <leader>bb :call My_CompareToFileName()<cr><cr>
@@ -1187,9 +1466,9 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	nmap <silent> <leader>df :Rename ~/tmp/del_%:t<cr>
 	nmap <silent> <leader>dl :bdelete #<cr>
 	nmap <silent> <leader>dk :%s#.*karlzheng_todel.*\n##<cr>
-	nmap <silent> <leader>dm :%s#.*mzdbg.*\n##<cr>
+	nmap <silent> <leader>dm :%s#.*karldbg.*\n##<cr>
 	nmap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
-	nmap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>
+	nmap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
 	nmap <silent> <leader>dr :%s#\r\n#\r#g<cr>
 	nmap <silent> <leader>ds :%s#\s*$##g<cr>
 	nmap <silent> <leader>dt :diffthis<cr>:set wrap<cr>
@@ -1207,7 +1486,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	else
 		nmap <leader>es :tabnew $TEMP/scratch.txt<cr>
 	endif
-	nmap <silent> <leader>em :e mgrep.mk<cr>
+	"nmap <silent> <leader>em :e mgrep.mk<cr>
 	nmap <silent> <leader>et :vs ~/tmp/tmp_work_file/%:t<cr>
 	nmap <silent> <leader>ev :e ~/.vimrc<cr>
 	nmap <silent> <leader>vb :vs ~/.bashrc<cr>
@@ -1219,23 +1498,27 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	nmap <leader>fi :setlocal foldmethod=indent<cr>zR
 	nmap <leader>fm :setlocal foldmethod=manual<cr>
 	nmap <silent> <leader>fn :call My_Save_CurrentFileName()<cr><cr>
+	nmap <leader>fp :call Vim_cd_absolute_path()<cr>
+	nmap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 	nmap <leader>gi gg/include<cr>
+	nmap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 	nmap <silent> <leader>gc :git checkout -- %<cr>
 	nmap <silent> <leader>ge :!gedit %&<cr>
 	nmap <silent> <leader>gg :call My_compile_command()<cr>
 	" for function GitDiffLog1()
 	nnoremap <leader>gw "gyiw
-	nmap <silent> <leader>ko :!kompare % 1>/dev/null 2>&1 &<cr><cr>
+	"nmap <leader>kb :!p2d.sh % 1>/dev/null 2>&1 &<cr><cr>
+	nmap <leader>ko :!kompare % 1>/dev/null 2>&1 &<cr><cr>
 	"http://vim.wikia.com/wiki/Search_and_replace_in_multiple_buffers
 	"http://vim.wikia.com/wiki/Highlight_current_line
 	nmap <silent> <Leader>lc ml:execute 'match Search /\%'.line('.').'l/'<CR>
 	nmap <silent> <leader>ls :ls<cr>
 	nmap <silent> <leader>jj ggVGJ
 	nmap <leader>ma :set modifiable<cr>
-	nmap <silent> <leader>mj :make<cr>
-	nmap <silent> <leader>mz :!make zImage -j4<cr>
-	nmap <leader>mv1 :mks! ~/tmp/vimcurrentedit.vim<cr>
-	nmap <leader>mv2 :mks! vimcurrentedit.vim<cr>
+	nmap <silent> <leader>mj :make -j16<cr>
+	nmap <silent> <leader>mz :make zImage -j16<cr>
+	nmap <leader>mv1 :mks! ~/tmp/vimedit.vim<cr>
+	nmap <leader>mv2 :mks! vimedit.vim<cr>
 	nmap <silent> <leader>nl :nohl<cr>
 	nmap <silent> <leader>nn :set nonu<cr>
 	nmap <silent> <leader>pt :!pr.sh &<cr><cr>
@@ -1258,14 +1541,15 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	nmap <silent> <leader>rt :r ~/tmp/tmp_work_file/%:t<cr>
 	nmap <silent> <leader>sc :set ft=c<cr>
 	nmap <silent> <leader>sd :call SvnDiffCurrentFile()<cr>
+	nmap <leader>sf :call SaveFile2Tar()<cr>
 	nmap <silent> <leader>sl :!svn log %<cr>
 	nmap <silent> <leader>sn :set nu<cr>
 	nmap <silent> <leader>sm :set ft=make<cr>
 	nmap <silent> <leader>sp :set paste<cr>
 	nmap <silent> <leader>ss :source %<cr>
 	nmap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
-	nmap <leader>sv1 :source ~/tmp/vimcurrentedit.vim<cr>
-	nmap <leader>sv2 :source vimcurrentedit.vim<cr>
+	nmap <leader>sv1 :source ~/tmp/vimedit.vim<cr>
+	nmap <leader>sv2 :source vimedit.vim<cr>
 	nmap <silent> <leader>tl :TlistToggle<cr>
 	nmap <silent> <leader>vs :vs<cr>
 	nmap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
@@ -1286,29 +1570,33 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	nmap <silent> <leader>ww :w<cr>
 	nmap <silent> <leader>WW :w<cr>
 	nmap <silent> <leader>ya ggVGy``
-	nnoremap Y ggY``p
+	nnoremap Y ggY``P
 
-	nnoremap <silent> * :call MySpecialSearch('f', 0)<CR>
-	nnoremap <silent> # :call MySpecialSearch('b', 0)<CR>
+	"nnoremap <silent> * :call MySpecialSearch('f', 0)<CR>
+	"nnoremap <silent> # :call MySpecialSearch('b', 0)<CR>
+	nnoremap <silent> # #N
+	nnoremap <silent> * *N
 	"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 	nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
 
-	nnoremap <silent> <F2> :Grep
+	cnoremap <silent> <F3> Bgrep
 	nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
-	nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
+	"nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
+	"nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
+	nnoremap <silent> <F4> :SrcExplToggle<CR>
 	nnoremap <silent> <F6> :cp<CR>
 	nnoremap <silent> <F7> :cn<CR>
+	"nnoremap <silent> <F7> :SrcExplToggle<CR>
 	nnoremap <silent> <F8> :TlistToggle<CR>
 
 	nnoremap <silent> <C-6> <C-S-6>
+	nnoremap <c-y> yy"+yy"*yy
 
 	nnoremap <silent> <C-j>  <C-w>j
 	nnoremap <silent> <C-k>  <C-w>k
 	nnoremap <silent> <C-h>  <c-w>h
 	nnoremap <silent> <C-l>  <c-w>l
 
-	nnoremap <silent> <C-n> :bn<cr>
-	nnoremap <silent> <C-p> :bp<cr>
 	"<C-down>
 	nnoremap <silent>  [1;5B 4j
 	"<C-up>
@@ -1347,6 +1635,7 @@ command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<
 	vnoremap <Leader>* "9y/<C-R>='\V'.substitute(escape(@9,'\/'),'\n','\\n','g')<CR><CR>
 	"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 	vnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zf') : 'zo')<CR>
+	vnoremap <c-y> "+y
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1377,6 +1666,44 @@ EEOOFF
 endf
 
 	"!cat /dev/shm/beyond_compare_file_a | python -c "import sys,fileinput as f;[sys.stdout.write(str(f.lineno())+a) for a in f.input()]"
+
+"au! CursorHold *.[ch] nested call PreviewWord()
+func! PreviewWord()
+  if &previewwindow			" don't do this in the preview window
+    return
+  endif
+  let w = expand("<cword>")		" get the word under cursor
+  if w =~ '\a'			" if the word contains a letter
+
+    " Delete any existing highlight before showing another tag
+    silent! wincmd P			" jump to preview window
+    if &previewwindow			" if we really get there...
+      match none			" delete existing highlight
+      wincmd p			" back to old window
+    endif
+
+    " Try displaying a matching tag for the word under the cursor
+    try
+       exe "ptag " . w
+    catch
+      return
+    endtry
+
+    silent! wincmd P			" jump to preview window
+    if &previewwindow		" if we really get there...
+	 if has("folding")
+	   silent! .foldopen		" don't want a closed fold
+	 endif
+	 call search("$", "b")		" to end of previous line
+	 let w = substitute(w, '\\', '\\\\', "")
+	 call search('\<\V' . w . '\>')	" position cursor on match
+	 " Add a match highlight to the word at this position
+      hi previewWord term=bold ctermbg=green guibg=green
+	 exe 'match previewWord "\%' . line(".") . 'l\%' . col(".") . 'c\k*"'
+      wincmd p			" back to old window
+    endif
+  endif
+endfun
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
