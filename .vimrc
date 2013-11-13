@@ -483,6 +483,22 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" buffer functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+	
+	command! -nargs=* -complete=file -bang ExecBufferLine :call ExecBufferLine("<args>", "<bang>")
+	function! ExecBufferLine(name, bang)
+		let l:ans = confirm("Execute current buffer line in bash?", "&Yes\n&No")
+		if l:ans == 1
+		    exec ".,.w !sh"
+		else
+		    echo ("cancel Execute current buffer line in bash?")
+		endif
+	endfunction
+
+	command! -nargs=* -complete=file -bang Getfilename :call Getfilename("<args>", "<bang>")
+	function! Getfilename(name, bang)
+		let @"= expand("%:p")."\n"
+	endfunction
+
 	" Rename.vim - Copyright June 2007 by Christian J. Robinson <heptite@gmail.com>
 	command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
 	function! Rename(name, bang)
@@ -875,11 +891,16 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	    redir END
 	    if match(l:buflist, "\\d\\+.*\+") != -1
 		echo "has modified"
+		let l:ans = confirm("Save all and quit ?", "&Yes\n&No")
+		if l:ans == 1
+		    exec "wqa"
+		endif
 	    else
 		exec "qa"
 	    endif
 	endf
 	nmap <c-d> :call QuitAllBuffers_key()<cr>
+	imap <c-d> <ESC>:call QuitAllBuffers_key()<cr>
 	
 	func! AddDebugLine()
 		let l:msg = ''
@@ -1019,7 +1040,9 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"map <silent><F2> :NEXTCOLOR<cr>
 	"map <silent><F3> :PREVCOLOR<cr>
 	if has("gui_running")
-		colorscheme borland
+		"colorscheme borland
+		colorscheme breeze
+		"colorscheme 256_adaryn
 		"hi normal guibg=#294d4a
 	else
 		colorscheme 256_adaryn
@@ -1486,10 +1509,11 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	else
 		nmap <leader>es :tabnew $TEMP/scratch.txt<cr>
 	endif
+	nmap <silent> <leader>el :call ExecBufferLine("", "")<cr>
 	"nmap <silent> <leader>em :e mgrep.mk<cr>
 	nmap <silent> <leader>et :vs ~/tmp/tmp_work_file/%:t<cr>
 	nmap <silent> <leader>ev :e ~/.vimrc<cr>
-	nmap <silent> <leader>vb :vs ~/.bashrc<cr>
+	nmap          <leader>gn :call Getfilename("", "")<CR>
 	nmap <leader>fa :call SaveCurrentFileNameAbsolutePath()<cr>
 	nmap <leader>fb :call SaveCurrentFileNameRelativePath()<cr>
 	nmap <leader>fc :cs find c
@@ -1551,6 +1575,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <leader>sv1 :source ~/tmp/vimedit.vim<cr>
 	nmap <leader>sv2 :source vimedit.vim<cr>
 	nmap <silent> <leader>tl :TlistToggle<cr>
+	nmap <silent> <leader>vb :vs ~/.bashrc<cr>
 	nmap <silent> <leader>vs :vs<cr>
 	nmap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
 	nmap <silent> <leader>wj <C-W>j
