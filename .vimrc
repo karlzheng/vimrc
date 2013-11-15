@@ -1056,7 +1056,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	if MySys() == "windows"
 		let Tlist_Ctags_Cmd = 'ctags'
 	elseif MySys() == "linux"
-		let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+		let Tlist_Ctags_Cmd = 'ctags'
 	endif
 	let Tlist_Exit_OnlyWindow = 1
 	let Tlist_Use_Right_Window = 0
