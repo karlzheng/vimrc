@@ -1,0 +1,13 @@
+tmp.sh
+pwd.mk
+*.swp
+*.tar
+*.log
+cscope.files
+cscope.in.out
+cscope.out
+cscope.po.out
+filenametags
+fullfilenametags
+tags
+.vim/.netrwhist
