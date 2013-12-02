@@ -938,6 +938,11 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endfunction
 	nmap <silent> <leader>al :call AddDebugLine()<cr>
 
+	func! ReplaceMyUserName()
+	    s#ssh://.*@#ssh://kangliang.zkl@#g
+	endfunction
+	nmap <leader>rn :call ReplaceMyUserName()<cr>
+
 	""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	"buffer autocmd
 	""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1559,7 +1564,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>ra :!./a.out<cr>
 	nmap <silent> <leader>rd :r ~/tmp/delay.c<cr>
 	nmap <silent> <leader>rm :r ~/tmp/main.c<cr>
-	nmap <silent> <leader>rn :%d<CR>"+p
+	nmap <silent> <leader>rl :%d<CR>"+p
 	nmap <silent> <leader>rr :reg<cr>
 	nmap <silent> <leader>rs :20 vs ~/.stardict/iremember/tofel.txt<CR>
 	nmap <silent> <leader>rt :r ~/tmp/tmp_work_file/%:t<cr>
