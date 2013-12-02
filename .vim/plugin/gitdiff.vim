@@ -35,8 +35,9 @@ function! GitDiffLog()
 		 if matchstr(l:linetext, "^commit ") != ""
 			 let l:secondtag = strpart(l:linetext, 7, 40)
 			 let l:repoDir = getline(l:line -1)
-			 echo l:repoDir
-			 exec "cd ".l:repoDir
+			 if isdirectory(l:repoDir)
+			     exec "cd ".l:repoDir
+			 endif
 			 break
 		 endif
 		 let l:line = l:line - 1
