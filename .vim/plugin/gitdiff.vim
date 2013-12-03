@@ -54,6 +54,10 @@ function! GitDiffLog()
 	 endif
 	 let _resp = system(l:_cmd_)
 	 "exec ":e ".'gitdiff_'.l:firsttag.'_'.l:secondtag.'.c'
+	 if ! isdirectory("~/person_tools/")
+		 let l:_cmd_ = 'git diff '.l:secondtag.'^ '.l:secondtag.' -p -U100000 --raw > ' . "~/diff.patch"
+		 let _resp = system(l:_cmd_)
+	 endif
 
 	let l:dict = {}
 	let l:gitdiffbuf = 0 
@@ -111,6 +115,7 @@ endfunc
 
 "nnoremap <leader>gb :call GitDiffLog_and_bcompare()<cr>
 nnoremap <leader>gd :call GitDiffLog()<cr>
+nnoremap <c-g><c-g> :call GitDiffLog()<cr>
 
 function! <SID>GitEditFileInLine()
 	let l:linetext = getline('.')
