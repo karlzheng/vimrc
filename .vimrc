@@ -308,37 +308,53 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	" file quick open related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	function! SaveCurrentFileNameRelativePath()
-		let l:_f_ = expand("%")
-		if (l:_f_ != "")
-		    let l:_f_ = substitute(l:_f_, '^/tmp/a/', "", "")
-		    let l:_f_ = substitute(l:_f_, '^/tmp/b/', "", "")
-		    let l:_f_ = substitute(l:_f_, '^a/', "", "")
-		    let l:_f_ = substitute(l:_f_, '^b/', "", "")
-		    let l:_cmd_ = 'echo ' . '"' . l:_f_ . '" > /dev/shm/vim_cur_edit_file_relative_path'
+		let l:f = expand("%")
+		if (l:f != "")
+		    let l:f = substitute(l:f, '^/tmp/a/', "", "")
+		    let l:f = substitute(l:f, '^/tmp/b/', "", "")
+		    let l:f = substitute(l:f, '^a/', "", "")
+		    let l:f = substitute(l:f, '^b/', "", "")
+		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/cur_file_rela_path'
 		    let l:_resp = system(l:_cmd_)
 		else
 		    echo "Current file is noname."
 		endif
 	endfunction
 	
+	function! EditFileWithRelativePath()
+	    let l:f = expand("%")
+	    let l:f = substitute(l:f, '^/tmp/a/', "", "")
+	    let l:f = substitute(l:f, '^/tmp/b/', "", "")
+	    let l:r = system('cat /dev/shm/cur_file_rela_path')
+	    let l:r = substitute(l:r, "\r", "", "g")
+	    let l:r = substitute(l:r, "\n", "", "g")
+	    let l:f = l:r.'/'.l:f
+	    echo l:f
+	    if filereadable(l:f)
+		exec "windo diffoff!"
+		exec "bufdo diffoff!"
+		exec "vert diffsplit ".l:f
+	    endif
+	endfunction
+	
 	function! SaveFile2Tar()
-		let l:_f_ = expand("%")
-		let l:_cmd_ = 'tar cf /tmp/file.tar "'. l:_f_ .'"'
+		let l:f = expand("%")
+		let l:_cmd_ = 'tar cf /tmp/file.tar "'. l:f .'"'
 		let l:_resp = system(l:_cmd_)
 	endfunction
 
 	function! SaveCurrentFileNameAbsolutePath()
-		let l:_f_ = expand("%:p")
-		if (l:_f_ != "")
-		    let l:_cmd_ = 'echo ' . '"' . l:_f_ . '" > /dev/shm/vim_cur_edit_file_absolute_path'
+		let l:f = expand("%:p")
+		if (l:f != "")
+		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/vim_cur_edit_file_absolute_path'
 		    let l:_resp = system(l:_cmd_)
 		else
 		    echo "Current file is noname."
 		endif
 	endfunction
 
-	function! Edit_vim_cur_edit_file_relative_path()
-		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_relative_path | tr -d "\r" | tr -d "\n"'
+	function! EditCurFileRelaPath()
+		let l:_cmd_ = 'cat ' . '/dev/shm/cur_file_rela_path | tr -d "\r" | tr -d "\n"'
 		let l:_resp = system(l:_cmd_)
 		if filereadable(l:_resp)
 			exec "e ".l:_resp
@@ -1116,8 +1132,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 
 	"http://vim.wikia.com/wiki/Autocmd_to_update_ctags_file
 	function! UPDATE_TAGS()
-		let l:_f_ = expand("%:p")
-		let l:_cmd_ = '"ctags -a --c++-kinds=+p --fields=+iaS --extra=+q " ' . '"' . l:_f_ . ' & "'
+		let l:f = expand("%:p")
+		let l:_cmd_ = '"ctags -a --c++-kinds=+p --fields=+iaS --extra=+q " ' . '"' . l:f . ' & "'
 		let l:_resp = system(l:_cmd_)
 		if g:use_gtags && filereadable("/usr/bin/gtags")
 			exec ':silent !global -u > /dev/null 2>&1 &'
@@ -1505,7 +1521,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
 	nmap <silent> <leader>e2 :e ~/tmp/tmp_work_file/2.c<cr>
 	nmap <silent> <leader>ea :call Edit_vim_cur_edit_file_absolute_path()<cr>
-	nmap <silent> <leader>eb :call Edit_vim_cur_edit_file_relative_path()<cr>
+	nmap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
+	nmap <silent> <leader>ed :call EditFileWithRelativePath()<cr>
 	nmap <silent> <leader>ee :e!<cr>
 	nmap <silent> <leader>eh :e %:h<cr>
 	if MySys() == "linux"
