@@ -334,6 +334,12 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		exec "windo diffoff!"
 		exec "bufdo diffoff!"
 		exec "vert diffsplit ".l:f
+		exec "set wrap"
+		exec "normal! \<C-w>\<C-l>"
+		exec "set wrap"
+		exec "normal! \<C-w>\<C-h>"
+		exec "normal! \<C-W>L"
+		exec "normal! ]c"
 	    endif
 	endfunction
 	
