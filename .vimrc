@@ -325,7 +325,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	    let l:f = expand("%")
 	    let l:df = substitute(l:f, '^/tmp/a/', "", "")
 	    let l:df = substitute(l:f, '^/tmp/b/', "", "")
-	    let l:r = system('cat /dev/shm/cur_file_rela_path')
+	    let l:r = system('cat /dev/shm/diff_file_rela_path')
 	    let l:r = substitute(l:r, "\r", "", "g")
 	    let l:r = substitute(l:r, "\n", "", "g")
 	    let l:df = l:r.'/'.l:f
@@ -366,7 +366,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		if filereadable(l:_resp)
 			exec "e ".l:_resp
 		else
-			echo "has no file". l:_resp
+			echo "has no file ". l:_resp
 		endif
 	endfunction
 
