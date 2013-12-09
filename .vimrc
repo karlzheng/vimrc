@@ -53,7 +53,7 @@ set cscopetag
 set dictionary+=~/.vim/usr_bin_cmd.txt,~/.vim/bash-support/wordlists/bash.list
 "set encoding=prc
 set encoding=utf-8
-set fencs=utf-8,gbk,big5,euc-jp,utf-16le,gb2312,gb18030
+set fencs=utf-8,gbk,big5,gb2312,gb18030,euc-jp,utf-16le
 "fenc; internal enc; terminal enc
 set fenc=utf-8 enc=utf-8 tenc=utf-8
 set fileformats=unix
@@ -323,17 +323,18 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	
 	function! EditFileWithRelativePath()
 	    let l:f = expand("%")
-	    let l:f = substitute(l:f, '^/tmp/a/', "", "")
-	    let l:f = substitute(l:f, '^/tmp/b/', "", "")
+	    let l:df = substitute(l:f, '^/tmp/a/', "", "")
+	    let l:df = substitute(l:f, '^/tmp/b/', "", "")
 	    let l:r = system('cat /dev/shm/cur_file_rela_path')
 	    let l:r = substitute(l:r, "\r", "", "g")
 	    let l:r = substitute(l:r, "\n", "", "g")
-	    let l:f = l:r.'/'.l:f
-	    echo l:f
-	    if filereadable(l:f)
+	    let l:df = l:r.'/'.l:f
+	    if filereadable(l:df)
 		exec "windo diffoff!"
 		exec "bufdo diffoff!"
-		exec "vert diffsplit ".l:f
+		exec "b ".l:f
+		exec "normal! \<C-w>o"
+		exec "vert diffsplit ".l:df
 		exec "set wrap"
 		exec "normal! \<C-w>\<C-l>"
 		exec "set wrap"
