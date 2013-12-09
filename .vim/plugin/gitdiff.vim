@@ -115,7 +115,7 @@ endfunc
 
 "nnoremap <leader>gb :call GitDiffLog_and_bcompare()<cr>
 nnoremap <leader>gd :call GitDiffLog()<cr>
-nnoremap <c-g><c-g> :call GitDiffLog()<cr>
+nnoremap <c-g><c-d> :call GitDiffLog()<cr>
 
 function! <SID>GitEditFileInLine()
 	let l:linetext = getline('.')
