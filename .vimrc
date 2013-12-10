@@ -521,6 +521,17 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	function! Getfilename(name, bang)
 		let @"= expand("%:p")."\n"
 	endfunction
+	
+	function! YankText()
+	    if &clipboard == ""
+		let l:lines = []
+		let l:line = getline(".")
+		call add(l:lines, l:line)
+		call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
+	    endif
+		exec 'norm yy"+yy"*yy'
+	endfunction
+	nnoremap <c-y> :call YankText()<cr>
 
 	" Rename.vim - Copyright June 2007 by Christian J. Robinson <heptite@gmail.com>
 	command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
@@ -1008,14 +1019,14 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		let InCopyright = 0
 		set foldmethod=manual
 		for Line in range(1,line('$'))
-			let LineContents = getline(Line)
-			if LineContents !~ "^#"
+			let lineContents = getline(Line)
+			if lineContents !~ "^#"
 				if InCopyright
 					let CopyrightEnd = Line - 1
 					exe CopyrightStart . ',' . CopyrightEnd . 'fold'
 				endif
 				break
-			elseif LineContents =~ "Copyright"
+			elseif lineContents =~ "Copyright"
 				let InCopyright = 1
 				let CopyrightStart = Line
 			endif
@@ -1644,7 +1655,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nnoremap <silent> <F8> :TlistToggle<CR>
 
 	nnoremap <silent> <C-6> <C-S-6>
-	nnoremap <c-y> yy"+yy"*yy
 
 	nnoremap <silent> <C-j>  <C-w>j
 	nnoremap <silent> <C-k>  <C-w>k
@@ -1763,4 +1773,3 @@ endfun
 " the end of my .vimrc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:my_vimrc_is_loaded = 1
-
