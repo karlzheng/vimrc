@@ -532,6 +532,12 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		exec 'norm yy"+yy"*yy'
 	endfunction
 	nnoremap <c-y> :call YankText()<cr>
+	
+	function! EditYankText()
+		let l:f = "/dev/shm/".g:whoami."/yank.txt"
+		exec 'e '.l:f
+	endfunction
+	nnoremap <leader>ey :call EditYankText()<cr>
 
 	" Rename.vim - Copyright June 2007 by Christian J. Robinson <heptite@gmail.com>
 	command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
