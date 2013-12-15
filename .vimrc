@@ -979,7 +979,10 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>al :call AddDebugLine()<cr>
 
 	func! ReplaceMyUserName()
-	    s#ssh://.*@#ssh://kangliang.zkl@#g
+	    let l:line = getline(".")
+	    let l:line = substitute(l:line, 'ssh://.*@', 'ssh://kangliang.zkl@', "")
+	    let l:line = substitute(l:line, 'http://.*@', 'http://kangliang.zkl@', "")
+	    call setline(".", l:line)
 	endfunction
 	nmap <leader>rn :call ReplaceMyUserName()<cr>
 
