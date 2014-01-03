@@ -373,7 +373,8 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	function! Edit_vim_cur_edit_file_absolute_path()
 		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_absolute_path | tr -d "\r" | tr -d "\n"'
 		let l:f = system(l:_cmd_)
-		let l:f = escape(l:f, '.%')
+		"let l:f = "'".escape(l:f, '%')."'"
+		let l:f = escape(l:f, '%')
 		if filereadable(l:f)
 			exec "e ".l:f
 		else
