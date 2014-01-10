@@ -129,12 +129,16 @@ endif
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" path operate related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! My_SaveVimFilePath()
-		let l:str = expand("%:p:h")
-		let l:str = s:Escape(str)
-		execute ":!echo '".l:str."' > /dev/shm/".g:whoami."/vim_cur_file_path"
+	function! SaveFilePath()
+		let l:f = expand("%:p:h")
+		let l:f = s:Escape(f)
+		if (l:f != "")
+		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/apwdpath'
+		    let l:_resp = system(l:_cmd_)
+		else
+		    echo "Current file is noname."
+		endif
 	endfunction
-	nmap <leader>cdv :call My_SaveVimFilePath()<cr><cr>
 
 	"Switch to current dir
 	function! My_FilePath_Switch_Func()
@@ -1526,6 +1530,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nnoremap <Esc><Esc> :q<cr>
 
 	nmap <silent> ,32 f vt "xx$"xp
+	nmap <leader>ap :call SaveFilePath()<cr>
 	nmap <silent> <leader>ba :call My_Save_CompareFileName()<cr><cr>
 	nmap <silent> <leader>bb :call My_CompareToFileName()<cr><cr>
 	nmap <silent> <leader>c8 :call SetColorColumnC80()<CR>
