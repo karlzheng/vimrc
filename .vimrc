@@ -914,7 +914,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	    else
 		"let l:ans = confirm("Quit all buf ?", "&Yes\n&No")
 		if isdirectory('/dev/shm/'.g:whoami)
-		    let l:cmd = "mks! /dev/shm/".g:whoami."/vimedit.vim"
+		    let l:cmd = "mks! /dev/shm/".g:whoami."/edit.vim"
 		    exec l:cmd
 		endif
 		exec "qa"
@@ -925,9 +925,19 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	command! -nargs=* -complete=file -bang SS :call SourceSession("<args>", "<bang>")
 	function! SourceSession(name, bang)
 		if isdirectory('/dev/shm/'.g:whoami)
-		    let l:cmd = "source /dev/shm/".g:whoami."/vimedit.vim"
+		    let l:cmd = "source /dev/shm/".g:whoami."/edit.vim"
 		    exec l:cmd
 		endif
+	endfunction
+	
+	command! -nargs=* -complete=file -bang MS :call MakeSession("<args>", "<bang>")
+	function! MakeSession(name, bang)
+		if isdirectory('/dev/shm/'.g:whoami)
+		    let l:cmd = "mks! /dev/shm/".g:whoami."/edit.vim"
+		else
+		    let l:cmd = "mks! /dev/shm/edit.vim"
+		endif
+		    exec l:cmd
 	endfunction
 	
 	func! QuitAllBuffers_key()
@@ -1597,8 +1607,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <leader>ma :set modifiable<cr>
 	nmap <silent> <leader>mj :make -j16<cr>
 	nmap <silent> <leader>mz :make zImage -j16<cr>
-	nmap <leader>mv1 :mks! ~/tmp/vimedit.vim<cr>
-	nmap <leader>mv2 :mks! vimedit.vim<cr>
+	nmap <leader>mv1 :mks! ~/tmp/edit.vim<cr>
+	nmap <leader>mv2 :mks! edit.vim<cr>
 	nmap <silent> <leader>nl :nohl<cr>
 	nmap <silent> <leader>nn :set nonu<cr>
 	nmap <silent> <leader>pt :!pr.sh &<cr><cr>
@@ -1628,8 +1638,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>sp :set paste<cr>
 	nmap <silent> <leader>ss :source %<cr>
 	nmap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
-	nmap <leader>sv1 :source ~/tmp/vimedit.vim<cr>
-	nmap <leader>sv2 :source vimedit.vim<cr>
+	nmap <leader>sv1 :source ~/tmp/edit.vim<cr>
+	nmap <leader>sv2 :source edit.vim<cr>
 	nmap <silent> <leader>tl :TlistToggle<cr>
 	nmap <silent> <leader>vb :vs ~/.bashrc<cr>
 	nmap <silent> <leader>vs :vs<cr>
