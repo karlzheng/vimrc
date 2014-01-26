@@ -162,7 +162,7 @@ endif
 		endif
 	endfunction
 	nmap <silent> <c-s> :call My_FilePath_Switch_Func()<cr>
-	
+
 	function! Edit_FilePath()
 		let l:filepath = s:Escape(expand("%:p:h"))
 		execute "e ".l:filepath
@@ -178,7 +178,7 @@ endif
 	    if isdirectory("arch/arm/configs/")
 		let l:has_arm_config = 1
 	    endif
-	    
+
 	    if l:has_dot_config && l:has_arm_config
 		let l:ans= confirm("1.edit .config; 2.edit arm configs dir?", "&1 for .config \n&2 for arch/arm/configs")
 		if l:ans == 1
@@ -206,7 +206,7 @@ endif
 		endif
 	endfunction
 	nmap <silent> <leader>ek :call Edit_Kconfig()<cr>
-	
+
 	function! Edit_Makefile()
 		let l:filepath = expand("%:p:h")
 		let l:makefile = s:Escape(l:filepath)."/Makefile"
@@ -220,7 +220,7 @@ endif
 		endif
 	endfunction
 	nmap <silent> <leader>em :call Edit_Makefile()<cr>
-	
+
 	function! My_Save_CurrentFileName()
 		let l:str = expand("%:p")
 		let l:str = s:Escape(str)
@@ -264,7 +264,7 @@ endif
 		unlet l:cmd_text
 	endfunction
 	"nmap <silent> <leader>bb :call Compare_to_selected()<cr>
-	
+
 	function! DoGitBeyondCompare()
 		let l:ext = expand("%:e")
 		if l:ext == "log"
@@ -324,7 +324,12 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		    echo "Current file is noname."
 		endif
 	endfunction
-	
+
+	function! EditWorkDiary()
+		exec "e ~/person_tools/workDiary/diary.txt"
+		exec "norm G"
+	endfunction
+
 	function! EditFileWithRelativePath()
 	    let l:f = expand("%")
 	    let l:df = substitute(l:f, '^/tmp/a/', "", "")
@@ -347,7 +352,17 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		exec "normal! ]c"
 	    endif
 	endfunction
-	
+
+	function! EdCommandProxy()
+		let l:f = expand("%:t")
+		echo l:f
+		if (l:f == "scratch")
+			call EditWorkDiary()
+		else
+			call EditFileWithRelativePath()
+		endif
+	endfunction
+
 	function! SaveFile2Tar()
 		let l:f = expand("%")
 		let l:_cmd_ = 'tar cf /tmp/file.tar "'. l:f .'"'
@@ -512,7 +527,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" buffer functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	
+
 	command! -nargs=* -complete=file -bang ExecBufferLine :call ExecBufferLine("<args>", "<bang>")
 	function! ExecBufferLine(name, bang)
 		let l:ans = confirm("Execute current buffer line in bash?", "&Yes\n&No")
@@ -527,7 +542,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	function! Getfilename(name, bang)
 		let @"= expand("%:p")."\n"
 	endfunction
-	
+
 	function! YankText()
 	    if &clipboard == ""
 		let l:lines = []
@@ -538,7 +553,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		exec 'norm yy"+yy"*yy'
 	endfunction
 	nnoremap <c-y> :call YankText()<cr>
-	
+
 	function! EditYankText()
 		let l:f = "/dev/shm/".g:whoami."/yank.txt"
 		exec 'e '.l:f
@@ -729,7 +744,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		let @/ = l:pattern
 		let @" = l:saved_reg
 	endfunction
-	
+
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" c file edit functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -874,7 +889,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	    endif
 	endf
 	nmap <c-q> :call QuickfixToggle()<cr>
-	
+
 	"http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
 	function! Is_quickfix_visual()
 	    let l:is_quickfix_visual = 0
@@ -921,13 +936,13 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	    endif
 	endf
 	nmap <c-x><c-c> :call QuitAllBuffers()<cr>
-	
+
 	command! -nargs=* -complete=file -bang M1 :call MakeSessionInCurDir("<args>", "<bang>")
 	function! MakeSessionInCurDir(name, bang)
 		let l:cmd = "mks! edit.vim"
 		exec l:cmd
 	endfunction
-	
+
 	command! -nargs=* -complete=file -bang MS :call MakeSession("<args>", "<bang>")
 	function! MakeSession(name, bang)
 		if isdirectory('/dev/shm/'.g:whoami)
@@ -937,13 +952,13 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		endif
 		exec l:cmd
 	endfunction
-	
+
 	command! -nargs=* -complete=file -bang S1 :call SourceSessionInCurDir("<args>", "<bang>")
 	function! SourceSessionInCurDir(name, bang)
 		let l:cmd = "source edit.vim"
 		exec l:cmd
 	endfunction
-	
+
 	command! -nargs=* -complete=file -bang SS :call SourceSession("<args>", "<bang>")
 	function! SourceSession(name, bang)
 		if isdirectory('/dev/shm/'.g:whoami)
@@ -951,7 +966,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		    exec l:cmd
 		endif
 	endfunction
-	
+
 	func! QuitAllBuffers_key()
 	    "http://rickey-nctu.blogspot.com/2009/02/vim-quickfix.html
 	    redir => l:buflist
@@ -969,7 +984,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endf
 	nmap <c-d> :call QuitAllBuffers_key()<cr>
 	imap <c-d> <ESC>:call QuitAllBuffers_key()<cr>
-	
+
 	func! AddDebugLine()
 		let l:msg = ''
 		if &ft == "c"
@@ -1206,7 +1221,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endfunction
 	"autocmd BufWrite *.cpp,*.h,*.c call UPDATE_Cscope()
 	nmap <leader>uc :call UPDATE_Cscope()<cr>
-	
+
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" SrcExpl settings
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1578,7 +1593,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>e2 :e ~/tmp/tmp_work_file/2.c<cr>
 	nmap <silent> <leader>ea :call Edit_vim_cur_edit_file_absolute_path()<cr>
 	nmap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
-	nmap <silent> <leader>ed :call EditFileWithRelativePath()<cr>
+	nmap <silent> <leader>ed :call EdCommandProxy()<cr>
 	nmap <silent> <leader>ee :e!<cr>
 	nmap <silent> <leader>eh :e %:h<cr>
 	if MySys() == "linux"
@@ -1633,7 +1648,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>qa :qa<cr>
 	nmap <leader>r1 :r ~/tmp/tmp_work_file/1.txt<cr>
 	nmap <silent> <leader>ra :!./a.out<cr>
-	nmap <silent> <leader>rd :r ~/tmp/delay.c<cr>
+	"nmap <silent> <leader>rd :r ~/tmp/delay.c<cr>
+	nmap <silent> <leader>rd :r !date<cr>
 	nmap <silent> <leader>rm :r ~/tmp/main.c<cr>
 	nmap <silent> <leader>rl :%d<CR>"+p
 	nmap <silent> <leader>rr :reg<cr>
