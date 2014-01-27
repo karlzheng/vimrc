@@ -687,6 +687,16 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			endtry
 		endif
 	endfunction
+	
+	function! BufCloseWindow()
+		q
+		let l:f=expand("%:t")
+		if l:f == "-MiniBufExplorer-"
+			exec "normal! \<C-W>j"
+		endif
+	endfunction
+	nnoremap <Esc><Esc> :call BufCloseWindow()<cr>
+	
 	command! Bwipe  call <SID>BufcloseCloseIt(1)
 	command! Bclose call <SID>BufcloseCloseIt(0)
 	nmap <c-x><c-d> :Bclose<cr>
@@ -800,6 +810,22 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		let l:_cmd_ = 'git diff '.l:firsttag.' '.l:secondtag.' > gitdiff.c'
 		let _resp = system(l:_cmd_)
 	endfunc
+	
+	function! ShowGitDiffInBcompare()
+		call GitDiffLog()
+		exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+		call SwitchToBuf("gitdiff.c")
+		q
+		let l:f=expand("%:t")
+		if l:f == "-MiniBufExplorer-"
+			exec "normal! \<C-W>j"
+		endif
+		let l:f=expand("%:t")
+		if l:f == "__Tag_List__"
+			exec "normal! \<C-W>l"
+		endif
+	endfunc
+	nmap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" dictionary functions
@@ -1564,7 +1590,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	nnoremap ,, ,
 	nnoremap - "_dd
-	nnoremap <Esc><Esc> :q<cr>
 
 	nmap <silent> ,32 f vt "xx$"xp
 	nmap <leader>ap :call SaveFilePath()<cr>
@@ -1750,7 +1775,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 	vnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zf') : 'zo')<CR>
 	vnoremap <c-y> "+y
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " misc of .vimrc; useless.
