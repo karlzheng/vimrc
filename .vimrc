@@ -372,7 +372,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	function! SaveCurrentFileNameAbsolutePath()
 		let l:f = expand("%:p")
 		if (l:f != "")
-		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/vim_cur_edit_file_absolute_path'
+		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
 		    let l:_resp = system(l:_cmd_)
 		else
 		    echo "Current file is noname."
@@ -390,7 +390,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	endfunction
 
 	function! Edit_vim_cur_edit_file_absolute_path()
-		let l:_cmd_ = 'cat ' . '/dev/shm/vim_cur_edit_file_absolute_path | tr -d "\r" | tr -d "\n"'
+		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
 		let l:f = system(l:_cmd_)
 		"let l:f = "'".escape(l:f, '%')."'"
 		let l:f = escape(l:f, '%')
