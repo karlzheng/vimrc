@@ -220,6 +220,14 @@ endif
 		endif
 	endfunction
 	nmap <silent> <leader>em :call Edit_Makefile()<cr>
+	
+	function! EditScratch()
+		if filereadable("/home/karlzheng/tmp/.scratch.swp")
+			e ~/tmp/scratch2
+		else
+			e $HOME/tmp/scratch
+		endif
+	endfunction
 
 	function! My_Save_CurrentFileName()
 		let l:str = expand("%:p")
@@ -1621,14 +1629,9 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>ed :call EdCommandProxy()<cr>
 	nmap <silent> <leader>ee :e!<cr>
 	nmap <silent> <leader>eh :e %:h<cr>
-	if MySys() == "linux"
-		nmap <leader>es :e ~/tmp/scratch<cr>
-		":setl buftype=nofile<cr>
-	else
-		nmap <leader>es :tabnew $TEMP/scratch.txt<cr>
-	endif
 	nmap <silent> <leader>el :call ExecBufferLine("", "")<cr>
 	"nmap <silent> <leader>em :e mgrep.mk<cr>
+	nmap <silent> <leader>es :call EditScratch()<cr>
 	nmap <silent> <leader>et :vs ~/tmp/tmp_work_file/%:t<cr>
 	nmap <silent> <leader>ev :e ~/.vimrc<cr>
 	nmap          <leader>gn :call Getfilename("", "")<CR>
