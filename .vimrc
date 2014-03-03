@@ -364,7 +364,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	function! EdCommandProxy()
 		let l:f = expand("%:t")
 		echo l:f
-		if (l:f == "scratch")
+		if (l:f == "scratch" || l:f == "scratch2")
 			call EditWorkDiary()
 		else
 			call EditFileWithRelativePath()
@@ -552,12 +552,10 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endfunction
 
 	function! YankText()
-	    if &clipboard == ""
 		let l:lines = []
 		let l:line = getline(".")
 		call add(l:lines, l:line)
 		call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
-	    endif
 		exec 'norm yy"+yy"*yy'
 	endfunction
 	nnoremap <c-y> :call YankText()<cr>
