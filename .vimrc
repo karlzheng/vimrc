@@ -228,6 +228,23 @@ endif
 			e $HOME/tmp/scratch
 		endif
 	endfunction
+	
+	func! ReplaceFilePath4fp()
+	    let l:line = getline(".")
+		let l:aRegex = '$(fp)'
+		let l:findstr = matchstr(l:line, l:aRegex)
+		if l:findstr != ""
+			echo "got it"
+			let l:f = '/dev/shm/'.g:whoami.'/absfn'
+			if filereadable(l:f)
+				let l:l = readfile(l:f, '', 1)
+				let l:str = l:l[0]
+				let l:line = substitute(l:line, '$(fp)', l:str, "")
+				call setline(".", l:line)
+			endif
+		endif
+	endf
+	nmap <leader>rf :call ReplaceFilePath4fp()<cr>
 
 	function! My_Save_CurrentFileName()
 		let l:str = expand("%:p")
