@@ -1579,8 +1579,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	inoremap <silent> <C-a> <Home>
 	inoremap <silent> <C-e> <End>
-	inoremap <silent> <C-h> <Left>
-	inoremap <silent> <C-l> <Right>
 	inoremap <C-o> <C-c>
 	inoremap <C-Del> <c-g>u<c-c>lC
 	"http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
@@ -1864,8 +1862,16 @@ endfun
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " key map
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-imap <c-b> <ESC>bi
-imap <c-B> <ESC>Bi
+"ALT+b
+imap b <ESC>bi
+"ALT+f
+inoremap f <ESC>lWi
+inoremap <c-b> <ESC>lhi
+inoremap <c-B> <ESC>lhi
+inoremap <c-f> <ESC>lli
+inoremap <c-F> <ESC>lli
+inoremap <C-h> <ESC>"_s
+inoremap <C-l> <ESC>l"_s
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
