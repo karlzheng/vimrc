@@ -161,7 +161,7 @@ endif
 			exec "cd ".g:root_work_path
 		endif
 	endfunction
-	nmap <silent> <c-s> :call My_FilePath_Switch_Func()<cr>
+	nmap <leader>cd :call My_FilePath_Switch_Func()<cr>
 
 	function! Edit_FilePath()
 		let l:filepath = s:Escape(expand("%:p:h"))
@@ -1872,6 +1872,8 @@ inoremap <c-f> <ESC>lli
 inoremap <c-F> <ESC>lli
 inoremap <C-h> <ESC>"_s
 inoremap <C-l> <ESC>l"_s
+inoremap <c-s> <ESC>:w<cr>i
+nnoremap <c-s> :w<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
