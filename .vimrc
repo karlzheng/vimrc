@@ -337,7 +337,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	" file quick open related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	function! SaveCurrentFileNameRelativePath()
-		let l:f = expand("%")
+		let l:f = expand("%:")
 		if (l:f != "")
 		    let l:f = substitute(l:f, '^/tmp/a/', "", "")
 		    let l:f = substitute(l:f, '^/tmp/b/', "", "")
