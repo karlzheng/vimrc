@@ -118,17 +118,11 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " my functions
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" common functions
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! s:Escape(dir)
-	  " See rules at :help 'path'
-	  return escape(escape(escape(a:dir, ','), "\\"), ' ')
-	endfunction
+function! s:Escape(dir)
+  " See rules at :help 'path'
+  return escape(escape(escape(a:dir, ','), "\\"), ' ')
+endfunction
 
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" path operate related functions
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! EnterSavedPath()
 	let l:f='/dev/shm/'.g:whoami.'/apwdpath'
 	if filereadable(l:f)
@@ -138,6 +132,19 @@ function! EnterSavedPath()
 		echo "cd ".l:r
 		exec "cd ".l:r
 	endif
+endfunction
+
+function! GrepCurWordInCurDir()
+	let l:lastpwd = escape(getcwd(), " ")
+	let l:filepath = expand("%:p:h")
+	let l:filepath = s:Escape(l:filepath)
+	echo "cd ".l:filepath
+	exec "cd ".l:filepath
+	let l:w = expand("<cword>")
+	let l:w = substitute(l:w, '\n', '', 'g')
+	let l:c = '!mg.sh '.l:w
+	exec l:c
+	call ReadQuickfixFile()
 endfunction
 
 function! SaveFilePath()
@@ -1249,6 +1256,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	if has("cscope")
 		"nmap {c :cscope find c <cword><CR>
 		nmap <expr><silent> [c (&diff ? "[c" : ":cscope find c <cword><CR>")
+		nnoremap [a :call GrepCurWordInCurDir()<cr>
 		nmap [d :cscope find d <cword><CR>
 		nmap [e :cscope find e <cword><CR>
 		nmap [f :cscope find f <cword><CR>
