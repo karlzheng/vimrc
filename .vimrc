@@ -134,20 +134,22 @@ function! EnterSavedPath()
 	if filereadable(l:f)
 		let l:c = 'cat ' . '/dev/shm/'.g:whoami.'/apwdpath'
 		let l:r = system(l:c)
-		execute "cd ".l:r
+		let l:r = substitute(l:r, '\n', '', 'g')
+		echo "cd ".l:r
+		exec "cd ".l:r
 	endif
 endfunction
 
-	function! SaveFilePath()
-		let l:f = expand("%:p:h")
-		let l:f = s:Escape(f)
-		if (l:f != "")
-		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/apwdpath'
-		    let l:_resp = system(l:_cmd_)
-		else
-		    echo "Current file is noname."
-		endif
-	endfunction
+function! SaveFilePath()
+	let l:f = expand("%:p:h")
+	let l:f = s:Escape(f)
+	if (l:f != "")
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/apwdpath'
+		let l:_resp = system(l:_cmd_)
+	else
+		echo "Current file is noname."
+	endif
+endfunction
 
 	"Switch to current dir
 	function! My_FilePath_Switch_Func()
@@ -164,13 +166,12 @@ endfunction
 		let l:filepath = s:Escape(l:filepath)
 		if l:pwd == g:root_work_path
 			echo "cd ".l:filepath
-			execute "cd ".l:filepath
+			exec "cd ".l:filepath
 		else
 			echo "cd ".g:root_work_path
 			exec "cd ".g:root_work_path
 		endif
 	endfunction
-	nmap <leader>cd :call My_FilePath_Switch_Func()<cr>
 
 	function! Edit_FilePath()
 		let l:filepath = s:Escape(expand("%:p:h"))
@@ -1627,6 +1628,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>ba :call My_Save_CompareFileName()<cr><cr>
 	nmap <silent> <leader>bb :call My_CompareToFileName()<cr><cr>
 	nmap <silent> <leader>c8 :call SetColorColumnC80()<CR>
+	nmap <leader>cd :call My_FilePath_Switch_Func()<cr>
 	nmap <silent> <leader>ch :call SetColorColumn()<CR>
 	nmap <silent> <leader>cf :cgete getmatches()<cr>
 	nmap <silent> <leader>cg :call ReadQuickfixFile()<cr>
