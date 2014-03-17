@@ -129,6 +129,15 @@ endif
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" path operate related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! EnterSavedPath()
+	let l:f='/dev/shm/'.g:whoami.'/apwdpath'
+	if filereadable(l:f)
+		let l:c = 'cat ' . '/dev/shm/'.g:whoami.'/apwdpath'
+		let l:r = system(l:c)
+		execute "cd ".l:r
+	endif
+endfunction
+
 	function! SaveFilePath()
 		let l:f = expand("%:p:h")
 		let l:f = s:Escape(f)
@@ -1613,6 +1622,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nnoremap - "_dd
 
 	nmap <silent> ,32 f vt "xx$"xp
+	nmap <leader>ac :call EnterSavedPath()<cr>
 	nmap <leader>ap :call SaveFilePath()<cr>
 	nmap <silent> <leader>ba :call My_Save_CompareFileName()<cr><cr>
 	nmap <silent> <leader>bb :call My_CompareToFileName()<cr><cr>
