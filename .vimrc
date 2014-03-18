@@ -1892,7 +1892,7 @@ inoremap <c-f> <ESC>lli
 inoremap <c-F> <ESC>lli
 inoremap <C-h> <ESC>"_s
 inoremap <C-l> <ESC>l"_s
-inoremap <c-s> <ESC>:w<cr>i
+inoremap <c-s> <ESC>:w<cr>li
 nnoremap <c-s> :w<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
