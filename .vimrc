@@ -1071,6 +1071,9 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 				let l:msg = 'printf("karldbg %s %d\n", __func__, __LINE__);'
 			endif
 		endif
+		if &ft == "java"
+			let l:msg = 'System.err.println("karldbg " + Thread.currentThread().getStackTrace()[1].getLineNumber());'
+		endif
 		if &ft == "make"
 			let l:msg = '$(warning "karldbg")'
 		endif
