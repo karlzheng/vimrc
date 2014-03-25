@@ -1603,7 +1603,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	inoremap <C-o> <C-c>
 	inoremap <C-Del> <c-g>u<c-c>lC
 	"http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
-	inoremap <c-j> <c-g>j
+	inoremap <c-j> <ESC>gjli
 	"inoremap <c-k> <c-g>u<c-c>lC
 	inoremap <c-k> <c-g>k
 	inoremap <c-u> <c-g>u<c-u>
