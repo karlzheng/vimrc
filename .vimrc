@@ -1668,7 +1668,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>el :call ExecBufferLine("", "")<cr>
 	"nmap <silent> <leader>em :e mgrep.mk<cr>
 	nmap <silent> <leader>es :call EditScratch()<cr>
-	nmap <silent> <leader>et :vs ~/tmp/tmp_work_file/%:t<cr>
+	nmap <silent> <leader>et :e ~/tmp/tee.log<cr>
 	nmap <silent> <leader>ev :e ~/.vimrc<cr>
 	nmap          <leader>gn :call Getfilename("", "")<CR>
 	nmap <leader>fa :call SaveCurrentFileNameAbsolutePath()<cr>
