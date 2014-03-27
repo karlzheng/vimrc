@@ -1887,6 +1887,7 @@ endfun
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "ALT+b
 imap b <ESC>bi
+nnoremap d dw
 "ALT+f
 inoremap f <ESC>lWi
 inoremap <c-b> <ESC>lhi
