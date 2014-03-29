@@ -1780,6 +1780,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"<C-up>
 	nnoremap <silent>  [1;5A 4k
 
+	" ALT + hjkl
 	if has("gui_running")
 		nmap <silent> ê 1<C-w>+
 		nmap <silent> ë 1<C-w>-
@@ -1887,6 +1888,7 @@ endfun
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "ALT+b
 imap b <ESC>bi
+"ALT+d
 nnoremap d dw
 "ALT+f
 inoremap f <ESC>lWi
@@ -1895,6 +1897,7 @@ inoremap <c-B> <ESC>lhi
 inoremap <c-f> <ESC>lli
 inoremap <c-F> <ESC>lli
 inoremap <C-h> <ESC>"_s
+inoremap <C-k> <ESC>l"_Da
 inoremap <C-l> <ESC>l"_s
 inoremap <c-s> <ESC>:w<cr>li
 nnoremap <c-s> :w<cr>
