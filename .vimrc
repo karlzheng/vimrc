@@ -69,7 +69,7 @@ set history=400
 set history=500
 set hlsearch
 set incsearch
-set isf-==,/
+set isf-==
 set iskeyword-=",/,,
 " for  # * quick lookup
 set iskeyword+=_
@@ -237,7 +237,7 @@ endfunction
 		endif
 	endfunction
 	nmap <silent> <leader>em :call Edit_Makefile()<cr>
-	
+
 	function! EditScratch()
 		if filereadable("/home/karlzheng/tmp/.scratch.swp")
 			e ~/tmp/scratch2
@@ -245,7 +245,7 @@ endfunction
 			e $HOME/tmp/scratch
 		endif
 	endfunction
-	
+
 	func! ReplaceFilePath4fp()
 	    let l:line = getline(".")
 		let l:aRegex = '$(fp)'
@@ -727,7 +727,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			endtry
 		endif
 	endfunction
-	
+
 	function! BufCloseWindow()
 		q
 		let l:f=expand("%:t")
@@ -736,7 +736,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		endif
 	endfunction
 	nnoremap <Esc><Esc> :call BufCloseWindow()<cr>
-	
+
 	command! Bwipe  call <SID>BufcloseCloseIt(1)
 	command! Bclose call <SID>BufcloseCloseIt(0)
 	nmap <c-x><c-d> :Bclose<cr>
@@ -850,7 +850,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		let l:_cmd_ = 'git diff '.l:firsttag.' '.l:secondtag.' > gitdiff.c'
 		let _resp = system(l:_cmd_)
 	endfunc
-	
+
 	function! ShowGitDiffInBcompare()
 		call GitDiffLog()
 		exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
