@@ -1606,11 +1606,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"inoremap <c-j> <ESC>gjli
 	"inoremap <c-k> <c-g>u<c-c>lC
 	"inoremap <c-k> <c-g>k
-	inoremap <c-u> <c-g>u<c-u>
-	inoremap <c-w> <c-g>u<c-w>
 	"inoremap <C-l> <C-o>:set im<cr><C-l>
 	"nnoremap <C-l> :set noim<cr>
-	inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" Ex mode key remap
@@ -1898,13 +1895,18 @@ inoremap k <c-g>k
 inoremap l <ESC>lli
 inoremap <c-b> <ESC>lhi
 inoremap <c-B> <ESC>lhi
-inoremap <c-f> <ESC>lli
+nnoremap <C-e> <End>
 inoremap <c-F> <ESC>lli
+inoremap <c-f> <ESC>lli
 inoremap <C-h> <ESC>"_s
 inoremap <C-k> <ESC>l"_Da
 inoremap <C-l> <ESC>l"_s
 inoremap <c-s> <ESC>:w<cr>li
 nnoremap <c-s> :w<cr>
+inoremap <c-u> <c-g>u<c-u>
+inoremap <c-w> <ESC>ldbi
+inoremap <c-y> <ESC>pa
+inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
