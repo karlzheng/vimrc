@@ -1901,8 +1901,8 @@ inoremap <c-f> <ESC>lli
 inoremap <C-h> <ESC>"_s
 inoremap <C-k> <ESC>l"_Da
 inoremap <C-l> <ESC>l"_s
-inoremap <c-s> <ESC>:w<cr>li
-nnoremap <c-s> :w<cr>
+inoremap <c-s> <ESC>:w!<cr>li
+nnoremap <c-s> :w!<cr>
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
 inoremap <c-y> <ESC>pa
