@@ -368,7 +368,12 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	endfunction
 
 	function! EditWorkDiary()
-		exec "e ~/person_tools/workDiary/diary.txt"
+		let l:f = "/home/karlzheng/tmp/workDiary/diary.txt"
+		if filereadable(l:f)
+			exec "e ".l:f
+		else
+			exec "e ~/person_tools/workDiary/diary.txt"
+		endif
 		exec "norm G"
 	endfunction
 
