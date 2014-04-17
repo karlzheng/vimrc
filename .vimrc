@@ -1670,7 +1670,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
 	nmap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
 	nmap <silent> <leader>dr :%s#\r\n#\r#g<cr>
-	nmap <silent> <leader>ds :%s#\s*$##g<cr>
+	nmap <silent> <leader>ds :%s#\s*$##g<cr>:nohl<cr><c-o>
 	nmap <silent> <leader>dt :diffthis<cr>:set wrap<cr>
 
 	nmap <silent> <leader>e. :e .<cr>
