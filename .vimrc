@@ -113,7 +113,7 @@ endif
 
 "user HOME dir.
 if ! exists("g:hDir")
-    let g:hDir = system("echo ${HOME}")
+    let g:hDir = system("echo ${HOME} | tr -d '\r' | tr -d '\n' ")
 endif
 
 if ! exists("g:whoami")
@@ -189,7 +189,17 @@ endfunction
 		let l:filepath = s:Escape(expand("%:p:h"))
 		execute "e ".l:filepath
 	endfunction
-	nmap <silent> <leader>ep :call Edit_FilePath()<cr>
+
+func! EditBashLog()
+	let l:f = g:hDir.'/.bash_history'
+	if filereadable(l:f)
+		exec "e ".l:f
+	endif
+	let l:f = g:hDir."/tmp/bash_history"
+	if filereadable(l:f)
+		exec "e ".l:f
+	endif
+endf
 
 	func! EditConfig()
 	    let l:has_dot_config = 0
@@ -218,7 +228,6 @@ endfunction
 		endif
 	    endif
 	endf
-	nmap <leader>ec :call EditConfig()<cr>
 
 	function! Edit_Kconfig()
 		let l:filepath = expand("%:p:h")
@@ -1917,6 +1926,10 @@ inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
 inoremap <c-y> <ESC>pa
 inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
+
+nmap <leader>bl :call EditBashLog()<cr>
+nmap <leader>ec :call EditConfig()<cr>
+nmap <silent> <leader>ep :call Edit_FilePath()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
