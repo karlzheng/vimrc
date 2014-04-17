@@ -36,9 +36,9 @@ endfunction
 " General settings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader=","
+let g:BASH_Ctrl_j='on'
 let g:use_gtags=0
 "let g:use_gtags=1
-let g:BASH_Ctrl_j='on'
 
 set nocompatible
 "au BufRead ft=Help set nu
@@ -109,6 +109,11 @@ endif
 
 if ! exists("g:root_work_path")
     let g:root_work_path = escape(getcwd(), " ")
+endif
+
+"user HOME dir.
+if ! exists("g:hDir")
+    let g:hDir = system("echo ${HOME}")
 endif
 
 if ! exists("g:whoami")
@@ -239,7 +244,7 @@ endfunction
 	nmap <silent> <leader>em :call Edit_Makefile()<cr>
 
 	function! EditScratch()
-		if filereadable("/home/karlzheng/tmp/.scratch.swp")
+		if filereadable(g:hDir."/tmp/.scratch.swp")
 			e ~/tmp/scratch2
 		else
 			e $HOME/tmp/scratch
@@ -368,7 +373,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	endfunction
 
 	function! EditWorkDiary()
-		let l:f = "/home/karlzheng/tmp/workDiary/diary.txt"
+		let l:f = g:hDir."/tmp/workDiary/diary.txt"
 		if filereadable(l:f)
 			exec "e ".l:f
 		else
@@ -890,7 +895,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		let l:BufNum = 0
 		for i in range(1,bufnr("$"))
 			if buflisted(i)
-				if bufname(i) == "diCt-tmp" && l:currentBufNum != i && bufname(l:currentBufNum) != "/home/karlzheng/.stardict/iremember/tofel.txt"
+				if bufname(i) == "diCt-tmp" && l:currentBufNum != i && bufname(l:currentBufNum) != g:hDir."/.stardict/iremember/tofel.txt"
 					"if bufname(i) == "diCt-tmp" && l:currentBufNum != i
 					let l:is_exist_dict_tmp = 1
 					let l:BufNum = i
@@ -908,7 +913,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			3
 		endif
 		call SwitchToBuf(bufname(l:currentBufNum))
-		if bufname(l:currentBufNum) == "/home/karlzheng/.stardict/iremember/tofel.txt"
+		if bufname(l:currentBufNum) == g:hDir."/.stardict/iremember/tofel.txt"
 			"exec "b".l:currentBufNum
 			"call SwitchToBuf(bufname(l:currentBufNum))
 		endif
@@ -1364,10 +1369,10 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"Quickfix
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	function! ReadQuickfixFile()
-		if filereadable("/home/karlzheng/dev/quickfix.txt")
-			"exe 'cg /home/karlzheng/dev/quickfix.txt'
-			let l:_resp = system('rsync -avurP /home/karlzheng/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
-			let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt /home/karlzheng/dev/quickfix.txt')
+		if filereadable(g:hDir."/dev/quickfix.txt")
+			"exe 'cg '.g:hDir.'/dev/quickfix.txt'
+			let l:_resp = system('rsync -avurP ' .g:hDir.'/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
+			let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt' .g:hDir.'/dev/quickfix.txt')
 		endif
 		exe 'cg /dev/shm/'.g:whoami.'/quickfix.txt'
 		call OpenQuickfixBuf()
@@ -1389,18 +1394,18 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		endif
 	    endfor
 	    call writefile(l:qf_data_list, "/dev/shm/".g:whoami."/quickfix.txt")
-	    if ! isdirectory('/home/karlzheng/')
-		call writefile(l:qf_data_list, $HOME."/quickfix.txt")
+	    if ! isdirectory(g:hDir)
+		call writefile(l:qf_data_list, g:hDir."/quickfix.txt")
 	    endif
-	    if filereadable($HOME.'/dev/quickfix.txt')
-		call writefile(l:qf_data_list, $HOME."/dev/quickfix.txt")
+	    if filereadable(g:hDir.'/dev/quickfix.txt')
+		call writefile(l:qf_data_list, g:hDir."/dev/quickfix.txt")
 	    endif
 	endfunc
 	nmap <leader>sq :call SaveQuickfixToFile()<cr>
 
 	function! EditQuickfixList()
-	    if filereadable("/home/karlzheng/dev/quickfix.txt")
-		exe 'e /home/karlzheng/dev/quickfix.txt'
+	    if filereadable(g:hDir."/dev/quickfix.txt")
+		exe 'e '.g:hDir.'/dev/quickfix.txt'
 	    else
 		exe 'e /dev/shm/'.g:whoami.'/quickfix.txt'
 	    endif
