@@ -1909,7 +1909,7 @@ nnoremap d dw
 "ALT+f
 inoremap f <ESC>lWi
 inoremap h <ESC>hli
-inoremap j <c-g>j
+inoremap j <ESC>gja
 inoremap k <c-g>k
 inoremap l <ESC>lli
 inoremap <c-b> <ESC>lhi
