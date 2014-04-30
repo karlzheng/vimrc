@@ -120,6 +120,22 @@ if ! exists("g:whoami")
     let g:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
 endif
 
+function! s:PreSetEnv()
+	let l:d = '/dev/shm/'.g:whoami
+	if isdirectory(l:d) == 0
+		let l:c = 'mkdir -p '.l:d
+		let l:r = system(l:c)
+	endif
+	let l:f='/dev/shm/'.g:whoami.'/allBashCommands.txt'
+	if filereadable(l:f) == 0
+		let l:c = 'compgen -c > '.l:f
+		let l:r = system(l:c)
+	endif
+	exec 'set '. 'dictionary+='.l:f
+endfunc
+
+call s:PreSetEnv()
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " my functions
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
