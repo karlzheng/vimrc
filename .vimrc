@@ -1116,7 +1116,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			let l:msg = 'import inspect;print ("karldbg %s %d" %(__file__, inspect.currentframe().f_lineno))'
 		endif
 		if &ft == "sh"
-			let l:msg ='echo karldbg $(basename $0) $LINENO'
+			let l:msg ='echo karldbg ${BASH_SOURCE[0]} $LINENO'
 		endif
 		if l:msg != ''
 			call append(line('.'), l:msg)
