@@ -408,26 +408,28 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	endfunction
 
 	function! EditFileWithRelativePath()
-	    let l:f = expand("%")
-	    let l:df = substitute(l:f, '^/tmp/a/', "", "")
-	    let l:df = substitute(l:f, '^/tmp/b/', "", "")
-	    let l:r = system('cat /dev/shm/diff_file_rela_path')
-	    let l:r = substitute(l:r, "\r", "", "g")
-	    let l:r = substitute(l:r, "\n", "", "g")
-	    let l:df = l:r.'/'.l:f
-	    if filereadable(l:df)
-		exec "windo diffoff!"
-		exec "bufdo diffoff!"
-		exec "b ".l:f
-		exec "normal! \<C-w>o"
-		exec "vert diffsplit ".l:df
-		exec "set wrap"
-		exec "normal! \<C-w>\<C-l>"
-		exec "set wrap"
-		exec "normal! \<C-w>\<C-h>"
-		exec "normal! \<C-W>L"
-		exec "normal! ]c"
-	    endif
+		let l:f = expand("%")
+		let l:df = substitute(l:f, '^/tmp/a/', "", "")
+		let l:df = substitute(l:f, '^/tmp/b/', "", "")
+		let l:cmd = 'cat /dev/shm/'.g:whoami.'/absfn'
+		let l:r = system(l:cmd)
+		let l:r = substitute(l:r, "\r", "", "g")
+		let l:r = substitute(l:r, "\n", "", "g")
+		let l:df = l:r.'/'.l:f
+		echo l:df
+		if filereadable(l:df)
+			exec "windo diffoff!"
+			exec "bufdo diffoff!"
+			exec "b ".l:f
+			exec "normal! \<C-w>o"
+			exec "vert diffsplit ".l:df
+			exec "set wrap"
+			exec "normal! \<C-w>\<C-l>"
+			exec "set wrap"
+			exec "normal! \<C-w>\<C-h>"
+			exec "normal! \<C-W>L"
+			exec "normal! ]c"
+		endif
 	endfunction
 
 	function! EdCommandProxy()
