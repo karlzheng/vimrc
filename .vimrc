@@ -269,8 +269,21 @@ endf
 	nmap <silent> <leader>em :call Edit_Makefile()<cr>
 
 	function! EditScratch()
+		echo g:hDir
 		if filereadable(g:hDir."/tmp/.scratch.swp")
-			e ~/tmp/scratch2
+			let l:hasScratchBuf = 0
+			for i in range(1,bufnr("$"))
+				if buflisted(i)
+					if bufname(i) == g:hDir."/tmp/scratch"
+						let l:hasScratchBuf = 1
+					endif
+				endif
+			endfor
+			if l:hasScratchBuf
+				e ~/tmp/scratch
+			else
+				e ~/tmp/scratch2
+			endif
 		else
 			e $HOME/tmp/scratch
 		endif
