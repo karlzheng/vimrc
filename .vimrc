@@ -168,6 +168,18 @@ function! GrepCurWordInCurDir()
 	call ReadQuickfixFile()
 endfunction
 
+function! ReadDate()
+	if &ft == "make"
+		exec 'r !echo "\# date: $(date +\%Y/\%m/\%d)"'
+	else
+		if &ft == "c"
+			exec 'r !echo "/* date: $(date +\%Y/\%m/\%d) */"'
+		else
+			exec 'r !echo "date:$(date +\%Y/\%m/\%d)"'
+		endif
+	endif
+endfunction
+
 function! SaveFilePath()
 	let l:f = expand("%:p:h")
 	let l:f = s:Escape(f)
@@ -179,32 +191,32 @@ function! SaveFilePath()
 	endif
 endfunction
 
-	"Switch to current dir
-	function! My_FilePath_Switch_Func()
-		try
-			let g:last_work_path = escape(getcwd(), " ")
-			if exists("g:last_work_path")
-				let g:last_last_work_path = g:last_work_path
-			endif
-		catch
-			echo v:errmsg
-		endtry
-		let l:pwd = escape(getcwd(), " ")
-		let l:filepath = expand("%:p:h")
-		let l:filepath = s:Escape(l:filepath)
-		if l:pwd == g:root_work_path
-			echo "cd ".l:filepath
-			exec "cd ".l:filepath
-		else
-			echo "cd ".g:root_work_path
-			exec "cd ".g:root_work_path
+"Switch to current dir
+function! CDFilePath()
+	try
+		let g:last_work_path = escape(getcwd(), " ")
+		if exists("g:last_work_path")
+			let g:last_last_work_path = g:last_work_path
 		endif
-	endfunction
+	catch
+		echo v:errmsg
+	endtry
+	let l:pwd = escape(getcwd(), " ")
+	let l:filepath = expand("%:p:h")
+	let l:filepath = s:Escape(l:filepath)
+	if l:pwd == g:root_work_path
+		echo "cd ".l:filepath
+		exec "cd ".l:filepath
+	else
+		echo "cd ".g:root_work_path
+		exec "cd ".g:root_work_path
+	endif
+endfunction
 
-	function! Edit_FilePath()
-		let l:filepath = s:Escape(expand("%:p:h"))
-		execute "e ".l:filepath
-	endfunction
+function! EditFilePath()
+	let l:filepath = s:Escape(expand("%:p:h"))
+	execute "e ".l:filepath
+endfunction
 
 func! EditBashLog()
 	let l:f = g:hDir.'/.bash_history'
@@ -1686,7 +1698,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>ba :call My_Save_CompareFileName()<cr><cr>
 	nmap <silent> <leader>bb :call My_CompareToFileName()<cr><cr>
 	nmap <silent> <leader>c8 :call SetColorColumnC80()<CR>
-	nmap <leader>cd :call My_FilePath_Switch_Func()<cr>
+	nmap <leader>cd :call CDFilePath()<cr>
 	nmap <silent> <leader>ch :call SetColorColumn()<CR>
 	nmap <silent> <leader>cf :cgete getmatches()<cr>
 	nmap <silent> <leader>cg :call ReadQuickfixFile()<cr>
@@ -1760,7 +1772,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <leader>r1 :r ~/tmp/tmp_work_file/1.txt<cr>
 	nmap <silent> <leader>ra :!./a.out<cr>
 	"nmap <silent> <leader>rd :r ~/tmp/delay.c<cr>
-	nmap <silent> <leader>rd :r !date<cr>
+	nmap <silent> <leader>rd :call ReadDate()<cr>
 	nmap <silent> <leader>rm :r ~/tmp/main.c<cr>
 	nmap <silent> <leader>rl :%d<CR>"+p
 	nmap <silent> <leader>rr :reg<cr>
@@ -1961,7 +1973,7 @@ inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
 
 nmap <leader>bl :call EditBashLog()<cr>
 nmap <leader>ec :call EditConfig()<cr>
-nmap <silent> <leader>ep :call Edit_FilePath()<cr>
+nmap <silent> <leader>ep :call EditFilePath()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
