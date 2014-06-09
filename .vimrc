@@ -169,15 +169,7 @@ function! GrepCurWordInCurDir()
 endfunction
 
 function! ReadDate()
-	if &ft == "make"
-		exec 'r !echo "\# date: $(date +\%Y/\%m/\%d)"'
-	else
-		if &ft == "c"
-			exec 'r !echo "/* date: $(date +\%Y/\%m/\%d) */"'
-		else
-			exec 'r !echo "date:$(date +\%Y/\%m/\%d)"'
-		endif
-	endif
+	exec 'r !echo "date: $(LANG=en.UTF-8 date +\%Y/\%m/\%d\ \%a\ \%r)"'
 endfunction
 
 function! SaveFilePath()
