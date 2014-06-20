@@ -65,7 +65,6 @@ set guioptions-=m
 "set guioptions-=r
 "set guioptions-=T
 set hid
-set history=400
 set history=500
 set hlsearch
 set incsearch
@@ -628,6 +627,14 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	function! ExecBufferLine(name, bang)
 		let l:ans = confirm("Execute current buffer line in bash?", "&Yes\n&No")
 		if l:ans == 1
+			"let l:line = getline(".")
+			"let l:cmd = '!history -s '.l:line
+			"exec l:cmd
+			"let l:_cmd_ = 'source ~/.bashrc;history | wc -l >> /tmp/h'
+			"let _resp = system(l:_cmd_)
+			let l:line = getline(".")
+			let l:_cmd_ = 'echo "'.l:line.'" >> ~/.bash_history'
+			let _resp = system(l:_cmd_)
 		    exec ".,.w !sh"
 		else
 		    echo ("cancel Execute current buffer line in bash?")
