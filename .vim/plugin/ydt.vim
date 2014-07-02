@@ -21,9 +21,15 @@ endfunction
 
 
 python << EOF
-import vim,requests,collections,xml.etree.ElementTree as ET
-
 # -*- coding: utf-8 -*-
+#import vim,requests,collections,xml.etree.ElementTree as ET
+import vim,collections,xml.etree.ElementTree as ET
+
+try:
+	import requests
+except:
+	print "No requests module."
+	exit
 
 WARN_NOT_FIND = " 找不到该单词的释义"
 ERROR_QUERY = " 有道翻译查询出错!"
