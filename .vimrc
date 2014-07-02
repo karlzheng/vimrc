@@ -484,7 +484,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		endif
 	endfunction
 
-	function! Edit_vim_cur_edit_file_absolute_path()
+	function! EditAbsoluteFilePath()
 		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/vimEditFn | tr -d "\r" | tr -d "\n"'
 		let l:f = system(l:_cmd_)
 		"let l:f = "'".escape(l:f, '%')."'"
@@ -492,7 +492,11 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		if filereadable(l:f)
 			exec "e ".l:f
 		else
-			echo "has no file: ". l:f
+			if isdirectory(l:f)
+				exec "e ".l:f
+			else
+				echo "has no file: ". l:f
+			endif
 		endif
 	endfunction
 
@@ -1728,7 +1732,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>e. :e .<cr>
 	nmap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
 	nmap <silent> <leader>e2 :e ~/tmp/tmp_work_file/2.c<cr>
-	nmap <silent> <leader>ea :call Edit_vim_cur_edit_file_absolute_path()<cr>
+	nmap <silent> <leader>ea :call EditAbsoluteFilePath()<cr>
 	nmap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
 	nmap <silent> <leader>ed :call EdCommandProxy()<cr>
 	nmap <silent> <leader>ee :e!<cr>
