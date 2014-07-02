@@ -622,18 +622,14 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" buffer functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-	command! -nargs=* -complete=file -bang ExecBufferLine :call ExecBufferLine("<args>", "<bang>")
-	function! ExecBufferLine(name, bang)
+	command! -nargs=* -complete=file -bang ExecLineText :call ExecLineText("<args>", "<bang>")
+	function! ExecLineText(name, bang)
 		let l:ans = confirm("Execute current buffer line in bash?", "&Yes\n&No")
 		if l:ans == 1
-			"let l:line = getline(".")
-			"let l:cmd = '!history -s '.l:line
-			"exec l:cmd
-			"let l:_cmd_ = 'source ~/.bashrc;history | wc -l >> /tmp/h'
+			"let l:_cmd_ = 'echo "'.l:line.'" >> ~/.bash_history'
 			"let _resp = system(l:_cmd_)
 			let l:line = getline(".")
-			let l:_cmd_ = 'echo "'.l:line.'" >> ~/.bash_history'
+			let l:_cmd_ = "bash -i -c 'set -o history;history -s ".l:line."'"
 			let _resp = system(l:_cmd_)
 		    exec ".,.w !sh"
 		else
@@ -646,20 +642,34 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		let @"= expand("%:p")."\n"
 	endfunction
 
-	function! YankText()
+	function! EditYankText()
+		let l:f = "/dev/shm/".g:whoami."/yank.txt"
+		if filereadable(l:f)
+			exec 'e '.l:f
+		else
+			echo "No file: ".l:f
+		endif
+	endfunction
+	nnoremap <leader>ey :call EditYankText()<cr>
+
+	function! InsertYankText()
+		let l:f = "/dev/shm/".g:whoami."/yank.txt"
+		if filereadable(l:f)
+			let l:l = readfile(l:f, '', 1)
+			let l:str = l:l[0]
+			call append('.', l:str)
+		endif
+	endfunction
+	inoremap <c-y> :call InsertYankText()<cr>
+
+	function! SaveYankText()
 		let l:lines = []
 		let l:line = getline(".")
 		call add(l:lines, l:line)
 		call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
 		exec 'norm yy"+yy"*yy'
 	endfunction
-	nnoremap <c-y> :call YankText()<cr>
-
-	function! EditYankText()
-		let l:f = "/dev/shm/".g:whoami."/yank.txt"
-		exec 'e '.l:f
-	endfunction
-	nnoremap <leader>ey :call EditYankText()<cr>
+	nnoremap <c-y> :call SaveYankText()<cr>
 
 	" Rename.vim - Copyright June 2007 by Christian J. Robinson <heptite@gmail.com>
 	command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
@@ -1723,7 +1733,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>ed :call EdCommandProxy()<cr>
 	nmap <silent> <leader>ee :e!<cr>
 	nmap <silent> <leader>eh :e %:h<cr>
-	nmap <silent> <leader>el :call ExecBufferLine("", "")<cr>
+	nmap <silent> <leader>el :call ExecLineText("", "")<cr>
 	"nmap <silent> <leader>em :e mgrep.mk<cr>
 	nmap <silent> <leader>es :call EditScratch()<cr>
 	nmap <silent> <leader>et :e ~/tmp/tee.log<cr>
