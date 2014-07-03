@@ -1981,7 +1981,6 @@ nnoremap <c-s> :w!<cr>
 nnoremap <c-t> :Ydc<CR>
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
-inoremap <c-y> <ESC>pa
 inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
 
 nmap <leader>bl :call EditBashLog()<cr>
