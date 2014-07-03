@@ -298,7 +298,7 @@ endf
 		let l:findstr = matchstr(l:line, l:aRegex)
 		if l:findstr != ""
 			echo "got it"
-			let l:f = '/dev/shm/'.g:whoami.'/vimEditFn'
+			let l:f = '/dev/shm/'.g:whoami.'/absfn'
 			if filereadable(l:f)
 				let l:l = readfile(l:f, '', 1)
 				let l:str = l:l[0]
@@ -427,7 +427,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 		let l:f = expand("%")
 		let l:df = substitute(l:f, '^/tmp/a/', "", "")
 		let l:df = substitute(l:f, '^/tmp/b/', "", "")
-		let l:cmd = 'cat /dev/shm/'.g:whoami.'/vimEditFn'
+		let l:cmd = 'cat /dev/shm/'.g:whoami.'/absfn'
 		let l:r = system(l:cmd)
 		let l:r = substitute(l:r, "\r", "", "g")
 		let l:r = substitute(l:r, "\n", "", "g")
@@ -467,7 +467,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	function! SaveCurrentFileNameAbsolutePath()
 		let l:f = expand("%:p")
 		if (l:f != "")
-		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/vimEditFn'
+		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
 		    let l:_resp = system(l:_cmd_)
 		else
 		    echo "Current file is noname."
@@ -485,7 +485,7 @@ nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
 	endfunction
 
 	function! EditAbsoluteFilePath()
-		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/vimEditFn | tr -d "\r" | tr -d "\n"'
+		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
 		let l:f = system(l:_cmd_)
 		"let l:f = "'".escape(l:f, '%')."'"
 		let l:f = escape(l:f, '%')
