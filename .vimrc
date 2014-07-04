@@ -268,7 +268,6 @@ function! EditKconfig()
 		execute "e ".l:kconfig
 	endif
 endfunction
-nmap <silent> <leader>ek :call EditKconfig()<cr>
 
 function! EditMakefile()
 	let l:filepath = expand("%:p:h")
@@ -282,7 +281,6 @@ function! EditMakefile()
 		endif
 	endif
 endfunction
-nmap <silent> <leader>em :call EditMakefile()<cr>
 
 function! EditScratch()
 	echo g:hDir
@@ -320,7 +318,6 @@ func! ReplaceFilePath4fp()
 		endif
 	endif
 endf
-nmap <leader>rf :call ReplaceFilePath4fp()<cr>
 
 function! SaveCurrentFileName()
 	let l:str = expand("%:p")
@@ -375,7 +372,6 @@ function! DoGitBeyondCompare()
 		exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
 	endif
 endfunction
-nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
 
 function! Python4CompareToFileName()
 	if has("python")
@@ -396,7 +392,6 @@ EEOOFF
     execute l:cmd_text
 	unlet l:cmd_text
 endfunction
-nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " diff operation relative settings
@@ -667,7 +662,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			echo "No file: ".l:f
 		endif
 	endfunction
-	nnoremap <leader>ey :call EditYankText()<cr>
 
 	function! InsertYankText()
 		let l:f = "/dev/shm/".g:whoami."/yank.txt"
@@ -777,7 +771,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		endfor
 	endfunction
 	command! BcloseOthers call <SID>BufCloseOthers()
-	nmap <leader>ddo :BcloseOthers<cr>
 
 	" Don't close window, when deleting a buffer
 	function! <SID>BufcloseCloseIt(is_buf_wipeout)
@@ -827,10 +820,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 
 	command! Bwipe  call <SID>BufcloseCloseIt(1)
 	command! Bclose call <SID>BufcloseCloseIt(0)
-	nmap <c-x><c-d> :Bclose<cr>
-	nmap <leader>bd :Bclose<cr>
-	nmap <c-x><c-w> :Bwipe<cr>
-	nmap <leader>bw :Bwipe<cr>
 
 	"close draft window and quickfix window
 	command! BcloseDraft call <SID>BufcloseCloseDraft()
@@ -996,7 +985,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			"call SwitchToBuf(bufname(l:currentBufNum))
 		endif
 	endfunction
-	nmap <leader>kk :call Sdcv("", "")<CR>
 	command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1176,7 +1164,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			exec "normal Vj=j"
 		endif
 	endfunction
-	nmap <silent> <leader>al :call AddDebugLine()<cr>
 
 	func! ReplaceMyUserName()
 	    let l:line = getline(".")
@@ -1184,7 +1171,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	    let l:line = substitute(l:line, 'http://.*@', 'http://kangliang.zkl@', "")
 	    call setline(".", l:line)
 	endfunction
-	nmap <leader>rn :call ReplaceMyUserName()<cr>
 
 	""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	"buffer autocmd
@@ -1308,7 +1294,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endif
 	let Tlist_Exit_OnlyWindow = 1
 	let Tlist_Use_Right_Window = 0
-	nmap <silent> <leader>tl :Tlist<cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" ctags
@@ -1378,7 +1363,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		:cs reset
 	endfunction
 	"autocmd BufWrite *.cpp,*.h,*.c call UPDATE_Cscope()
-	nmap <leader>uc :call UPDATE_Cscope()<cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" SrcExpl settings
@@ -1436,12 +1420,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endfunction
 
 	"nmap <silent> <leader>lf :LUTags <C-R>=expand("<cword>")<cr><cr>
-	nmap <silent> <leader>lf :call LookupFullFilenameTag("", "")<CR>
 	"nmap <silent> <leader>lt :LUTags<cr>
-	nmap <silent> <leader>lt :LookupPartFilenameTag<cr>
-	nmap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
-	nmap <silent> <leader>lb :LUBufs<cr>
-	nmap <silent> <leader>lw :LUWalk<cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	"Quickfix
@@ -1479,7 +1458,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		call writefile(l:qf_data_list, g:hDir."/dev/quickfix.txt")
 	    endif
 	endfunc
-	nmap <leader>sq :call SaveQuickfixToFile()<cr>
 
 	function! EditQuickfixList()
 	    if filereadable(g:hDir."/dev/quickfix.txt")
@@ -1488,7 +1466,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		exe 'e /dev/shm/'.g:whoami.'/quickfix.txt'
 	    endif
 	endfunc
-	nmap <leader>eq :call EditQuickfixList()<cr>
 
 	"http://vim.wikia.com/wiki/Automatically_sort_Quickfix_list
 	func! s:CompareQuickfixEntries(i1, i2)
@@ -1557,10 +1534,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			vert copen 45
 		endif
 	endfunction
-	nmap <leader>cn :cn<cr>
-	nmap <leader>cp :cp<cr>
-	nmap <leader>cw :call OpenQuickfixBuf()<cr>
-	nmap <leader>cq :cclose<cr>
 	"nmap <leader>cc :botright lw 10<cr>
 	"map <c-u> <c-l><c-j>:q<cr>:botright cw 10<cr>
 	"au BufReadPost quickfix  cclose | vert copen 45
@@ -1574,16 +1547,12 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	let g:winManagerWindowLayout = "FileExplorer,BufExplorer"
 	let g:winManagerWidth = 30
 	let g:defaultExplorer = 0
-	"nmap <C-W><C-F> :FirstExplorerWindow<cr>
-	nmap <C-W><C-B> :BottomExplorerWindow<cr>
-	nmap <silent> <leader>wm :WMToggle<cr>
 	autocmd BufWinEnter \[Buf\ List\] setl nonumber
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" netrw setting
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	let g:netrw_winsize = 30
-	nmap <silent> <leader>fe :Sexplore!<cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" file explorer setting
@@ -1605,11 +1574,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 
 	"Hide the help thing..
 	let g:explDetailedHelp=0
-
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" markbrowser setting
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	nmap <silent> <leader>mk :MarksBrowser<cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" showmarks setting
@@ -1902,18 +1866,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " misc of .vimrc; useless.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! Test_func1()
-	  redir => g:mymsg
-	  silent execute "pwd"
-	  redir END
-	  echo g:mymsg
-	  "let v:statusmsg=""
-	  "execute "cd /usr/src"
-	  "echo v:statusmsg
-	  "return v:statusmsg
-	  ""let g:mymsg = v:statusmsg
-	endfunction
-
 func! MyPythonProcessLineText(expl)
 	if has("python")
 	"learn use python in vim script from autotag.vim
@@ -1993,10 +1945,42 @@ nnoremap <c-t> :Ydc<CR>
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
 inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
+nmap <c-x><c-d> :Bclose<cr>
+nmap <c-x><c-w> :Bwipe<cr>
+nmap <C-W><C-B> :BottomExplorerWindow<cr>
+"nmap <C-W><C-F> :FirstExplorerWindow<cr>
 
+nmap <silent> <leader>al :call AddDebugLine()<cr>
+nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
+nmap <leader>bd :Bclose<cr>
 nmap <leader>bl :call EditBashLog()<cr>
+nmap <leader>bw :Bwipe<cr>
+nmap <leader>cn :cn<cr>
+nmap <leader>cp :cp<cr>
+nmap <leader>cq :cclose<cr>
+nmap <leader>cw :call OpenQuickfixBuf()<cr>
+nmap <leader>ddo :BcloseOthers<cr>
 nmap <leader>ec :call EditConfig()<cr>
+nmap <silent> <leader>ek :call EditKconfig()<cr>
+nmap <silent> <leader>em :call EditMakefile()<cr>
 nmap <silent> <leader>ep :call EditFilePath()<cr>
+nmap <leader>eq :call EditQuickfixList()<cr>
+nnoremap <leader>ey :call EditYankText()<cr>
+nmap <silent> <leader>fe :Sexplore!<cr>
+nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
+nmap <leader>kk :call Sdcv("", "")<CR>
+nmap <silent> <leader>lb :LUBufs<cr>
+nmap <silent> <leader>lf :call LookupFullFilenameTag("", "")<CR>
+nmap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
+nmap <silent> <leader>lt :LookupPartFilenameTag<cr>
+nmap <silent> <leader>lw :LUWalk<cr>
+nmap <silent> <leader>mk :MarksBrowser<cr>
+nmap <leader>rf :call ReplaceFilePath4fp()<cr>
+nmap <leader>rn :call ReplaceMyUserName()<cr>
+nmap <leader>sq :call SaveQuickfixToFile()<cr>
+nmap <silent> <leader>tl :Tlist<cr>
+nmap <leader>uc :call UPDATE_Cscope()<cr>
+nmap <silent> <leader>wm :WMToggle<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
