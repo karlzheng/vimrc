@@ -17,8 +17,9 @@
 "	 1. global common settings
 "	 2. function defition for calling
 "	 3. plugin settings
-"	 4. command defitions
+"	 4. define user commands
 "	 5. key re map
+"	 6. run auto commands
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1558,215 +1559,6 @@ let @s=":s/^/#/,nl"
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" insert mode key remap
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-inoremap <silent> <C-a> <Home>
-inoremap <silent> <C-e> <End>
-inoremap <C-o> <C-c>
-inoremap <C-Del> <c-g>u<c-c>lC
-"http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
-"inoremap <c-j> <ESC>gjli
-"inoremap <c-k> <c-g>u<c-c>lC
-"inoremap <c-k> <c-g>k
-"inoremap <C-l> <C-o>:set im<cr><C-l>
-"nnoremap <C-l> :set noim<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Ex mode key remap
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"http://stackoverflow.com/questions/1694599/how-do-i-get-vims-sh-command-to-source-my-bashrc
-cabbr WQ wq
-cabbr QA qa
-cabbr Wq wq
-cabbr W <c-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'w' : 'W')<CR>
-cabbr WA <c-r>=(getcmdtype() == ':' && getcmdpos() == 2 ? 'wa' : 'WA')<CR>
-"cmap WA<cr> wa<cr>
-cabbr !sh<c-r>=(getcmdtype() == ':' && getcmdpos() == 3 ? '!bash --login' : '!sh')<CR>
-"cmap sh<CR> !bash --login<CR>
-"http://vim.wikia.com/wiki/Replace_a_builtin_command_using_cabbrev
-cnoremap  vi<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" normal mode key remap
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap ,, ,
-nnoremap - "_dd
-nmap <silent> ,32 f vt "xx$"xp
-nmap <leader>ac :call EnterSavedPath()<cr>
-nmap <leader>ap :call SaveFilePath()<cr>
-nmap <silent> <leader>ba :call SaveBCFn1()<cr><cr>
-nmap <silent> <leader>bb :call CompareTobcFn1()<cr><cr>
-nmap <silent> <leader>c8 :call SetColorColumnC80()<CR>
-nmap <leader>cd :call CDFilePath()<cr>
-nmap <silent> <leader>ch :call SetColorColumn()<CR>
-nmap <silent> <leader>cf :cgete getmatches()<cr>
-nmap <silent> <leader>cg :call ReadQuickfixFile()<cr>
-nmap <silent> <leader>d# :bd#<cr>
-nmap <silent> <leader># :e#<cr>
-nmap <silent> <leader>da :%d<cr>
-nmap <silent> <leader>db :bdelete<cr>
-nmap <silent> <leader>df :call DiffSplitFiles()<cr>
-nmap <silent> <leader>dl :bdelete #<cr>
-nmap <silent> <leader>dk :%s#.*karlzheng_todel.*\n##<cr>
-nmap <silent> <leader>dm :%s#.*karldbg.*\n##<cr>
-nmap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
-nmap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
-nmap <silent> <leader>dr :%s#\r\n#\r#g<cr>
-nmap <silent> <leader>ds :%s#\s*$##g<cr>:nohl<cr><c-o>
-nmap <silent> <leader>dt :Rename ~/tmp/del_%:t<cr>
-nmap <silent> <leader>e. :e .<cr>
-nmap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
-nmap <silent> <leader>e2 :e ~/tmp/tmp_work_file/2.c<cr>
-nmap <silent> <leader>ea :call EditAbsoluteFilePath()<cr>
-nmap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
-nmap <silent> <leader>ed :call EdCommandProxy()<cr>
-nmap <silent> <leader>ee :e!<cr>
-nmap <silent> <leader>eh :e %:h<cr>
-nmap <silent> <leader>el :call ExecLineText("", "")<cr>
-"nmap <silent> <leader>em :e mgrep.mk<cr>
-nmap <silent> <leader>es :call EditScratch()<cr>
-nmap <silent> <leader>et :e ~/tmp/tee.log<cr>
-nmap <silent> <leader>ev :e ~/.vimrc<cr>
-nmap          <leader>gn :call Getfilename("", "")<CR>
-nmap <leader>fa :call SaveAbsPathFileName()<cr>
-nmap <leader>fb :call SaveRelaPathFileName()<cr>
-nmap <leader>fc :cs find c
-nmap <leader>fg :cs find g
-nmap <leader>fs :cs find s
-nmap <leader>fi :setlocal foldmethod=indent<cr>zR
-nmap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
-nmap <leader>fp :call CDAbsPath()<cr>
-nmap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
-nmap <leader>gi gg/include<cr>
-nmap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
-nmap <silent> <leader>gc :git checkout -- %<cr>
-nmap <silent> <leader>ge :!gedit %&<cr>
-nmap <silent> <leader>gg :call CompileByGcc()<cr>
-nnoremap <leader>gw "gyiw
-"nmap <leader>kb :!p2d.sh % 1>/dev/null 2>&1 &<cr><cr>
-nmap <leader>ko :!kompare % 1>/dev/null 2>&1 &<cr><cr>
-"http://vim.wikia.com/wiki/Search_and_replace_in_multiple_buffers
-"http://vim.wikia.com/wiki/Highlight_current_line
-nmap <silent> <Leader>lc ml:execute 'match Search /\%'.line('.').'l/'<CR>
-nmap <silent> <leader>ls :ls<cr>
-nmap <silent> <leader>jj ggVGJ
-nmap <leader>ma :set modifiable<cr>
-nmap <silent> <leader>mj :make -j16<cr>
-nmap <silent> <leader>mz :make zImage -j16<cr>
-nmap <silent> <leader>nl :nohl<cr>
-nmap <silent> <leader>nn :set nonu<cr>
-nmap <silent> <leader>pt :!pr.sh &<cr><cr>
-nmap <silent> <leader>pv :sp /tmp/pt.txt<cr>2<C-W>_<C-W><C-W>
-nmap <silent> <leader>qh <C-W>h:bd<cr>
-nmap <silent> <leader>qj <C-W>j:bd<cr>
-nmap <silent> <leader>qk <C-W>k:bd<cr>
-nmap <silent> <leader>ql <C-W>l:bd<cr>
-nmap <silent> <leader>qq :q<cr>
-nmap <silent> <leader>qw :wq<cr>
-nmap <silent> <leader>qf :q!<cr>
-nmap <silent> <leader>qa :qa<cr>
-nmap <leader>r1 :r ~/tmp/tmp_work_file/1.txt<cr>
-nmap <silent> <leader>ra :!./a.out<cr>
-"nmap <silent> <leader>rd :r ~/tmp/delay.c<cr>
-nmap <silent> <leader>rd :call ReadDate()<cr>
-nmap <silent> <leader>rm :r ~/tmp/main.c<cr>
-nmap <silent> <leader>rl :%d<CR>"+p
-nmap <silent> <leader>rr :reg<cr>
-nmap <silent> <leader>rs :20 vs ~/.stardict/iremember/tofel.txt<CR>
-nmap <silent> <leader>rt :r ~/tmp/tmp_work_file/%:t<cr>
-nmap <silent> <leader>sc :set ft=c<cr>
-nmap <silent> <leader>sd :call SvnDiffCurrentFile()<cr>
-nmap <leader>sf :call SaveFile2Tar()<cr>
-nmap <silent> <leader>sl :!svn log %<cr>
-nmap <silent> <leader>sn :set nu<cr>
-nmap <silent> <leader>sm :set ft=make<cr>
-nmap <silent> <leader>sp :set paste<cr>
-nmap <silent> <leader>ss :source %<cr>
-nmap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
-nmap <silent> <leader>tl :TlistToggle<cr>
-nmap <silent> <leader>vb :vs ~/.bashrc<cr>
-nmap <silent> <leader>vs :vs<cr>
-nmap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
-nmap <silent> <leader>wj <C-W>j
-nmap <silent> <leader>wk <C-W>k
-nmap <silent> <leader>wh <C-W>h
-nmap <silent> <leader>wl <C-W>l
-nmap <silent> <leader>WJ <C-W>j
-nmap <silent> <leader>WK <C-W>k
-nmap <silent> <leader>WH <C-W>h
-nmap <silent> <leader>WL <C-W>l
-nmap <leader>w1 :w! ~/tmp/tmp_work_file/1.c<cr>
-nmap <leader>w2 :w! ~/tmp/tmp_work_file/2.c<cr>
-nmap <leader>wt :silent! w! ~/tmp/tmp_work_file/%:t<cr>
-nmap <silent> <leader>wa :wa<cr>
-nmap <silent> <leader>wf :w!<cr>
-nmap <silent> <leader>wq :wq<cr>
-nmap <silent> <leader>ww :w<cr>
-nmap <silent> <leader>WW :w<cr>
-nmap <silent> <leader>ya ggVGy``
-nnoremap Y ggY``P
-"nnoremap <silent> * :call SpecialVisualSearch('f', 0)<CR>
-"nnoremap <silent> # :call SpecialVisualSearch('b', 0)<CR>
-nnoremap <silent> # #N
-nnoremap <silent> * *N
-"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
-nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
-cnoremap <silent> <F3> Bgrep
-nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
-"nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
-"nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
-nnoremap <silent> <F4> :SrcExplToggle<CR>
-nnoremap <silent> <F6> :cp<CR>
-nnoremap <silent> <F7> :cn<CR>
-"nnoremap <silent> <F7> :SrcExplToggle<CR>
-nnoremap <silent> <F8> :TlistToggle<CR>
-nnoremap <silent> <C-6> <C-S-6>
-nnoremap <silent> <C-j>  <C-w>j
-nnoremap <silent> <C-k>  <C-w>k
-nnoremap <silent> <C-h>  <c-w>h
-nnoremap <silent> <C-l>  <c-w>l
-"<C-down>
-nnoremap <silent>  [1;5B 4j
-"<C-up>
-nnoremap <silent>  [1;5A 4k
-
-" ALT + hjkl
-if has("gui_running")
-	nmap <silent> ê 1<C-w>+
-	nmap <silent> ë 1<C-w>-
-	nmap <silent> è 1<C-W><
-	nmap <silent> ì 1<C-W>>
-else
-	nmap <silent> j 1<C-w>+
-	nmap <silent> k 1<C-w>-
-	nmap <silent> h 1<C-W><
-	nmap <silent> l 1<C-W>>
-	nmap <silent> J 1<C-W>+
-	nmap <silent> K 1<C-W>-
-	nmap <silent> H 1<C-W><
-	nmap <silent> L 1<C-W>>
-endif
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" visual mode key remap
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-vmap <silent> j 4j
-vmap <silent> k 4k
-vmap <leader>cl :!column -t<CR>
-vmap <leader>w1 :w! ~/tmp/tmp_work_file/1.txt<cr>
-"Basically you press * or # to search for the current selection !! Really useful
-vnoremap <silent> * :call SpecialVisualSearch('f', 1)<CR>
-vnoremap <silent> # :call SpecialVisualSearch('b', 1)<CR>
-"http://tech.groups.yahoo.com/group/vim/message/105517
-":au CursorHold * exec 'match IncSearch /'.expand("<cword>").'/'
-"nnoremap <leader>h :exec 'match IncSearch /'.expand("<cword>").'/'<cr>
-vnoremap <Leader># "9y?<C-R>='\V'.substitute(escape(@9,'\?'),'\n','\\n','g')<CR><CR>
-vnoremap <Leader>* "9y/<C-R>='\V'.substitute(escape(@9,'\/'),'\n','\\n','g')<CR><CR>
-"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
-vnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zf') : 'zo')<CR>
-vnoremap <c-y> "+y
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " misc of .vimrc; useless.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 func! PythonProcessLnText(expl)
@@ -1805,83 +1597,280 @@ command! Bwipe  call <SID>BufcloseCloseIt(1)
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" key map
+" normal mode key remap
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"ALT+b
-imap b <ESC>bi
-"ALT+d
-nnoremap d dw
-"ALT+f
+nnoremap ,, ,
+nnoremap - "_dd
+
+" ALT + hjkl
+if has("gui_running")
+	nnoremap <silent> ê 1<C-w>+
+	nnoremap <silent> ë 1<C-w>-
+	nnoremap <silent> è 1<C-W><
+	nnoremap <silent> ì 1<C-W>>
+else
+	nnoremap <silent> j 1<C-w>+
+	nnoremap <silent> k 1<C-w>-
+	nnoremap <silent> h 1<C-W><
+	nnoremap <silent> l 1<C-W>>
+	nnoremap <silent> J 1<C-W>+
+	nnoremap <silent> K 1<C-W>-
+	nnoremap <silent> H 1<C-W><
+	nnoremap <silent> L 1<C-W>>
+endif
+
+nnoremap <silent> ,32 f vt "xx$"xp
+nnoremap <leader>ac :call EnterSavedPath()<cr>
+nnoremap <silent> <leader>al :call AddDebugLine()<cr>
+nnoremap <leader>ap :call SaveFilePath()<cr>
+nnoremap <silent> <leader>ba :call SaveBCFn1()<cr><cr>
+nnoremap <silent> <leader>bb :call CompareTobcFn1()<cr><cr>
+nnoremap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
+nnoremap <leader>bd :Bclose<cr>
+nnoremap <leader>bl :call EditBashLog()<cr>
+nnoremap <leader>bw :Bwipe<cr>
+nnoremap <silent> <leader>c8 :call SetColorColumnC80()<CR>
+"nnoremap <leader>cc :botright lw 10<cr>
+nnoremap <leader>cd :call CDFilePath()<cr>
+nnoremap <silent> <leader>ch :call SetColorColumn()<CR>
+nnoremap <silent> <leader>cf :cgete getmatches()<cr>
+nnoremap <silent> <leader>cg :call ReadQuickfixFile()<cr>
+nnoremap <leader>cn :cn<cr>
+nnoremap <leader>cp :cp<cr>
+nnoremap <leader>cq :cclose<cr>
+nnoremap <leader>cw :call OpenQuickfixBuf()<cr>
+nnoremap <silent> <leader>da :%d<cr>
+nnoremap <silent> <leader>db :bdelete<cr>
+nnoremap <leader>ddo :BcloseOthers<cr>
+nnoremap <silent> <leader>df :call DiffSplitFiles()<cr>
+nnoremap <silent> <leader>dl :bdelete #<cr>
+nnoremap <silent> <leader>dk :%s#.*karlzheng_todel.*\n##<cr>
+nnoremap <silent> <leader>dm :%s#.*karldbg.*\n##<cr>
+nnoremap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
+nnoremap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
+nnoremap <silent> <leader>dr :%s#\r\n#\r#g<cr>
+nnoremap <silent> <leader>ds :%s#\s*$##g<cr>:nohl<cr><c-o>
+nnoremap <silent> <leader>dt :Rename ~/tmp/del_%:t<cr>
+nnoremap <silent> <leader>d# :bd#<cr>
+nnoremap <silent> <leader>e. :e .<cr>
+nnoremap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
+nnoremap <silent> <leader>e2 :e ~/tmp/tmp_work_file/2.c<cr>
+nnoremap <silent> <leader>ea :call EditAbsoluteFilePath()<cr>
+nnoremap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
+nnoremap <leader>ec :call EditConfig()<cr>
+nnoremap <silent> <leader>ed :call EdCommandProxy()<cr>
+nnoremap <silent> <leader>ee :e!<cr>
+nnoremap <silent> <leader>eh :e %:h<cr>
+nnoremap <silent> <leader>ek :call EditKconfig()<cr>
+nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
+"nnoremap <silent> <leader>em :e mgrep.mk<cr>
+nnoremap <silent> <leader>em :call EditMakefile()<cr>
+nnoremap <silent> <leader>ep :call EditFilePath()<cr>
+nnoremap <leader>eq :call EditQuickfixList()<cr>
+nnoremap <silent> <leader>es :call EditScratch()<cr>
+nnoremap <silent> <leader>et :e ~/tmp/tee.log<cr>
+nnoremap <silent> <leader>ev :e ~/.vimrc<cr>
+nnoremap <leader>ey :call EditYankText()<cr>
+nnoremap          <leader>gn :call Getfilename("", "")<CR>
+nnoremap <leader>fa :call SaveAbsPathFileName()<cr>
+nnoremap <leader>fb :call SaveRelaPathFileName()<cr>
+nnoremap <leader>fc :cs find c
+nnoremap <silent> <leader>fe :Sexplore!<cr>
+nnoremap <leader>fg :cs find g
+nnoremap <leader>fs :cs find s
+nnoremap <leader>fi :setlocal foldmethod=indent<cr>zR
+nnoremap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
+nnoremap <leader>fp :call CDAbsPath()<cr>
+nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
+nnoremap <leader>gi gg/include<cr>
+nnoremap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
+nnoremap <silent> <leader>gc :git checkout -- %<cr>
+nnoremap <silent> <leader>ge :!gedit %&<cr>
+nnoremap <silent> <leader>gg :call CompileByGcc()<cr>
+nnoremap <leader>gw "gyiw
+nnoremap <leader>ih :call InsertIncludeFileN(0)<CR>
+"nnoremap <leader>kb :!p2d.sh % 1>/dev/null 2>&1 &<cr><cr>
+nnoremap <leader>kb :call DoGitBeyondCompare()<cr><cr>
+nnoremap <leader>kk :call Sdcv("", "")<CR>
+nnoremap <leader>ko :!kompare % 1>/dev/null 2>&1 &<cr><cr>
+nnoremap <silent> <leader>lb :LUBufs<cr>
+"http://vim.wikia.com/wiki/Search_and_replace_in_multiple_buffers
+"http://vim.wikia.com/wiki/Highlight_current_line
+nnoremap <silent> <Leader>lc ml:execute 'match Search /\%'.line('.').'l/'<CR>
+nnoremap <silent> <leader>lf :call LookupFullFilenameTag("", "")<CR>
+nnoremap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
+nnoremap <silent> <leader>ls :ls<cr>
+nnoremap <silent> <leader>lt :LookupPartFilenameTag<cr>
+nnoremap <silent> <leader>lw :LUWalk<cr>
+nnoremap <silent> <leader>jj ggVGJ
+nnoremap <leader>ma :set modifiable<cr>
+nnoremap <silent> <leader>mj :make -j16<cr>
+nnoremap <silent> <leader>mk :MarksBrowser<cr>
+nnoremap <silent> <leader>mz :make zImage -j16<cr>
+nnoremap <silent> <leader>nl :nohl<cr>
+nnoremap <silent> <leader>nn :set nonu<cr>
+nnoremap <silent> <leader>pt :!pr.sh &<cr><cr>
+nnoremap <silent> <leader>pv :sp /tmp/pt.txt<cr>2<C-W>_<C-W><C-W>
+nnoremap <silent> <leader>qh <C-W>h:bd<cr>
+nnoremap <silent> <leader>qj <C-W>j:bd<cr>
+nnoremap <silent> <leader>qk <C-W>k:bd<cr>
+nnoremap <silent> <leader>ql <C-W>l:bd<cr>
+nnoremap <silent> <leader>qq :q<cr>
+nnoremap <silent> <leader>qw :wq<cr>
+nnoremap <silent> <leader>qf :q!<cr>
+nnoremap <silent> <leader>qa :qa<cr>
+nnoremap <leader>r1 :r ~/tmp/tmp_work_file/1.txt<cr>
+nnoremap <silent> <leader>ra :!./a.out<cr>
+"nnoremap <silent> <leader>rd :r ~/tmp/delay.c<cr>
+nnoremap <silent> <leader>rd :call ReadDate()<cr>
+nnoremap <leader>rf :call ReplaceFilePath4fp()<cr>
+nnoremap <silent> <leader>rl :%d<CR>"+p
+nnoremap <silent> <leader>rm :r ~/tmp/main.c<cr>
+nnoremap <leader>rn :call ReplaceMyUserName()<cr>
+nnoremap <silent> <leader>rr :reg<cr>
+nnoremap <silent> <leader>rs :20 vs ~/.stardict/iremember/tofel.txt<CR>
+nnoremap <silent> <leader>rt :r ~/tmp/tmp_work_file/%:t<cr>
+nnoremap <silent> <leader>sc :set ft=c<cr>
+nnoremap <silent> <leader>sd :call SvnDiffCurrentFile()<cr>
+nnoremap <leader>sf :call SaveFile2Tar()<cr>
+nnoremap <silent> <leader>sl :!svn log %<cr>
+nnoremap <silent> <leader>sn :set nu<cr>
+nnoremap <silent> <leader>sm :set ft=make<cr>
+nnoremap <silent> <leader>sp :set paste<cr>
+nnoremap <leader>sq :call SaveQuickfixToFile()<cr>
+nnoremap <silent> <leader>ss :source %<cr>
+nnoremap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
+nnoremap <silent> <leader>tl :TlistToggle<cr>
+nnoremap <silent> <leader>vb :vs ~/.bashrc<cr>
+nnoremap <silent> <leader>vs :vs<cr>
+nnoremap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
+nnoremap <silent> <leader>wj <C-W>j
+nnoremap <silent> <leader>wk <C-W>k
+nnoremap <silent> <leader>wh <C-W>h
+nnoremap <silent> <leader>wl <C-W>l
+nnoremap <silent> <leader>WH <C-W>h
+nnoremap <silent> <leader>WJ <C-W>j
+nnoremap <silent> <leader>WK <C-W>k
+nnoremap <silent> <leader>WL <C-W>l
+nnoremap <silent> <leader>wm :WMToggle<cr>
+nnoremap <leader>w1 :w! ~/tmp/tmp_work_file/1.c<cr>
+nnoremap <leader>w2 :w! ~/tmp/tmp_work_file/2.c<cr>
+nnoremap <leader>wt :silent! w! ~/tmp/tmp_work_file/%:t<cr>
+nnoremap <silent> <leader>wa :wa<cr>
+nnoremap <silent> <leader>wf :w!<cr>
+nnoremap <silent> <leader>wq :wq<cr>
+nnoremap <silent> <leader>ww :w<cr>
+nnoremap <silent> <leader>WW :w<cr>
+nnoremap <leader>uc :call UpdateCscope()<cr>
+nnoremap <silent> <leader>ya ggVGy``
+nnoremap Y ggY``P
+"nnoremap <silent> * :call SpecialVisualSearch('f', 0)<CR>
+"nnoremap <silent> # :call SpecialVisualSearch('b', 0)<CR>
+nnoremap <silent> # #N
+nnoremap <silent> * *N
+nnoremap <silent> <leader># :e#<cr>
+"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
+nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
+cnoremap <silent> <F3> Bgrep
+nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
+"nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
+"nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
+nnoremap <silent> <F4> :SrcExplToggle<CR>
+nnoremap <silent> <F6> :cp<CR>
+nnoremap <silent> <F7> :cn<CR>
+"nnoremap <silent> <F7> :SrcExplToggle<CR>
+nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <C-6> <C-S-6>
+nnoremap <c-d> :call QuitAllBuffers_key()<cr>
+nnoremap <C-e> <End>
+nnoremap <silent> <C-j>  <C-w>j
+nnoremap <silent> <C-k>  <C-w>k
+nnoremap <silent> <C-h>  <c-w>h
+nnoremap <silent> <C-l>  <c-w>l
+nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
+nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
+nnoremap <c-s> :w!<cr>
+nnoremap <c-t> :Ydc<CR>
+nnoremap <c-q> :call QuickfixToggle()<cr>
+nnoremap <c-x><c-d> :Bclose<cr>
+nnoremap <c-x><c-w> :Bwipe<cr>
+nnoremap <C-W><C-B> :BottomExplorerWindow<cr>
+nnoremap <c-y> :call SaveYankText()<cr>
+"nnoremap <C-W><C-F> :FirstExplorerWindow<cr>
+
+nnoremap <silent> d dw
+nnoremap <silent> n :call GoNextQuickfix()<cr>
+nnoremap <silent> p :call GoPreQuickfix()<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" insert mode key remap
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+inoremap b <ESC>bi
 inoremap f <ESC>lWi
 inoremap h <ESC>hli
 inoremap j <ESC>gja
 inoremap k <c-g>k
 inoremap l <ESC>lli
+inoremap <C-a> <Home>
 inoremap <c-b> <ESC>lhi
 inoremap <c-B> <ESC>lhi
-nnoremap <C-e> <End>
-imap <c-d> <ESC>:call QuitAllBuffers_key()<cr>
+inoremap <c-d> <ESC>:call QuitAllBuffers_key()<cr>
+inoremap <C-e> <End>
 inoremap <c-F> <ESC>lli
 inoremap <c-f> <ESC>lli
 inoremap <C-h> <ESC>"_s
+inoremap <c-i><c-h> <ESC>:call InsertIncludeFileI(0)<CR>
 inoremap <C-k> <ESC>l"_Da
 inoremap <C-l> <ESC>l"_s
+inoremap <C-o> <C-c>
 inoremap <c-s> <ESC>:w!<cr>li
-nnoremap <c-s> :w!<cr>
-nnoremap <c-t> :Ydc<CR>
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
-nmap <c-x><c-c> :call QuitAllBuffers()<cr>
 inoremap <c-y> :call InsertYankText()<cr>
+inoremap <C-Del> <c-g>u<c-c>lC
 inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
-nnoremap <Esc><Esc> :call BufCloseWindow()<cr>
+"http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
+"inoremap <c-j> <ESC>gjli
+"inoremap <c-k> <c-g>u<c-c>lC
+"inoremap <c-k> <c-g>k
+"inoremap <C-l> <C-o>:set im<cr><C-l>
+"nnoremap <C-l> :set noim<cr>
 
-nmap <c-d> :call QuitAllBuffers_key()<cr>
-nmap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
-imap <c-i><c-h> <ESC>:call InsertIncludeFileI(0)<CR>
-nmap <c-q> :call QuickfixToggle()<cr>
-nmap <c-x><c-d> :Bclose<cr>
-nmap <c-x><c-w> :Bwipe<cr>
-nmap <C-W><C-B> :BottomExplorerWindow<cr>
-nnoremap <c-y> :call SaveYankText()<cr>
-"nmap <C-W><C-F> :FirstExplorerWindow<cr>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" visual mode key remap
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+vmap <silent> j 4j
+vmap <silent> k 4k
+vmap <leader>cl :!column -t<CR>
+vmap <leader>w1 :w! ~/tmp/tmp_work_file/1.txt<cr>
+"Basically you press * or # to search for the current selection !! Really useful
+vnoremap <silent> * :call SpecialVisualSearch('f', 1)<CR>
+vnoremap <silent> # :call SpecialVisualSearch('b', 1)<CR>
+"http://tech.groups.yahoo.com/group/vim/message/105517
+":au CursorHold * exec 'match IncSearch /'.expand("<cword>").'/'
+"nnoremap <leader>h :exec 'match IncSearch /'.expand("<cword>").'/'<cr>
+vnoremap <Leader># "9y?<C-R>='\V'.substitute(escape(@9,'\?'),'\n','\\n','g')<CR><CR>
+vnoremap <Leader>* "9y/<C-R>='\V'.substitute(escape(@9,'\/'),'\n','\\n','g')<CR><CR>
+"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
+vnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zf') : 'zo')<CR>
+vnoremap <c-y> "+y
 
-nmap <silent> <leader>al :call AddDebugLine()<cr>
-nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
-nmap <leader>bd :Bclose<cr>
-nmap <leader>bl :call EditBashLog()<cr>
-nmap <leader>bw :Bwipe<cr>
-nmap <leader>cn :cn<cr>
-nmap <leader>cp :cp<cr>
-nmap <leader>cq :cclose<cr>
-nmap <leader>cw :call OpenQuickfixBuf()<cr>
-nmap <leader>ddo :BcloseOthers<cr>
-nmap <leader>ec :call EditConfig()<cr>
-nmap <silent> <leader>ek :call EditKconfig()<cr>
-nmap <silent> <leader>em :call EditMakefile()<cr>
-nmap <silent> <leader>ep :call EditFilePath()<cr>
-nmap <leader>eq :call EditQuickfixList()<cr>
-nnoremap <leader>ey :call EditYankText()<cr>
-nmap <silent> <leader>fe :Sexplore!<cr>
-nmap <leader>ih :call InsertIncludeFileN(0)<CR>
-nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
-nmap <leader>kk :call Sdcv("", "")<CR>
-nmap <silent> <leader>lb :LUBufs<cr>
-nmap <silent> <leader>lf :call LookupFullFilenameTag("", "")<CR>
-nmap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
-nmap <silent> <leader>lt :LookupPartFilenameTag<cr>
-nmap <silent> <leader>lw :LUWalk<cr>
-nmap <silent> <leader>mk :MarksBrowser<cr>
-nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
-nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
-nnoremap <silent> n :call GoNextQuickfix()<cr>
-nnoremap <silent> p :call GoPreQuickfix()<cr>
-nmap <leader>rf :call ReplaceFilePath4fp()<cr>
-nmap <leader>rn :call ReplaceMyUserName()<cr>
-nmap <leader>sq :call SaveQuickfixToFile()<cr>
-nmap <silent> <leader>tl :Tlist<cr>
-nmap <leader>uc :call UpdateCscope()<cr>
-nmap <silent> <leader>wm :WMToggle<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ex mode key remap
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"http://stackoverflow.com/questions/1694599/how-do-i-get-vims-sh-command-to-source-my-bashrc
+cabbr WQ wq
+cabbr QA qa
+cabbr Wq wq
+cabbr W <c-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'w' : 'W')<CR>
+cabbr WA <c-r>=(getcmdtype() == ':' && getcmdpos() == 2 ? 'wa' : 'WA')<CR>
+"cmap WA<cr> wa<cr>
+cabbr !sh<c-r>=(getcmdtype() == ':' && getcmdpos() == 3 ? '!bash --login' : '!sh')<CR>
+"cmap sh<CR> !bash --login<CR>
+"http://vim.wikia.com/wiki/Replace_a_builtin_command_using_cabbrev
+cnoremap  vi<cr>
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "buffer autocmd
@@ -1904,8 +1893,6 @@ au FileType c,cpp,h,hpp call SetCFileTabStop()
 "autocmd FileType c,cpp set shiftwidth=4 | set expandtab | set iskeyword -=-
 "autocmd FileType c,cpp set fo=tcq
 "au FileType sh set dictionary+=~/.vim/usr_bin_cmd.txt,~/.vim/bash-support/wordlists/bash.list
-
-"nmap <leader>cc :botright lw 10<cr>
 "map <c-u> <c-l><c-j>:q<cr>:botright cw 10<cr>
 "au BufReadPost quickfix  cclose | vert copen 45
 au! QuickfixCmdPost * call SortUniqQFList()
@@ -1914,8 +1901,8 @@ autocmd BufWinEnter \[Buf\ List\] setl nonumber
 autocmd BufRead,BufNew :call UMiniBufExplorer
 "autocmd BufWrite *.cpp,*.h,*.c call UpdateCscope()
 autocmd BufWrite *.cpp,*.h,*.c call UpdateTags()
-
 autocmd VimEnter * call BufPos_Initialize()
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
