@@ -233,149 +233,149 @@ func! EditBashLog()
 	endif
 endf
 
-	func! EditConfig()
-	    let l:has_dot_config = 0
-	    let l:has_arm_config = 0
-	    if filereadable(".config")
-		let l:has_dot_config = 1
-	    endif
-	    if isdirectory("arch/arm/configs/")
-		let l:has_arm_config = 1
-	    endif
+func! EditConfig()
+	let l:has_dot_config = 0
+	let l:has_arm_config = 0
+	if filereadable(".config")
+	let l:has_dot_config = 1
+	endif
+	if isdirectory("arch/arm/configs/")
+	let l:has_arm_config = 1
+	endif
 
-	    if l:has_dot_config && l:has_arm_config
-		let l:ans= confirm("1.edit .config; 2.edit arm configs dir?", "&1 for .config \n&2 for arch/arm/configs")
-		if l:ans == 1
-		    e .config
-		endif
-		if l:ans == 2
-		    e arch/arm/configs
-		endif
-	    else
-		if l:has_arm_config
-		    e arch/arm/configs
-		endif
-		if l:has_dot_config
-		    e .config
-		endif
-	    endif
-	endf
+	if l:has_dot_config && l:has_arm_config
+	let l:ans= confirm("1.edit .config; 2.edit arm configs dir?", "&1 for .config \n&2 for arch/arm/configs")
+	if l:ans == 1
+		e .config
+	endif
+	if l:ans == 2
+		e arch/arm/configs
+	endif
+	else
+	if l:has_arm_config
+		e arch/arm/configs
+	endif
+	if l:has_dot_config
+		e .config
+	endif
+	endif
+endf
 
-	function! EditKconfig()
-		let l:filepath = expand("%:p:h")
-		let l:kconfig = s:Escape(l:filepath)."/Kconfig"
-		if filereadable(l:kconfig)
-		    execute "e ".l:kconfig
-		endif
-	endfunction
-	nmap <silent> <leader>ek :call EditKconfig()<cr>
+function! EditKconfig()
+	let l:filepath = expand("%:p:h")
+	let l:kconfig = s:Escape(l:filepath)."/Kconfig"
+	if filereadable(l:kconfig)
+		execute "e ".l:kconfig
+	endif
+endfunction
+nmap <silent> <leader>ek :call EditKconfig()<cr>
 
-	function! EditMakefile()
-		let l:filepath = expand("%:p:h")
-		let l:makefile = s:Escape(l:filepath)."/Makefile"
+function! EditMakefile()
+	let l:filepath = expand("%:p:h")
+	let l:makefile = s:Escape(l:filepath)."/Makefile"
+	if filereadable(l:makefile)
+		execute "e ".l:makefile
+	else
+		let l:makefile = s:Escape(l:filepath)."/Android.mk"
 		if filereadable(l:makefile)
-		    execute "e ".l:makefile
-		else
-			let l:makefile = s:Escape(l:filepath)."/Android.mk"
-			if filereadable(l:makefile)
-				execute "e ".l:makefile
-			endif
+			execute "e ".l:makefile
 		endif
-	endfunction
-	nmap <silent> <leader>em :call EditMakefile()<cr>
+	endif
+endfunction
+nmap <silent> <leader>em :call EditMakefile()<cr>
 
-	function! EditScratch()
-		echo g:hDir
-		if filereadable(g:hDir."/tmp/.scratch.swp")
-			let l:hasScratchBuf = 0
-			for i in range(1,bufnr("$"))
-				if buflisted(i)
-					if bufname(i) == g:hDir."/tmp/scratch"
-						let l:hasScratchBuf = 1
-					endif
+function! EditScratch()
+	echo g:hDir
+	if filereadable(g:hDir."/tmp/.scratch.swp")
+		let l:hasScratchBuf = 0
+		for i in range(1,bufnr("$"))
+			if buflisted(i)
+				if bufname(i) == g:hDir."/tmp/scratch"
+					let l:hasScratchBuf = 1
 				endif
-			endfor
-			if l:hasScratchBuf
-				e ~/tmp/scratch
-			else
-				e ~/tmp/scratch2
 			endif
+		endfor
+		if l:hasScratchBuf
+			e ~/tmp/scratch
 		else
-			e $HOME/tmp/scratch
+			e ~/tmp/scratch2
 		endif
-	endfunction
+	else
+		e $HOME/tmp/scratch
+	endif
+endfunction
 
-	func! ReplaceFilePath4fp()
-	    let l:line = getline(".")
-		let l:aRegex = '$(fp)'
-		let l:findstr = matchstr(l:line, l:aRegex)
-		if l:findstr != ""
-			echo "got it"
-			let l:f = '/dev/shm/'.g:whoami.'/absfn'
-			if filereadable(l:f)
-				let l:l = readfile(l:f, '', 1)
-				let l:str = l:l[0]
-				let l:line = substitute(l:line, '$(fp)', l:str, "")
-				call setline(".", l:line)
-			endif
+func! ReplaceFilePath4fp()
+	let l:line = getline(".")
+	let l:aRegex = '$(fp)'
+	let l:findstr = matchstr(l:line, l:aRegex)
+	if l:findstr != ""
+		echo "got it"
+		let l:f = '/dev/shm/'.g:whoami.'/absfn'
+		if filereadable(l:f)
+			let l:l = readfile(l:f, '', 1)
+			let l:str = l:l[0]
+			let l:line = substitute(l:line, '$(fp)', l:str, "")
+			call setline(".", l:line)
 		endif
-	endf
-	nmap <leader>rf :call ReplaceFilePath4fp()<cr>
+	endif
+endf
+nmap <leader>rf :call ReplaceFilePath4fp()<cr>
 
-	function! My_Save_CurrentFileName()
-		let l:str = expand("%:p")
-		let l:str = s:Escape(str)
-		let @* = l:str
-		let @+ = '"'.l:str.'"'
-		execute ":!echo '".l:str."' > /dev/shm/filename"
-	endfunction
+function! SaveCurrentFileName()
+	let l:str = expand("%:p")
+	let l:str = s:Escape(str)
+	let @* = l:str
+	let @+ = '"'.l:str.'"'
+	execute ":!echo '".l:str."' > /dev/shm/filename"
+endfunction
 
-	function! My_Save_CompareFileName()
-		let str = expand("%:p")
-		let str = s:Escape(str)
-		execute ":!echo '".str."' > /dev/shm/beyond_compare_file_a"
-	endfunction
+function! SaveBCFn1()
+	let str = expand("%:p")
+	let str = s:Escape(str)
+	execute ":!echo '".str."' > /dev/shm/bcFn1"
+endfunction
 
-	function! My_CompareToFileName()
-		let _cmd_ = 'cat /dev/shm/beyond_compare_file_a'
-		echo _cmd_
-		let _resp = system(_cmd_)
-		let g:select_for_compare_file1 = substitute(_resp, '\n', '', 'g')
-		unlet _cmd_
-		unlet _resp
-		let g:select_for_compare_file2 = expand("%:p")
-		echo g:select_for_compare_file2
-		let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
-		execute l:cmd_text
-		unlet l:cmd_text
-	endfunction
+function! CompareTobcFn1()
+	let _cmd_ = 'cat /dev/shm/bcFn1'
+	echo _cmd_
+	let _resp = system(_cmd_)
+	let g:select_for_compare_file1 = substitute(_resp, '\n', '', 'g')
+	unlet _cmd_
+	unlet _resp
+	let g:select_for_compare_file2 = expand("%:p")
+	echo g:select_for_compare_file2
+	let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
+	execute l:cmd_text
+	unlet l:cmd_text
+endfunction
 
-	function! Select_for_compare()
-		let g:select_for_compare_file1 = expand("%:p")
-		echo g:select_for_compare_file1
-	endfunction
-	"nmap <silent> <leader>ba :call Select_for_compare()<cr>
+function! Select_for_compare()
+	let g:select_for_compare_file1 = expand("%:p")
+	echo g:select_for_compare_file1
+endfunction
+"nmap <silent> <leader>ba :call Select_for_compare()<cr>
 
-	function! Compare_to_selected()
-		let g:select_for_compare_file2 = expand("%:p")
-		echo g:select_for_compare_file2
-		let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
-		echo g:select_for_compare_file2
-		execute l:cmd_text
-		unlet l:cmd_text
-	endfunction
-	"nmap <silent> <leader>bb :call Compare_to_selected()<cr>
+function! Compare_to_selected()
+	let g:select_for_compare_file2 = expand("%:p")
+	echo g:select_for_compare_file2
+	let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
+	echo g:select_for_compare_file2
+	execute l:cmd_text
+	unlet l:cmd_text
+endfunction
+"nmap <silent> <leader>bb :call Compare_to_selected()<cr>
 
-	function! DoGitBeyondCompare()
-		let l:ext = expand("%:e")
-		if l:ext == "log"
-		    call GitDiffLog()
-		    exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
-		else
-		    exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
-		endif
-	endfunction
-	nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
+function! DoGitBeyondCompare()
+	let l:ext = expand("%:e")
+	if l:ext == "log"
+		call GitDiffLog()
+		exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+	else
+		exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
+	endif
+endfunction
+nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
 
 function! Python4CompareToFileName()
 	if has("python")
@@ -384,7 +384,7 @@ python << EEOOFF
 import fileinput
 import vim
 try:
-	input = fileinput.FileInput("/dev/shm/beyond_compare_file_a")
+	input = fileinput.FileInput("/dev/shm/bcFn1")
 	select_for_compare_file1 = input.readline()
 	vim.command("let g:select_for_compare_file1=%s" % select_for_compare_file1)
 finally:
@@ -398,28 +398,28 @@ EEOOFF
 endfunction
 nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" diff operation relative settings
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	if &diff
-	    set wrap
-	endif
-	" see :h diff
-	command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-			\ | wincmd p | diffthis
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" diff operation relative settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if &diff
+	set wrap
+endif
+" see :h diff
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+		\ | wincmd p | diffthis
 
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" file quick open related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! SaveCurrentFileNameRelativePath()
+	function! SaveRelaPathFileName()
 		let l:f = expand("%:")
 		if (l:f != "")
 		    let l:f = substitute(l:f, '^/tmp/a/', "", "")
 		    let l:f = substitute(l:f, '^/tmp/b/', "", "")
 		    let l:f = substitute(l:f, '^a/', "", "")
 		    let l:f = substitute(l:f, '^b/', "", "")
-		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/cur_file_rela_path'
+		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/relaFn'
 		    let l:_resp = system(l:_cmd_)
 		else
 		    echo "Current file is noname."
@@ -477,23 +477,13 @@ nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 		let l:_resp = system(l:_cmd_)
 	endfunction
 
-	function! SaveCurrentFileNameAbsolutePath()
+	function! SaveAbsPathFileName()
 		let l:f = expand("%:p")
 		if (l:f != "")
 		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
 		    let l:_resp = system(l:_cmd_)
 		else
 		    echo "Current file is noname."
-		endif
-	endfunction
-
-	function! EditCurFileRelaPath()
-		let l:_cmd_ = 'cat ' . '/dev/shm/cur_file_rela_path | tr -d "\r" | tr -d "\n"'
-		let l:_resp = system(l:_cmd_)
-		if filereadable(l:_resp)
-			exec "e ".l:_resp
-		else
-			echo "has no file ". l:_resp
 		endif
 	endfunction
 
@@ -510,6 +500,16 @@ nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 			else
 				echo "has no file: ". l:f
 			endif
+		endif
+	endfunction
+
+	function! EditCurFileRelaPath()
+		let l:_cmd_ = 'cat ' . '/dev/shm/relaFn | tr -d "\r" | tr -d "\n"'
+		let l:_resp = system(l:_cmd_)
+		if filereadable(l:_resp)
+			exec "e ".l:_resp
+		else
+			echo "has no file ". l:_resp
 		endif
 	endfunction
 
@@ -901,7 +901,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" gcc compile related functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! My_compile_command()
+	function! CompileByGcc()
 	  let l:ext = expand("%:e")
 	  if (l:ext == "cpp")
 		exec "!g++ ".expand("%")
@@ -1717,12 +1717,11 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	nnoremap ,, ,
 	nnoremap - "_dd
-
 	nmap <silent> ,32 f vt "xx$"xp
 	nmap <leader>ac :call EnterSavedPath()<cr>
 	nmap <leader>ap :call SaveFilePath()<cr>
-	nmap <silent> <leader>ba :call My_Save_CompareFileName()<cr><cr>
-	nmap <silent> <leader>bb :call My_CompareToFileName()<cr><cr>
+	nmap <silent> <leader>ba :call SaveBCFn1()<cr><cr>
+	nmap <silent> <leader>bb :call CompareTobcFn1()<cr><cr>
 	nmap <silent> <leader>c8 :call SetColorColumnC80()<CR>
 	nmap <leader>cd :call CDFilePath()<cr>
 	nmap <silent> <leader>ch :call SetColorColumn()<CR>
@@ -1756,21 +1755,20 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>et :e ~/tmp/tee.log<cr>
 	nmap <silent> <leader>ev :e ~/.vimrc<cr>
 	nmap          <leader>gn :call Getfilename("", "")<CR>
-	nmap <leader>fa :call SaveCurrentFileNameAbsolutePath()<cr>
-	nmap <leader>fb :call SaveCurrentFileNameRelativePath()<cr>
+	nmap <leader>fa :call SaveAbsPathFileName()<cr>
+	nmap <leader>fb :call SaveRelaPathFileName()<cr>
 	nmap <leader>fc :cs find c
 	nmap <leader>fg :cs find g
 	nmap <leader>fs :cs find s
 	nmap <leader>fi :setlocal foldmethod=indent<cr>zR
-
-	nmap <silent> <leader>fn :call My_Save_CurrentFileName()<cr><cr>
+	nmap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
 	nmap <leader>fp :call Vim_cd_absolute_path()<cr>
 	nmap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 	nmap <leader>gi gg/include<cr>
 	nmap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 	nmap <silent> <leader>gc :git checkout -- %<cr>
 	nmap <silent> <leader>ge :!gedit %&<cr>
-	nmap <silent> <leader>gg :call My_compile_command()<cr>
+	nmap <silent> <leader>gg :call CompileByGcc()<cr>
 	" for function GitDiffLog1()
 	nnoremap <leader>gw "gyiw
 	"nmap <leader>kb :!p2d.sh % 1>/dev/null 2>&1 &<cr><cr>
@@ -1928,7 +1926,7 @@ EEOOFF
 	endif
 endf
 
-	"!cat /dev/shm/beyond_compare_file_a | python -c "import sys,fileinput as f;[sys.stdout.write(str(f.lineno())+a) for a in f.input()]"
+	"!cat /dev/shm/bcFn1 | python -c "import sys,fileinput as f;[sys.stdout.write(str(f.lineno())+a) for a in f.input()]"
 
 "au! CursorHold *.[ch] nested call PreviewWord()
 func! PreviewWord()
