@@ -138,6 +138,19 @@ call s:PreSetEnv()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " my functions
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! DiffSplitFiles()
+	exec "windo diffoff!"
+	exec "bufdo diffoff!"
+	exec "diffthis"
+	exec "set wrap"
+	exec "normal! \<C-w>\<C-l>"
+	exec "diffthis"
+	exec "set wrap"
+	exec "normal! \<C-w>\<C-h>"
+	exec "diffthis"
+	exec "set wrap"
+endfunction
+
 function! s:Escape(dir)
   " See rules at :help 'path'
   return escape(escape(escape(a:dir, ','), "\\"), ' ')
@@ -248,16 +261,16 @@ endf
 	    endif
 	endf
 
-	function! Edit_Kconfig()
+	function! EditKconfig()
 		let l:filepath = expand("%:p:h")
 		let l:kconfig = s:Escape(l:filepath)."/Kconfig"
 		if filereadable(l:kconfig)
 		    execute "e ".l:kconfig
 		endif
 	endfunction
-	nmap <silent> <leader>ek :call Edit_Kconfig()<cr>
+	nmap <silent> <leader>ek :call EditKconfig()<cr>
 
-	function! Edit_Makefile()
+	function! EditMakefile()
 		let l:filepath = expand("%:p:h")
 		let l:makefile = s:Escape(l:filepath)."/Makefile"
 		if filereadable(l:makefile)
@@ -269,7 +282,7 @@ endf
 			endif
 		endif
 	endfunction
-	nmap <silent> <leader>em :call Edit_Makefile()<cr>
+	nmap <silent> <leader>em :call EditMakefile()<cr>
 
 	function! EditScratch()
 		echo g:hDir
@@ -364,7 +377,7 @@ endf
 	endfunction
 	nmap <leader>kb :call DoGitBeyondCompare()<cr><cr>
 
-function! My_Python4CompareToFileName()
+function! Python4CompareToFileName()
 	if has("python")
 	"learn use python in vim script from autotag.vim
 python << EEOOFF
@@ -383,7 +396,7 @@ EEOOFF
     execute l:cmd_text
 	unlet l:cmd_text
 endfunction
-nmap <silent> <leader>bc :call My_Python4CompareToFileName()<cr><cr>
+nmap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" diff operation relative settings
@@ -1719,7 +1732,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader># :e#<cr>
 	nmap <silent> <leader>da :%d<cr>
 	nmap <silent> <leader>db :bdelete<cr>
-	nmap <silent> <leader>df :Rename ~/tmp/del_%:t<cr>
+	nmap <silent> <leader>df :call DiffSplitFiles()<cr>
 	nmap <silent> <leader>dl :bdelete #<cr>
 	nmap <silent> <leader>dk :%s#.*karlzheng_todel.*\n##<cr>
 	nmap <silent> <leader>dm :%s#.*karldbg.*\n##<cr>
@@ -1727,7 +1740,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
 	nmap <silent> <leader>dr :%s#\r\n#\r#g<cr>
 	nmap <silent> <leader>ds :%s#\s*$##g<cr>:nohl<cr><c-o>
-	nmap <silent> <leader>dt :diffthis<cr>:set wrap<cr>
+	nmap <silent> <leader>dt :Rename ~/tmp/del_%:t<cr>
 
 	nmap <silent> <leader>e. :e .<cr>
 	nmap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
@@ -1749,7 +1762,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <leader>fg :cs find g
 	nmap <leader>fs :cs find s
 	nmap <leader>fi :setlocal foldmethod=indent<cr>zR
-	nmap <leader>fm :setlocal foldmethod=manual<cr>
+
 	nmap <silent> <leader>fn :call My_Save_CurrentFileName()<cr><cr>
 	nmap <leader>fp :call Vim_cd_absolute_path()<cr>
 	nmap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
