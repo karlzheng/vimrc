@@ -1677,6 +1677,7 @@ nnoremap <leader>fb :call SaveRelaPathFileName()<cr>
 nnoremap <leader>fc :cs find c
 nnoremap <silent> <leader>fe :Sexplore!<cr>
 nnoremap <leader>fg :cs find g
+nnoremap <leader>fm :setlocal foldmethod=manual<cr>
 nnoremap <leader>fs :cs find s
 nnoremap <leader>fi :setlocal foldmethod=indent<cr>zR
 nnoremap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
@@ -1783,6 +1784,7 @@ nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
 nnoremap <C-e> <End>
+nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <silent> <C-j>  <C-w>j
 nnoremap <silent> <C-k>  <C-w>k
 nnoremap <silent> <C-h>  <c-w>h
@@ -1792,11 +1794,13 @@ nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
 nnoremap <c-s> :w!<cr>
 nnoremap <c-t> :Ydc<CR>
 nnoremap <c-q> :call QuickfixToggle()<cr>
+nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
 nnoremap <c-x><c-w> :Bwipe<cr>
 nnoremap <C-W><C-B> :BottomExplorerWindow<cr>
 nnoremap <c-y> :call SaveYankText()<cr>
 "nnoremap <C-W><C-F> :FirstExplorerWindow<cr>
+nnoremap <Esc><Esc> :call BufCloseWindow()<cr>
 
 nnoremap <silent> d dw
 nnoremap <silent> n :call GoNextQuickfix()<cr>
