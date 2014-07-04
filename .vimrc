@@ -138,6 +138,78 @@ call s:PreSetEnv()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " my functions
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! BufPos_ActivateBuffer(num)
+	let l:count = 1
+	for i in range(1, bufnr("$"))
+		if buflisted(i) && getbufvar(i, "&modifiable")
+			if l:count == a:num
+				exe "buffer " . i
+				return
+			endif
+			let l:count = l:count + 1
+		endif
+	endfor
+	echo "No buffer!"
+endfunction
+
+function! BufPos_Initialize()
+	for i in range(1, 9)
+		exe "nmap " . i . " :b". i ."<CR>"
+		"exe "map " . i . " :call BufPos_ActivateBuffer(" . i . ")<CR>"
+	endfor
+	exe "nmap 0" . " :b10<cr>"
+	"exe "map <M-0> :call BufPos_ActivateBuffer(10)<CR>"
+endfunction
+
+func! BwipeCurrentBuffer()
+	let l:currentBufNum = bufnr("%")
+	echo l:currentBufNum
+	exec "normal! \<C-o>"
+	exec("bwipe ".  l:currentBufNum)
+endf
+
+function! CDAbsPath()
+	let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/filename'
+	let l:_resp = system(l:_cmd_)
+	exec "cd ".l:_resp
+	exec "pwd"
+endfunction
+
+function! CDFilePath()
+	try
+		let g:last_work_path = escape(getcwd(), " ")
+		if exists("g:last_work_path")
+			let g:last_last_work_path = g:last_work_path
+		endif
+	catch
+		echo v:errmsg
+	endtry
+	let l:pwd = escape(getcwd(), " ")
+	let l:filepath = expand("%:p:h")
+	let l:filepath = Escape(l:filepath)
+	if l:pwd == g:root_work_path
+		echo "cd ".l:filepath
+		exec "cd ".l:filepath
+	else
+		echo "cd ".g:root_work_path
+		exec "cd ".g:root_work_path
+	endif
+endfunction
+
+function! CompareTobcFn1()
+	let _cmd_ = 'cat /dev/shm/bcFn1'
+	echo _cmd_
+	let _resp = system(_cmd_)
+	let g:bcFn1 = substitute(_resp, '\n', '', 'g')
+	unlet _cmd_
+	unlet _resp
+	let g:bcFn2 = expand("%:p")
+	echo g:bcFn2
+	let l:cmd_text = "!bcompare "."\"".g:bcFn1."\""." \"".g:bcFn2."\" \&"
+	execute l:cmd_text
+	unlet l:cmd_text
+endfunction
+
 function! DiffSplitFiles()
 	exec "windo diffoff!"
 	exec "bufdo diffoff!"
@@ -151,7 +223,17 @@ function! DiffSplitFiles()
 	exec "set wrap"
 endfunction
 
-function! s:Escape(dir)
+function! DoGitBeyondCompare()
+	let l:ext = expand("%:e")
+	if l:ext == "log"
+		call GitDiffLog()
+		exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+	else
+		exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
+	endif
+endfunction
+
+function! Escape(dir)
   " See rules at :help 'path'
   return escape(escape(escape(a:dir, ','), "\\"), ' ')
 endfunction
@@ -167,59 +249,20 @@ function! EnterSavedPath()
 	endif
 endfunction
 
-function! GrepCurWordInCurDir()
-	let l:lastpwd = escape(getcwd(), " ")
-	let l:filepath = expand("%:p:h")
-	let l:filepath = s:Escape(l:filepath)
-	echo "cd ".l:filepath
-	exec "cd ".l:filepath
-	let l:w = expand("<cword>")
-	let l:w = substitute(l:w, '\n', '', 'g')
-	let l:c = '!mg.sh '.l:w
-	exec l:c
-	call ReadQuickfixFile()
-endfunction
-
-function! ReadDate()
-	exec 'r !echo "date: $(LANG=en.UTF-8 date +\%Y/\%m/\%d\ \%a\ \%r)"'
-endfunction
-
-function! SaveFilePath()
-	let l:f = expand("%:p:h")
-	let l:f = s:Escape(f)
-	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/apwdpath'
-		let l:_resp = system(l:_cmd_)
+function! EditAbsoluteFilePath()
+	let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
+	let l:f = system(l:_cmd_)
+	"let l:f = "'".escape(l:f, '%')."'"
+	let l:f = escape(l:f, '%')
+	if filereadable(l:f)
+		exec "e ".l:f
 	else
-		echo "Current file is noname."
-	endif
-endfunction
-
-"Switch to current dir
-function! CDFilePath()
-	try
-		let g:last_work_path = escape(getcwd(), " ")
-		if exists("g:last_work_path")
-			let g:last_last_work_path = g:last_work_path
+		if isdirectory(l:f)
+			exec "e ".l:f
+		else
+			echo "has no file: ". l:f
 		endif
-	catch
-		echo v:errmsg
-	endtry
-	let l:pwd = escape(getcwd(), " ")
-	let l:filepath = expand("%:p:h")
-	let l:filepath = s:Escape(l:filepath)
-	if l:pwd == g:root_work_path
-		echo "cd ".l:filepath
-		exec "cd ".l:filepath
-	else
-		echo "cd ".g:root_work_path
-		exec "cd ".g:root_work_path
 	endif
-endfunction
-
-function! EditFilePath()
-	let l:filepath = s:Escape(expand("%:p:h"))
-	execute "e ".l:filepath
 endfunction
 
 func! EditBashLog()
@@ -232,6 +275,16 @@ func! EditBashLog()
 		exec "e ".l:f
 	endif
 endf
+
+function! EdCommandProxy()
+	let l:f = expand("%:t")
+	echo l:f
+	if (l:f == "scratch" || l:f == "scratch2")
+		call EditWorkDiary()
+	else
+		call EditFileWithRelativePath()
+	endif
+endfunction
 
 func! EditConfig()
 	let l:has_dot_config = 0
@@ -261,9 +314,49 @@ func! EditConfig()
 	endif
 endf
 
+function! EditCurFileRelaPath()
+	let l:_cmd_ = 'cat ' . '/dev/shm/relaFn | tr -d "\r" | tr -d "\n"'
+	let l:_resp = system(l:_cmd_)
+	if filereadable(l:_resp)
+		exec "e ".l:_resp
+	else
+		echo "has no file ". l:_resp
+	endif
+endfunction
+
+function! EditFilePath()
+	let l:filepath = Escape(expand("%:p:h"))
+	execute "e ".l:filepath
+endfunction
+
+function! EditFileWithRelativePath()
+	let l:f = expand("%")
+	let l:df = substitute(l:f, '^/tmp/a/', "", "")
+	let l:df = substitute(l:f, '^/tmp/b/', "", "")
+	let l:cmd = 'cat /dev/shm/'.g:whoami.'/absfn'
+	let l:r = system(l:cmd)
+	let l:r = substitute(l:r, "\r", "", "g")
+	let l:r = substitute(l:r, "\n", "", "g")
+	let l:df = l:r.'/'.l:f
+	echo l:df
+	if filereadable(l:df)
+		exec "windo diffoff!"
+		exec "bufdo diffoff!"
+		exec "b ".l:f
+		exec "normal! \<C-w>o"
+		exec "vert diffsplit ".l:df
+		exec "set wrap"
+		exec "normal! \<C-w>\<C-l>"
+		exec "set wrap"
+		exec "normal! \<C-w>\<C-h>"
+		exec "normal! \<C-W>L"
+		exec "normal! ]c"
+	endif
+endfunction
+
 function! EditKconfig()
 	let l:filepath = expand("%:p:h")
-	let l:kconfig = s:Escape(l:filepath)."/Kconfig"
+	let l:kconfig = Escape(l:filepath)."/Kconfig"
 	if filereadable(l:kconfig)
 		execute "e ".l:kconfig
 	endif
@@ -271,11 +364,11 @@ endfunction
 
 function! EditMakefile()
 	let l:filepath = expand("%:p:h")
-	let l:makefile = s:Escape(l:filepath)."/Makefile"
+	let l:makefile = Escape(l:filepath)."/Makefile"
 	if filereadable(l:makefile)
 		execute "e ".l:makefile
 	else
-		let l:makefile = s:Escape(l:filepath)."/Android.mk"
+		let l:makefile = Escape(l:filepath)."/Android.mk"
 		if filereadable(l:makefile)
 			execute "e ".l:makefile
 		endif
@@ -303,272 +396,75 @@ function! EditScratch()
 	endif
 endfunction
 
-func! ReplaceFilePath4fp()
-	let l:line = getline(".")
-	let l:aRegex = '$(fp)'
-	let l:findstr = matchstr(l:line, l:aRegex)
-	if l:findstr != ""
-		echo "got it"
-		let l:f = '/dev/shm/'.g:whoami.'/absfn'
-		if filereadable(l:f)
-			let l:l = readfile(l:f, '', 1)
-			let l:str = l:l[0]
-			let l:line = substitute(l:line, '$(fp)', l:str, "")
-			call setline(".", l:line)
-		endif
-	endif
-endf
-
-function! SaveCurrentFileName()
-	let l:str = expand("%:p")
-	let l:str = s:Escape(str)
-	let @* = l:str
-	let @+ = '"'.l:str.'"'
-	execute ":!echo '".l:str."' > /dev/shm/filename"
-endfunction
-
-function! SaveBCFn1()
-	let str = expand("%:p")
-	let str = s:Escape(str)
-	execute ":!echo '".str."' > /dev/shm/bcFn1"
-endfunction
-
-function! CompareTobcFn1()
-	let _cmd_ = 'cat /dev/shm/bcFn1'
-	echo _cmd_
-	let _resp = system(_cmd_)
-	let g:select_for_compare_file1 = substitute(_resp, '\n', '', 'g')
-	unlet _cmd_
-	unlet _resp
-	let g:select_for_compare_file2 = expand("%:p")
-	echo g:select_for_compare_file2
-	let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
-	execute l:cmd_text
-	unlet l:cmd_text
-endfunction
-
-function! Select_for_compare()
-	let g:select_for_compare_file1 = expand("%:p")
-	echo g:select_for_compare_file1
-endfunction
-"nmap <silent> <leader>ba :call Select_for_compare()<cr>
-
-function! Compare_to_selected()
-	let g:select_for_compare_file2 = expand("%:p")
-	echo g:select_for_compare_file2
-	let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
-	echo g:select_for_compare_file2
-	execute l:cmd_text
-	unlet l:cmd_text
-endfunction
-"nmap <silent> <leader>bb :call Compare_to_selected()<cr>
-
-function! DoGitBeyondCompare()
-	let l:ext = expand("%:e")
-	if l:ext == "log"
-		call GitDiffLog()
-		exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+function! EditWorkDiary()
+	let l:f = g:hDir."/tmp/workDiary/diary.txt"
+	if filereadable(l:f)
+		exec "e ".l:f
 	else
-		exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
+		exec "e ~/person_tools/workDiary/diary.txt"
+	endif
+	exec "norm G"
+endfunction
+
+function! ExecLineText(name, bang)
+	let l:ans = confirm("Execute current buffer line in bash?", "&Yes\n&No")
+	if l:ans == 1
+		"let l:_cmd_ = 'echo "'.l:line.'" >> ~/.bash_history'
+		"let _resp = system(l:_cmd_)
+		let l:line = getline(".")
+		let l:_cmd_ = "bash -i -c 'set -o history;history -s ".l:line."'"
+		let _resp = system(l:_cmd_)
+		exec ".,.w !sh"
+	else
+		echo ("cancel Execute current buffer line in bash?")
 	endif
 endfunction
 
-function! Python4CompareToFileName()
-	if has("python")
-	"learn use python in vim script from autotag.vim
-python << EEOOFF
-import fileinput
-import vim
-try:
-	input = fileinput.FileInput("/dev/shm/bcFn1")
-	select_for_compare_file1 = input.readline()
-	vim.command("let g:select_for_compare_file1=%s" % select_for_compare_file1)
-finally:
-	input.close()
-EEOOFF
-	endif
-    let l:cmd_text = "!bcompare "."\"".g:select_for_compare_file1."\""." \"".g:select_for_compare_file2."\" \&"
-    echo g:select_for_compare_file2
-    execute l:cmd_text
-	unlet l:cmd_text
+"http://forum.ubuntu.org.cn/viewtopic.php?f=68&t=343460
+"au VimEnter * call VimEnterCallback()
+"au BufAdd *.[ch] call FindGtags(expand('<afile>'))
+function! FindFiles(pat, ...)
+	 let path = ''
+	 for str in a:000
+		 let path .= str . ','
+	 endfor
+	 if path == ''
+		 let path = &path
+	 endif
+	 echo 'finding...'
+	 redraw
+	 call append(line('$'), split(globpath(path, a:pat), '\n'))
+	 echo 'finding...done!'
+	 redraw
+endfunc
+	
+function! FindGtags(f)
+	let dir = fnamemodify(a:f, ':p:h')
+	while 1
+		let tmp = dir . '/GTAGS'
+		if filereadable(tmp)
+			exe 'cs add ' . tmp . ' ' . dir
+			break
+		elseif dir == '/'
+			break
+		endif
+
+		let dir = fnamemodify(dir, ":h")
+	endwhile
+endfunc
+
+function! GrepCurWordInCurDir()
+	let l:lastpwd = escape(getcwd(), " ")
+	let l:filepath = expand("%:p:h")
+	let l:filepath = Escape(l:filepath)
+	echo "cd ".l:filepath
+	exec "cd ".l:filepath
+	let l:w = expand("<cword>")
+	let l:w = substitute(l:w, '\n', '', 'g')
+	let l:c = '!mg.sh '.l:w
+	exec l:c
+	call ReadQuickfixFile()
 endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" diff operation relative settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if &diff
-	set wrap
-endif
-" see :h diff
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-		\ | wincmd p | diffthis
-
-
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" file quick open related functions
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! SaveRelaPathFileName()
-		let l:f = expand("%:")
-		if (l:f != "")
-		    let l:f = substitute(l:f, '^/tmp/a/', "", "")
-		    let l:f = substitute(l:f, '^/tmp/b/', "", "")
-		    let l:f = substitute(l:f, '^a/', "", "")
-		    let l:f = substitute(l:f, '^b/', "", "")
-		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/relaFn'
-		    let l:_resp = system(l:_cmd_)
-		else
-		    echo "Current file is noname."
-		endif
-	endfunction
-
-	function! EditWorkDiary()
-		let l:f = g:hDir."/tmp/workDiary/diary.txt"
-		if filereadable(l:f)
-			exec "e ".l:f
-		else
-			exec "e ~/person_tools/workDiary/diary.txt"
-		endif
-		exec "norm G"
-	endfunction
-
-	function! EditFileWithRelativePath()
-		let l:f = expand("%")
-		let l:df = substitute(l:f, '^/tmp/a/', "", "")
-		let l:df = substitute(l:f, '^/tmp/b/', "", "")
-		let l:cmd = 'cat /dev/shm/'.g:whoami.'/absfn'
-		let l:r = system(l:cmd)
-		let l:r = substitute(l:r, "\r", "", "g")
-		let l:r = substitute(l:r, "\n", "", "g")
-		let l:df = l:r.'/'.l:f
-		echo l:df
-		if filereadable(l:df)
-			exec "windo diffoff!"
-			exec "bufdo diffoff!"
-			exec "b ".l:f
-			exec "normal! \<C-w>o"
-			exec "vert diffsplit ".l:df
-			exec "set wrap"
-			exec "normal! \<C-w>\<C-l>"
-			exec "set wrap"
-			exec "normal! \<C-w>\<C-h>"
-			exec "normal! \<C-W>L"
-			exec "normal! ]c"
-		endif
-	endfunction
-
-	function! EdCommandProxy()
-		let l:f = expand("%:t")
-		echo l:f
-		if (l:f == "scratch" || l:f == "scratch2")
-			call EditWorkDiary()
-		else
-			call EditFileWithRelativePath()
-		endif
-	endfunction
-
-	function! SaveFile2Tar()
-		let l:f = expand("%")
-		let l:_cmd_ = 'tar cf /tmp/file.tar "'. l:f .'"'
-		let l:_resp = system(l:_cmd_)
-	endfunction
-
-	function! SaveAbsPathFileName()
-		let l:f = expand("%:p")
-		if (l:f != "")
-		    let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
-		    let l:_resp = system(l:_cmd_)
-		else
-		    echo "Current file is noname."
-		endif
-	endfunction
-
-	function! EditAbsoluteFilePath()
-		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
-		let l:f = system(l:_cmd_)
-		"let l:f = "'".escape(l:f, '%')."'"
-		let l:f = escape(l:f, '%')
-		if filereadable(l:f)
-			exec "e ".l:f
-		else
-			if isdirectory(l:f)
-				exec "e ".l:f
-			else
-				echo "has no file: ". l:f
-			endif
-		endif
-	endfunction
-
-	function! EditCurFileRelaPath()
-		let l:_cmd_ = 'cat ' . '/dev/shm/relaFn | tr -d "\r" | tr -d "\n"'
-		let l:_resp = system(l:_cmd_)
-		if filereadable(l:_resp)
-			exec "e ".l:_resp
-		else
-			echo "has no file ". l:_resp
-		endif
-	endfunction
-
-	function! Vim_cd_absolute_path()
-		let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/filename'
-		let l:_resp = system(l:_cmd_)
-		exec "cd ".l:_resp
-		exec "pwd"
-	endfunction
-
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" lookupfile functions
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! UpdateGtags(f)
-		let l:root_gtags_file=g:root_work_path . "/GTAGS"
-		if filereadable(l:root_gtags_file) && filereadable("/usr/bin/gtags")
-			let dir = fnamemodify(a:f, ':p:h')
-			exe 'silent !cd ' . dir . ' && global -u &> /dev/null &'
-		endif
-	endfunction
-	"au BufWritePost *.c,*.h,*.hpp,*.cpp,*.java call UpdateGtags(expand('<afile>'))
-
-	command! -nargs=+ -complete=dir FindFiles :call FindFiles(<f-args>)
-	"http://forum.ubuntu.org.cn/viewtopic.php?f=68&t=343460
-	"au VimEnter * call VimEnterCallback()
-	"au BufAdd *.[ch] call FindGtags(expand('<afile>'))
-	function! FindFiles(pat, ...)
-		 let path = ''
-		 for str in a:000
-			 let path .= str . ','
-		 endfor
-		 if path == ''
-			 let path = &path
-		 endif
-		 echo 'finding...'
-		 redraw
-		 call append(line('$'), split(globpath(path, a:pat), '\n'))
-		 echo 'finding...done!'
-		 redraw
-	endfunc
-
-	function! VimEnterCallback()
-		 for f in argv()
-			 if fnamemodify(f, ':e') != 'c' && fnamemodify(f, ':e') != 'h'
-				 continue
-			 endif
-			 call FindGtags(f)
-		 endfor
-	endfunc
-
-	function! FindGtags(f)
-		 let dir = fnamemodify(a:f, ':p:h')
-		 while 1
-			 let tmp = dir . '/GTAGS'
-			 if filereadable(tmp)
-				 exe 'cs add ' . tmp . ' ' . dir
-				 break
-			 elseif dir == '/'
-				 break
-			 endif
-
-			 let dir = fnamemodify(dir, ":h")
-		 endwhile
-	endfunc
 
 func! ParseFilenameTag(line, bang)
 	let l:line = getline('.')
@@ -617,7 +513,186 @@ endif
 	endif
 	exec "LUTags ".l:filename
 endf
-command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
+
+function! LookupFuncIgnoreCase(pattern)
+	let _tags = &tags
+	try
+		if g:use_LookupFile_FullNameTagExpr == 1
+			let &tags = eval(g:LookupFile_FullNameTagExpr)
+			let newpattern = a:pattern
+		else
+			let &tags = eval(g:LookupFile_TagExpr)
+			let newpattern = '\c' . a:pattern
+		endif
+			let newpattern = '\c' . a:pattern
+		echom &tags
+		"let g:mytag = &tags
+		let tags = taglist(newpattern)
+	catch
+		echohl ErrorMsg | echo "Exception: " . v:exception | echohl NONE
+		return ""
+	finally
+		let &tags = _tags
+	endtry
+
+	" Show the matches for what is typed so far.
+	let files = map(tags, 'v:val["filename"]')
+	"let g:use_LookupFile_FullNameTagExpr = 0
+	return files
+endfunction
+
+function! Python4CompareToFileName()
+	if has("python")
+	"learn use python in vim script from autotag.vim
+python << EEOOFF
+import fileinput
+import vim
+try:
+	input = fileinput.FileInput("/dev/shm/bcFn1")
+	bcFn1 = input.readline()
+	vim.command("let g:bcFn1=%s" % bcFn1)
+finally:
+	input.close()
+EEOOFF
+	endif
+    let l:cmd_text = "!bcompare "."\"".g:bcFn1."\""." \"".g:bcFn2."\" \&"
+    echo g:bcFn2
+    execute l:cmd_text
+	unlet l:cmd_text
+endfunction
+
+function! ReadDate()
+	exec 'r !echo "date: $(LANG=en.UTF-8 date +\%Y/\%m/\%d\ \%a\ \%r)"'
+endfunction
+
+func! ReplaceFilePath4fp()
+	let l:line = getline(".")
+	let l:aRegex = '$(fp)'
+	let l:findstr = matchstr(l:line, l:aRegex)
+	if l:findstr != ""
+		echo "got it"
+		let l:f = '/dev/shm/'.g:whoami.'/absfn'
+		if filereadable(l:f)
+			let l:l = readfile(l:f, '', 1)
+			let l:str = l:l[0]
+			let l:line = substitute(l:line, '$(fp)', l:str, "")
+			call setline(".", l:line)
+		endif
+	endif
+endf
+
+function! SaveAbsPathFileName()
+	let l:f = expand("%:p")
+	if (l:f != "")
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
+		let l:_resp = system(l:_cmd_)
+	else
+		echo "Current file is noname."
+	endif
+endfunction
+
+function! SaveBCFn1()
+	let str = expand("%:p")
+	let str = Escape(str)
+	execute ":!echo '".str."' > /dev/shm/bcFn1"
+endfunction
+
+function! SaveCurrentFileName()
+	let l:str = expand("%:p")
+	let l:str = Escape(str)
+	let @* = l:str
+	let @+ = '"'.l:str.'"'
+	execute ":!echo '".l:str."' > /dev/shm/filename"
+endfunction
+
+function! SaveFile2Tar()
+	let l:f = expand("%")
+	let l:_cmd_ = 'tar cf /tmp/file.tar "'. l:f .'"'
+	let l:_resp = system(l:_cmd_)
+endfunction
+
+function! SaveFilePath()
+	let l:f = expand("%:p:h")
+	let l:f = Escape(f)
+	if (l:f != "")
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/apwdpath'
+		let l:_resp = system(l:_cmd_)
+	else
+		echo "Current file is noname."
+	endif
+endfunction
+
+function! SaveYankText()
+	let l:lines = []
+	let l:line = getline(".")
+	call add(l:lines, l:line)
+	call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
+	exec 'norm yy"+yy"*yy'
+endfunction
+
+function! SaveRelaPathFileName()
+	let l:f = expand("%:")
+	if (l:f != "")
+		let l:f = substitute(l:f, '^/tmp/a/', "", "")
+		let l:f = substitute(l:f, '^/tmp/b/', "", "")
+		let l:f = substitute(l:f, '^a/', "", "")
+		let l:f = substitute(l:f, '^b/', "", "")
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/relaFn'
+		let l:_resp = system(l:_cmd_)
+	else
+		echo "Current file is noname."
+	endif
+endfunction
+
+function! SetCFileTabStop()
+	if isdirectory(g:root_work_path."/arch/arm/configs")
+		set shiftwidth=8
+		set tabstop=8
+	else
+		set shiftwidth=4
+		set tabstop=4
+	endif
+	set iskeyword-=-,>()
+	set fo-=l
+	set textwidth=80
+endfunction
+
+function! VimEnterCallback()
+	 for f in argv()
+		 if fnamemodify(f, ':e') != 'c' && fnamemodify(f, ':e') != 'h'
+			 continue
+		 endif
+		 call FindGtags(f)
+	 endfor
+endfunc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" diff operation relative settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if &diff
+	set wrap
+endif
+" see :h diff
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+		\ | wincmd p | diffthis
+
+
+	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+	" file quick open related functions
+	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+	" lookupfile functions
+	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+	function! UpdateGtags(f)
+		let l:root_gtags_file=g:root_work_path . "/GTAGS"
+		if filereadable(l:root_gtags_file) && filereadable("/usr/bin/gtags")
+			let dir = fnamemodify(a:f, ':p:h')
+			exe 'silent !cd ' . dir . ' && global -u &> /dev/null &'
+		endif
+	endfunction
+	"au BufWritePost *.c,*.h,*.hpp,*.cpp,*.java call UpdateGtags(expand('<afile>'))
+
 
 func! LookupPartFilenameTag(line, bang)
 	let g:use_LookupFile_FullNameTagExpr = 0
@@ -634,21 +709,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" buffer functions
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	command! -nargs=* -complete=file -bang ExecLineText :call ExecLineText("<args>", "<bang>")
-	function! ExecLineText(name, bang)
-		let l:ans = confirm("Execute current buffer line in bash?", "&Yes\n&No")
-		if l:ans == 1
-			"let l:_cmd_ = 'echo "'.l:line.'" >> ~/.bash_history'
-			"let _resp = system(l:_cmd_)
-			let l:line = getline(".")
-			let l:_cmd_ = "bash -i -c 'set -o history;history -s ".l:line."'"
-			let _resp = system(l:_cmd_)
-		    exec ".,.w !sh"
-		else
-		    echo ("cancel Execute current buffer line in bash?")
-		endif
-	endfunction
-
 	command! -nargs=* -complete=file -bang Getfilename :call Getfilename("<args>", "<bang>")
 	function! Getfilename(name, bang)
 		let @"= expand("%:p")."\n"
@@ -672,15 +732,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		endif
 	endfunction
 	inoremap <c-y> :call InsertYankText()<cr>
-
-	function! SaveYankText()
-		let l:lines = []
-		let l:line = getline(".")
-		call add(l:lines, l:line)
-		call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
-		exec 'norm yy"+yy"*yy'
-	endfunction
-	nnoremap <c-y> :call SaveYankText()<cr>
 
 	" Rename.vim - Copyright June 2007 by Christian J. Robinson <heptite@gmail.com>
 	command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
@@ -847,7 +898,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	" functions for Visual mode
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" From an idea by Michael Naumann
-	function! MySpecialSearch(direction, is_VisualSearch)
+	function! SpecialVisualSearch(direction, is_VisualSearch)
 		"execute "set hls"
 		let l:saved_reg = @"
 		if a:is_VisualSearch
@@ -990,50 +1041,17 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Buffer realted settings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	" buffer initial
-	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	function! BufPos_ActivateBuffer(num)
-		let l:count = 1
-		for i in range(1, bufnr("$"))
-			if buflisted(i) && getbufvar(i, "&modifiable")
-				if l:count == a:num
-					exe "buffer " . i
-					return
-				endif
-				let l:count = l:count + 1
-			endif
-		endfor
-		echo "No buffer!"
-	endfunction
-	function! BufPos_Initialize()
-		for i in range(1, 9)
-			exe "nmap " . i . " :b". i ."<CR>"
-			"exe "map " . i . " :call BufPos_ActivateBuffer(" . i . ")<CR>"
-		endfor
-		exe "nmap 0" . " :b10<cr>"
-		"exe "map <M-0> :call BufPos_ActivateBuffer(10)<CR>"
-	endfunction
-	autocmd VimEnter * call BufPos_Initialize()
-
-	func! BwipeCurrentBuffer()
-		let l:currentBufNum = bufnr("%")
-		echo l:currentBufNum
-		exec "normal! \<C-o>"
-		exec("bwipe ".  l:currentBufNum)
-	endf
 
 	func! QuickfixToggle()
-	    if Is_quickfix_visual()
+	    if IsQuickfixVisual()
 		cclose
 	    else
 		call OpenQuickfixBuf()
 	    endif
 	endf
-	nmap <c-q> :call QuickfixToggle()<cr>
 
 	"http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
-	function! Is_quickfix_visual()
+	function! IsQuickfixVisual()
 	    let l:is_quickfix_visual = 0
 	    redir => l:buflist
 	    silent! ls
@@ -1172,43 +1190,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	    call setline(".", l:line)
 	endfunction
 
-	""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	"buffer autocmd
-	""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	if has("autocmd") && exists("+omnifunc")
-		autocmd Filetype *
-		\	if &omnifunc == "" |
-		\		setlocal omnifunc=syntaxcomplete#Complete |
-		\	endif
-	endif
-
-	function! C_file_shiftwidth_setting()
-	    if isdirectory(g:root_work_path."/arch/arm/configs")
-		set shiftwidth=8
-		set tabstop=8
-	    else
-		set shiftwidth=4
-		set tabstop=4
-	    endif
-	    set iskeyword-=-,>()
-	    set fo-=l
-	    set textwidth=80
-	endfunction
-
-	autocmd! bufwritepost .vimrc source ~/.vimrc
-
-	au BufRead,BufNewFile *.txt setlocal ft=txt
-	au BufRead,BufNewFile *.rc setlocal ft=make
-	au FileType help set nu
-	au FileType c,cpp,h,hpp call C_file_shiftwidth_setting()
-	"au FileType c,cpp,h,hpp set shiftwidth=8 |set tabstop=8 | set iskeyword-=-,>()
-	"au FileType c,cpp,h,hpp set fo-=l | set textwidth=80
-	"http://easwy.com/blog/archives/advanced-vim-skills-advanced-move-method/
-	"autocmd FileType c,cpp setl fdm=syntax | setl fen
-	"autocmd FileType c,cpp set shiftwidth=4 | set expandtab | set iskeyword -=-
-	"autocmd FileType c,cpp set fo=tcq
-	"au FileType sh set dictionary+=~/.vim/usr_bin_cmd.txt,~/.vim/bash-support/wordlists/bash.list
-
 	"http://stackoverflow.com/questions/2250011/can-i-have-vim-ignore-a-license-block-at-the-top-of-a-file
 	function! CreateCopyrightFold()
 		let InCopyright = 0
@@ -1344,7 +1325,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	endif
 
 	"http://vim.wikia.com/wiki/Autocmd_to_update_ctags_file
-	function! UPDATE_TAGS()
+	function! UpdateTags()
 		let l:f = expand("%:p")
 		let l:_cmd_ = '"ctags -a --c++-kinds=+p --fields=+iaS --extra=+q " ' . '"' . l:f . ' & "'
 		let l:_resp = system(l:_cmd_)
@@ -1352,9 +1333,9 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 			exec ':silent !global -u > /dev/null 2>&1 &'
 		endif
 	endfunction
-	autocmd BufWrite *.cpp,*.h,*.c call UPDATE_TAGS()
+	autocmd BufWrite *.cpp,*.h,*.c call UpdateTags()
 
-	function! UPDATE_Cscope()
+	function! UpdateCscope()
 		let l:curfile = expand("%")
 		let l:command="!echo " . l:curfile . " >> modify.files"
 		exec l:command
@@ -1362,7 +1343,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		exec l:command
 		:cs reset
 	endfunction
-	"autocmd BufWrite *.cpp,*.h,*.c call UPDATE_Cscope()
+	"autocmd BufWrite *.cpp,*.h,*.c call UpdateCscope()
 
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" SrcExpl settings
@@ -1374,7 +1355,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 	" lookupfile setting
 	"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-	let g:LookupFile_LookupFunc = 'LookupFile_IgnoreCaseFunc'
+	let g:LookupFile_LookupFunc = 'LookupFuncIgnoreCase'
 	let g:LookupFile_MinPatLength = 4
 	let g:LookupFile_PreserveLastPattern = 1
 	let g:LookupFile_PreservePatternHistory = 1
@@ -1391,33 +1372,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	if filereadable("./fullfilenametags")
 		let g:LookupFile_FullNameTagExpr = '"./fullfilenametags"'
 	endif
-
-	function! LookupFile_IgnoreCaseFunc(pattern)
-		let _tags = &tags
-		try
-			if g:use_LookupFile_FullNameTagExpr == 1
-				let &tags = eval(g:LookupFile_FullNameTagExpr)
-				let newpattern = a:pattern
-			else
-				let &tags = eval(g:LookupFile_TagExpr)
-				let newpattern = '\c' . a:pattern
-			endif
-				let newpattern = '\c' . a:pattern
-			echom &tags
-			"let g:mytag = &tags
-			let tags = taglist(newpattern)
-		catch
-			echohl ErrorMsg | echo "Exception: " . v:exception | echohl NONE
-			return ""
-		finally
-			let &tags = _tags
-		endtry
-
-		" Show the matches for what is typed so far.
-		let files = map(tags, 'v:val["filename"]')
-		"let g:use_LookupFile_FullNameTagExpr = 0
-		return files
-	endfunction
 
 	"nmap <silent> <leader>lf :LUTags <C-R>=expand("<cword>")<cr><cr>
 	"nmap <silent> <leader>lt :LUTags<cr>
@@ -1484,6 +1438,36 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		endif
 	    endif
 	endf
+	
+	function! OpenQuickfixBuf()
+		if ((&ft == 'qf') && (bufname("%") == ""))
+			let l:wn = winnr()
+			wincmd h
+			let l:h_wn = winnr()
+			wincmd l
+			if (l:wn == l:h_wn)
+				let l:linenr = line('.')
+				cclose
+				vert copen 45
+				exec "norm ".l:linenr."gg"
+			else
+				exec "normal! \<C-W>J"
+				exec "normal! 10\<C-W>_"
+			endif
+		else
+			vert copen 45
+		endif
+	endfunction
+
+	func! QuifixBufReadPost_Process()
+		let qflist = getqflist()
+		if len(qflist) == 0
+			if exists("g:Quickfix_uniqedList")
+				call setqflist(g:Quickfix_uniqedList)
+			endif
+		endif
+		cclose | vert copen 45
+	endf
 
 	func! SortUniqQFList()
 		let sortedList = sort(getqflist(), 's:CompareQuickfixEntries')
@@ -1505,35 +1489,6 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 		"exec "vert copen 45"
 	endf
 
-	func! QuifixBufReadPost_Process()
-		let qflist = getqflist()
-		if len(qflist) == 0
-			if exists("g:Quickfix_uniqedList")
-				call setqflist(g:Quickfix_uniqedList)
-			endif
-		endif
-		cclose | vert copen 45
-	endf
-
-	function! OpenQuickfixBuf()
-		if ((&ft == 'qf') && (bufname("%") == ""))
-			let l:wn = winnr()
-			wincmd h
-			let l:h_wn = winnr()
-			wincmd l
-			if (l:wn == l:h_wn)
-				let l:linenr = line('.')
-				cclose
-				vert copen 45
-				exec "norm ".l:linenr."gg"
-			else
-				exec "normal! \<C-W>J"
-				exec "normal! 10\<C-W>_"
-			endif
-		else
-			vert copen 45
-		endif
-	endfunction
 	"nmap <leader>cc :botright lw 10<cr>
 	"map <c-u> <c-l><c-j>:q<cr>:botright cw 10<cr>
 	"au BufReadPost quickfix  cclose | vert copen 45
@@ -1726,7 +1681,7 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <leader>fs :cs find s
 	nmap <leader>fi :setlocal foldmethod=indent<cr>zR
 	nmap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
-	nmap <leader>fp :call Vim_cd_absolute_path()<cr>
+	nmap <leader>fp :call CDAbsPath()<cr>
 	nmap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 	nmap <leader>gi gg/include<cr>
 	nmap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
@@ -1798,8 +1753,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	nmap <silent> <leader>ya ggVGy``
 	nnoremap Y ggY``P
 
-	"nnoremap <silent> * :call MySpecialSearch('f', 0)<CR>
-	"nnoremap <silent> # :call MySpecialSearch('b', 0)<CR>
+	"nnoremap <silent> * :call SpecialVisualSearch('f', 0)<CR>
+	"nnoremap <silent> # :call SpecialVisualSearch('b', 0)<CR>
 	nnoremap <silent> # #N
 	nnoremap <silent> * *N
 	"http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
@@ -1852,8 +1807,8 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 	vmap <leader>cl :!column -t<CR>
 	vmap <leader>w1 :w! ~/tmp/tmp_work_file/1.txt<cr>
 	"Basically you press * or # to search for the current selection !! Really useful
-	vnoremap <silent> * :call MySpecialSearch('f', 1)<CR>
-	vnoremap <silent> # :call MySpecialSearch('b', 1)<CR>
+	vnoremap <silent> * :call SpecialVisualSearch('f', 1)<CR>
+	vnoremap <silent> # :call SpecialVisualSearch('b', 1)<CR>
 	"http://tech.groups.yahoo.com/group/vim/message/105517
 	":au CursorHold * exec 'match IncSearch /'.expand("<cword>").'/'
 	"nnoremap <leader>h :exec 'match IncSearch /'.expand("<cword>").'/'<cr>
@@ -1878,7 +1833,7 @@ EEOOFF
 	endif
 endf
 
-	"!cat /dev/shm/bcFn1 | python -c "import sys,fileinput as f;[sys.stdout.write(str(f.lineno())+a) for a in f.input()]"
+"!cat /dev/shm/bcFn1 | python -c "import sys,fileinput as f;[sys.stdout.write(str(f.lineno())+a) for a in f.input()]"
 
 "au! CursorHold *.[ch] nested call PreviewWord()
 func! PreviewWord()
@@ -1917,6 +1872,14 @@ func! PreviewWord()
     endif
   endif
 endfun
+	
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" User defined commands
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+command! -nargs=* -complete=file -bang ExecLineText :call ExecLineText("<args>", "<bang>")
+command! -nargs=+ -complete=dir FindFiles :call FindFiles(<f-args>)
+command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " key map
@@ -1945,9 +1908,12 @@ nnoremap <c-t> :Ydc<CR>
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
 inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
+
+nmap <c-q> :call QuickfixToggle()<cr>
 nmap <c-x><c-d> :Bclose<cr>
 nmap <c-x><c-w> :Bwipe<cr>
 nmap <C-W><C-B> :BottomExplorerWindow<cr>
+nnoremap <c-y> :call SaveYankText()<cr>
 "nmap <C-W><C-F> :FirstExplorerWindow<cr>
 
 nmap <silent> <leader>al :call AddDebugLine()<cr>
@@ -1979,8 +1945,34 @@ nmap <leader>rf :call ReplaceFilePath4fp()<cr>
 nmap <leader>rn :call ReplaceMyUserName()<cr>
 nmap <leader>sq :call SaveQuickfixToFile()<cr>
 nmap <silent> <leader>tl :Tlist<cr>
-nmap <leader>uc :call UPDATE_Cscope()<cr>
+nmap <leader>uc :call UpdateCscope()<cr>
 nmap <silent> <leader>wm :WMToggle<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"buffer autocmd
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("autocmd") && exists("+omnifunc")
+	autocmd Filetype *
+	\	if &omnifunc == "" |
+	\		setlocal omnifunc=syntaxcomplete#Complete |
+	\	endif
+endif
+
+autocmd! bufwritepost .vimrc source ~/.vimrc
+
+au BufRead,BufNewFile *.txt setlocal ft=txt
+au BufRead,BufNewFile *.rc setlocal ft=make
+au FileType help set nu
+au FileType c,cpp,h,hpp call SetCFileTabStop()
+"au FileType c,cpp,h,hpp set shiftwidth=8 |set tabstop=8 | set iskeyword-=-,>()
+"au FileType c,cpp,h,hpp set fo-=l | set textwidth=80
+"http://easwy.com/blog/archives/advanced-vim-skills-advanced-move-method/
+"autocmd FileType c,cpp setl fdm=syntax | setl fen
+"autocmd FileType c,cpp set shiftwidth=4 | set expandtab | set iskeyword -=-
+"autocmd FileType c,cpp set fo=tcq
+"au FileType sh set dictionary+=~/.vim/usr_bin_cmd.txt,~/.vim/bash-support/wordlists/bash.list
+
+autocmd VimEnter * call BufPos_Initialize()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
