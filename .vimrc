@@ -1586,6 +1586,7 @@ command! -nargs=* -complete=tag -bang LookupPartFilenameTag :call LookupPartFile
 command! -nargs=* -complete=file -bang M1 :call MakeSessionInCurDir("<args>", "<bang>")
 command! -nargs=* -complete=file -bang MS :call MakeSession("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
+command! -nargs=* -complete=file -bang P2d :!p2d.sh %
 command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
 command! -nargs=* -complete=file -bang S1 :call SourceSessionInCurDir("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
