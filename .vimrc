@@ -1831,7 +1831,7 @@ inoremap <C-o> <C-c>
 inoremap <c-s> <ESC>:w!<cr>li
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <ESC>ldbi
-inoremap <c-y> :call InsertYankText()<cr>
+inoremap <c-y> <ESC>:call InsertYankText()<cr>i
 inoremap <C-Del> <c-g>u<c-c>lC
 inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
 "http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
