@@ -1704,7 +1704,7 @@ nnoremap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
 nnoremap <silent> <leader>ls :ls<cr>
 nnoremap <silent> <leader>lt :LookupPartFilenameTag<cr>
 nnoremap <silent> <leader>lw :LUWalk<cr>
-nnoremap <silent> <leader>jj ggVGJ
+nnoremap <silent> <leader>jj ggVGgJ
 nnoremap <leader>ma :set modifiable<cr>
 nnoremap <silent> <leader>mj :make -j16<cr>
 nnoremap <silent> <leader>mk :MarksBrowser<cr>
@@ -1743,7 +1743,7 @@ nnoremap <leader>sq :call SaveQuickfixToFile()<cr>
 nnoremap <silent> <leader>ss :source %<cr>
 nnoremap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
 nnoremap <silent> <leader>tl :TlistToggle<cr>
-nnoremap <silent> <leader>vb :vs ~/.bashrc<cr>
+nnoremap <silent> <leader>vb :e ~/.bashrc<cr>Gk$
 nnoremap <silent> <leader>vs :vs<cr>
 nnoremap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wj <C-W>j
