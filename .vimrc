@@ -1689,6 +1689,7 @@ nnoremap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/nu
 nnoremap <silent> <leader>gc :git checkout -- %<cr>
 nnoremap <silent> <leader>ge :!gedit %&<cr>
 nnoremap <silent> <leader>gg :call CompileByGcc()<cr>
+nnoremap <silent> <leader>gj ggVGgJ
 nnoremap <leader>gw "gyiw
 nnoremap <leader>ih :call InsertIncludeFileN(0)<CR>
 "nnoremap <leader>kb :!p2d.sh % 1>/dev/null 2>&1 &<cr><cr>
@@ -1704,7 +1705,7 @@ nnoremap <silent> <leader>ll :call ParseFilenameTag("", "")<CR>
 nnoremap <silent> <leader>ls :ls<cr>
 nnoremap <silent> <leader>lt :LookupPartFilenameTag<cr>
 nnoremap <silent> <leader>lw :LUWalk<cr>
-nnoremap <silent> <leader>jj ggVGgJ
+nnoremap <silent> <leader>jj ggVGJ
 nnoremap <leader>ma :set modifiable<cr>
 nnoremap <silent> <leader>mj :make -j16<cr>
 nnoremap <silent> <leader>mk :MarksBrowser<cr>
