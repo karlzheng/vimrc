@@ -12,7 +12,7 @@
 #          BUGS:  ---
 #         NOTES:  ---
 #        AUTHOR: Karl Zheng (), ZhengKarl#gmail.com
-#       COMPANY: Alibaba
+#       COMPANY: Meizu
 #       CREATED: 2013年12月02日 20时03分52秒 CST
 #      REVISION:  ---
 #===============================================================================
