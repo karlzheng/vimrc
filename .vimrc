@@ -430,11 +430,11 @@ function! EditAbsoluteFilePath()
 endfunction
 
 func! EditBashLog()
-	let l:f = g:hDir.'/.bash_history'
+	let l:f = g:hDir."/tmp/bash_history"
 	if filereadable(l:f)
 		exec "e ".l:f
 	endif
-	let l:f = g:hDir."/tmp/bash_history"
+	let l:f = g:hDir.'/.bash_history'
 	if filereadable(l:f)
 		exec "e ".l:f
 	endif
@@ -1628,7 +1628,6 @@ nnoremap <silent> <leader>ba :call SaveBCFn1()<cr><cr>
 nnoremap <silent> <leader>bb :call CompareTobcFn1()<cr><cr>
 nnoremap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 nnoremap <leader>bd :Bclose<cr>
-nnoremap <leader>bl :call EditBashLog()<cr>
 nnoremap <leader>bw :Bwipe<cr>
 nnoremap <silent> <leader>c8 :call SetColorColumnC80()<CR>
 "nnoremap <leader>cc :botright lw 10<cr>
@@ -1745,6 +1744,7 @@ nnoremap <silent> <leader>ss :source %<cr>
 nnoremap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
 nnoremap <silent> <leader>tl :TlistToggle<cr>
 nnoremap <silent> <leader>vb :e ~/.bashrc<cr>Gk$
+nnoremap <leader>vl :call EditBashLog()<cr>
 nnoremap <silent> <leader>vs :vs<cr>
 nnoremap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wj <C-W>j
