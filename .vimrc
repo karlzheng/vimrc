@@ -61,6 +61,7 @@ set fileformats=unix
 "set foldenable
 "set foldmethod=indent
 set grepprg=mgrep.sh
+set guifont=文泉驿等宽微米黑\ 10
 "set guioptions-=L
 set guioptions-=m
 "set guioptions-=r
