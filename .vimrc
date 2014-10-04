@@ -955,6 +955,28 @@ func! QuitAllBuffers()
 	endif
 endf
 
+func! QuitAllBuffersWithoutSaving()
+	let l:has_modified_buffer = 0
+	for i in range(1, bufnr("$"))
+		if buflisted(i)
+			try
+			exec "b".i
+			catch
+			continue
+			endtry
+			if  &modified != 0
+			let l:has_modified_buffer = 1
+			endif
+		endif
+	endfor
+	if l:has_modified_buffer != 0
+		let l:ans = confirm("Quit all buffer without saving ?", "&Yes\n&No")
+		if l:ans == 1
+			exec "qa!"
+		endif
+	endif
+endf
+
 func! QuifixBufReadPost_Process()
 	let qflist = getqflist()
 	if len(qflist) == 0
@@ -1720,7 +1742,7 @@ nnoremap <silent> <leader>qk <C-W>k:bd<cr>
 nnoremap <silent> <leader>ql <C-W>l:bd<cr>
 nnoremap <silent> <leader>qq :q<cr>
 nnoremap <silent> <leader>qw :wq<cr>
-nnoremap <silent> <leader>qf :q!<cr>
+nnoremap <silent> <leader>qf :call QuitAllBuffersWithoutSaving()<cr>
 nnoremap <silent> <leader>qa :qa<cr>
 nnoremap <leader>r1 :r ~/tmp/tmp_work_file/1.txt<cr>
 nnoremap <silent> <leader>ra :!./a.out<cr>
@@ -1800,6 +1822,7 @@ nnoremap <c-q> :call QuickfixToggle()<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
 nnoremap <c-x><c-w> :Bwipe<cr>
+nnoremap <c-x><c-p> "+Pj
 nnoremap <C-W><C-B> :BottomExplorerWindow<cr>
 nnoremap <c-y> :call SaveYankText()<cr>
 "nnoremap <C-W><C-F> :FirstExplorerWindow<cr>
