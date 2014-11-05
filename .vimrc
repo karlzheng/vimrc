@@ -647,6 +647,8 @@ endfunc
 
 function! Getfilename(name, bang)
 	let @"= expand("%:p")."\n"
+	let @+= expand("%:p")."\n"
+	let @*= expand("%:p")."\n"
 endfunction
 
 function! GitDiffLog1()
@@ -687,16 +689,20 @@ function! GoNextQuickfix()
 endfunction
 
 function! GrepCurWordInCurDir()
+	let l:bwn = bufwinnr("%")
 	let l:lastpwd = escape(getcwd(), " ")
 	let l:filepath = expand("%:p:h")
 	let l:filepath = Escape(l:filepath)
-	echo "cd ".l:filepath
+	"echo "cd ".l:filepath
 	exec "cd ".l:filepath
 	let l:w = expand("<cword>")
 	let l:w = substitute(l:w, '\n', '', 'g')
-	let l:c = '!mg.sh '.l:w
-	exec l:c
+	let l:c = 'mg.sh '.l:w
+	let l:_resp = system(l:c)
 	call ReadQuickfixFile()
+	cclose
+	vert copen 45
+	exec l:bwn. "wincmd w"
 endfunction
 
 "http://www.vimer.cn/2010/01/饭前甜点-vimgvim自动在cpp文件中添加-h文件包含.html
@@ -787,9 +793,13 @@ function! MakeSessionInCurDir(name, bang)
 endfunction
 
 function! MultiGrepCurWord(name, bang)
-	let l:cmd = "!mg.sh ".expand("<cword>")
-	exec l:cmd
+	let l:cmd = "mg.sh ".expand("<cword>")
+	let l:bwn = bufwinnr("%")
+	let l:_resp = system(l:cmd)
+	"silent! exec l:cmd
 	call ReadQuickfixFile()
+	vert copen 45
+	exec l:bwn. "wincmd w"
 endfunction
 
 function! OpenQuickfixBuf()
@@ -1457,7 +1467,8 @@ endif
 if has("cscope")
 	"nmap {c :cscope find c <cword><CR>
 	nmap <expr><silent> [c (&diff ? "[c" : ":cscope find c <cword><CR>")
-	nnoremap [a :call GrepCurWordInCurDir()<cr>
+	nnoremap <silent> [a :call MultiGrepCurWord("", "")<cr><cr>
+	nnoremap [w :call GrepCurWordInCurDir()<cr>
 	nmap [d :cscope find d <cword><CR>
 	nmap [e :cscope find e <cword><CR>
 	nmap [f :cscope find f <cword><CR>
