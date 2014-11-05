@@ -375,6 +375,16 @@ function! CreateCopyrightFold()
 endfunction
 "au BufRead *.py call CreateCopyrightFold()
 
+function! CscopeSeach()
+	let l:w = expand("<cword>")
+	let l:c = 'cscope find s '.l:w
+	let l:bwn = bufwinnr("%")
+	silent! exec l:c
+	cclose
+	vert copen 45
+	exec l:bwn. "wincmd w"
+endfunction
+
 function! DiffSplitFiles()
 	exec "windo diffoff!"
 	exec "bufdo diffoff!"
@@ -1443,6 +1453,7 @@ else
 		exe s:mycstags
 	endif
 endif
+
 if has("cscope")
 	"nmap {c :cscope find c <cword><CR>
 	nmap <expr><silent> [c (&diff ? "[c" : ":cscope find c <cword><CR>")
@@ -1453,7 +1464,8 @@ if has("cscope")
 	nmap [g :cscope find g <cword><CR>
 	nmap [i :cscope find i <cword><CR>
 	nmap [I :cscope find i %:t<CR>
-	nmap [s :cscope find s <cword><CR><c-q><cr><c-q><cr>
+	"nmap [s :cscope find s <cword><CR><c-q><cr><c-q><cr>
+	nmap [s :call CscopeSeach()<CR>
 	nmap [t :cscope find t <cword><CR>
 endif
 
@@ -1616,13 +1628,13 @@ command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFile
 command! -nargs=* -complete=tag -bang LookupPartFilenameTag :call LookupPartFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=file -bang M1 :call MakeSession("<args>", "<bang>")
 command! -nargs=* -complete=file -bang G :call MultiGrepCurWord("<args>", "<bang>")
-command! -nargs=* -complete=file -bang MS :call MakeSessionInCurDir("<args>", "<bang>")
+command! -nargs=* -complete=file -bang M2 :call MakeSessionInCurDir("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=file -bang P2d :!p2d.sh %
 command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
 command! -nargs=* -complete=file -bang S1 :call SourceSession("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
-command! -nargs=* -complete=file -bang SS :call SourceSessionInCurDir("<args>", "<bang>")
+command! -nargs=* -complete=file -bang S2 :call SourceSessionInCurDir("<args>", "<bang>")
 command! Bclose call <SID>BufcloseCloseIt(0)
 command! BcloseDraft call <SID>BufcloseCloseDraft()
 command! BcloseOthers call <SID>BufCloseOthers()
