@@ -945,11 +945,13 @@ func! QuitAllBuffers_key()
 endf
 
 func! QuickfixToggle()
+	let l:bwn = bufwinnr("%")
 	if IsQuickfixVisual()
-	cclose
+		cclose
 	else
-	call OpenQuickfixBuf()
+		call OpenQuickfixBuf()
 	endif
+	exec l:bwn. "wincmd w"
 endf
 
 func! QuitAllBuffers()
