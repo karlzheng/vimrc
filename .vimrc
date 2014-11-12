@@ -1707,7 +1707,7 @@ nnoremap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
 nnoremap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
 nnoremap <silent> <leader>dr :%s#\r\n#\r#g<cr>
 nnoremap <silent> <leader>ds :%s#\s*$##g<cr>:nohl<cr><c-o>
-nnoremap <silent> <leader>dt :Rename ~/tmp/del_%:t<cr>
+nnoremap <silent> <leader>dt :Rename! ~/tmp/del_%:t<cr>
 nnoremap <silent> <leader>d# :bd#<cr>
 nnoremap <silent> <leader>e. :e .<cr>
 nnoremap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
@@ -1856,7 +1856,8 @@ nnoremap <c-q> :call QuickfixToggle()<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
 nnoremap <c-x><c-w> :Bwipe<cr>
-nnoremap <c-x><c-p> "+Pj
+nnoremap <c-x><c-p> "+P
+nnoremap <c-x><c-n> "+p
 nnoremap <C-W><C-B> :BottomExplorerWindow<cr>
 nnoremap <c-y> :call SaveYankText()<cr>
 "nnoremap <C-W><C-F> :FirstExplorerWindow<cr>
