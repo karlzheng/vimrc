@@ -718,9 +718,8 @@ endfunction
 function! InsertYankText()
 	let l:f = "/dev/shm/".g:whoami."/yank.txt"
 	if filereadable(l:f)
-		let l:l = readfile(l:f, '', 1)
-		let l:str = l:l[0]
-		call append('.', l:str)
+		let l:l = readfile(l:f, '')
+		call append('.', l:l)
 	endif
 endfunction
 
@@ -1142,6 +1141,16 @@ function! SaveYankText()
 	call add(l:lines, l:line)
 	call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
 	exec 'norm yy"+yy"*yy'
+endfunction
+
+function! SaveYankTextInVisual()
+	let l:fl = line("'<")
+	let l:ll = line("'>")
+	silen exec 'norm gvy'
+	let l:lines = getline(l:fl, l:ll)
+	let @*=@"
+	let @+=@"
+	call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt", "b")
 endfunction
 
 function! SaveRelaPathFileName()
@@ -1918,8 +1927,7 @@ vnoremap <Leader># "9y?<C-R>='\V'.substitute(escape(@9,'\?'),'\n','\\n','g')<CR>
 vnoremap <Leader>* "9y/<C-R>='\V'.substitute(escape(@9,'\/'),'\n','\\n','g')<CR><CR>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 vnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zf') : 'zo')<CR>
-vnoremap <c-y> "+y
-
+vnoremap <c-y> <ESC>:call SaveYankTextInVisual()<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Ex mode key remap
