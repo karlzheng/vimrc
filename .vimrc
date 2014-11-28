@@ -1865,7 +1865,7 @@ nnoremap <c-q> :call QuickfixToggle()<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
 nnoremap <c-x><c-w> :Bwipe<cr>
-nnoremap <c-x><c-p> "+P
+nnoremap <c-x><c-p> O<ESC>"+Pj"_dd
 nnoremap <c-x><c-n> "+p
 nnoremap <C-W><C-B> :BottomExplorerWindow<cr>
 nnoremap <c-y> :call SaveYankText()<cr>
@@ -1929,7 +1929,7 @@ vnoremap <Leader>* "9y/<C-R>='\V'.substitute(escape(@9,'\/'),'\n','\\n','g')<CR>
 vnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zf') : 'zo')<CR>
 vnoremap <c-y> <ESC>:call SaveYankTextInVisual()<CR>
 
-xnoremap <c-p> "_dp
+xnoremap <c-p> "_dP
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Ex mode key remap
