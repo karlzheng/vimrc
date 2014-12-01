@@ -660,23 +660,35 @@ endfunc
 
 function! GoNextBuffer()
 	if &diff
-	exec "normal ]c"
+		exec "normal ]c"
 	else
-	bn
-	if &ft == "qf"
-		bn
-	endif
+		if IsQuickfixVisual()
+			cn
+		else
+			bn
+			let l:c = 0
+			while ((expand("%:p") == "") && l:c < 10)
+				bn
+				let l:c = l:c + 1
+			endwhile
+		endif
 	endif
 endfunction
 
 function! GoPreBuffer()
 	if &diff
-	exec "normal [c"
+		exec "normal [c"
 	else
-	bp
-	if &ft == "qf"
-		bp
-	endif
+		if IsQuickfixVisual()
+			cp
+		else
+			bp
+			let l:c = 0
+			while ((expand("%:p") == "") && l:c < 10)
+				bp
+				let l:c = l:c + 1
+			endwhile
+		endif
 	endif
 endfunction
 
@@ -699,7 +711,7 @@ function! GrepCurWordInCurDir()
 	let l:w = substitute(l:w, '\n', '', 'g')
 	let l:c = 'mg.sh '.l:w
 	let l:_resp = system(l:c)
-	call ReadQuickfixFile()
+	call ReadQuickfixFile(0)
 	cclose
 	vert copen 45
 	exec l:bwn. "wincmd w"
@@ -796,7 +808,7 @@ function! MultiGrepCurWord(name, bang)
 	let l:bwn = bufwinnr("%")
 	let l:_resp = system(l:cmd)
 	"silent! exec l:cmd
-	call ReadQuickfixFile()
+	call ReadQuickfixFile(0)
 	vert copen 45
 	exec l:bwn. "wincmd w"
 endfunction
@@ -1020,7 +1032,7 @@ function! ReadDate()
 	exec 'r !echo "date: $(LANG=en.UTF-8 date +\%Y/\%m/\%d\ \%a\ \%r)"'
 endfunction
 
-function! ReadQuickfixFile()
+function! ReadQuickfixFile(onlyOneWindow)
 	if filereadable(g:hDir."/dev/quickfix.txt")
 		"exe 'cg '.g:hDir.'/dev/quickfix.txt'
 		let l:_resp = system('rsync -avurP ' .g:hDir.'/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
@@ -1028,6 +1040,9 @@ function! ReadQuickfixFile()
 	endif
 	exe 'cg /dev/shm/'.g:whoami.'/quickfix.txt'
 	call OpenQuickfixBuf()
+	if a:onlyOneWindow
+		exec "normal \<c-w>\<c-o>"
+	endif
 endfunc
 
 " Rename.vim - Copyright June 2007 by Christian J. Robinson <heptite@gmail.com>
@@ -1661,6 +1676,7 @@ command! Bclose call <SID>BufcloseCloseIt(0)
 command! BcloseDraft call <SID>BufcloseCloseDraft()
 command! BcloseOthers call <SID>BufCloseOthers()
 command! Bwipe  call <SID>BufcloseCloseIt(1)
+command! CG call ReadQuickfixFile(1)
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1700,7 +1716,7 @@ nnoremap <silent> <leader>c8 :call SetColorColumnC80()<CR>
 nnoremap <leader>cd :call CDFilePath()<cr>
 nnoremap <silent> <leader>ch :call SetColorColumn()<CR>
 nnoremap <silent> <leader>cf :cgete getmatches()<cr>
-nnoremap <silent> <leader>cg :call ReadQuickfixFile()<cr>
+nnoremap <silent> <leader>cg :call ReadQuickfixFile(0)<cr>
 nnoremap <leader>cn :cn<cr>
 nnoremap <leader>cp :cp<cr>
 nnoremap <leader>cq :cclose<cr>
