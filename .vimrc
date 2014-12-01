@@ -701,6 +701,7 @@ function! GoNextQuickfix()
 endfunction
 
 function! GrepCurWordInCurDir()
+	exec "norm "."mP"
 	let l:bwn = bufwinnr("%")
 	let l:lastpwd = escape(getcwd(), " ")
 	let l:filepath = expand("%:p:h")
@@ -715,6 +716,7 @@ function! GrepCurWordInCurDir()
 	cclose
 	vert copen 45
 	exec l:bwn. "wincmd w"
+	exec "norm "."`P"
 endfunction
 
 "http://www.vimer.cn/2010/01/饭前甜点-vimgvim自动在cpp文件中添加-h文件包含.html
@@ -804,6 +806,7 @@ function! MakeSessionInCurDir(name, bang)
 endfunction
 
 function! MultiGrepCurWord(name, bang)
+	exec "norm "."mP"
 	let l:cmd = "mg.sh ".expand("<cword>")
 	let l:bwn = bufwinnr("%")
 	let l:_resp = system(l:cmd)
@@ -811,6 +814,7 @@ function! MultiGrepCurWord(name, bang)
 	call ReadQuickfixFile(0)
 	vert copen 45
 	exec l:bwn. "wincmd w"
+	exec "norm "."`P"
 endfunction
 
 function! OpenQuickfixBuf()
