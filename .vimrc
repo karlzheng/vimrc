@@ -662,16 +662,12 @@ function! GoNextBuffer()
 	if &diff
 		exec "normal ]c"
 	else
-		if IsQuickfixVisual()
-			cn
-		else
+		bn
+		let l:c = 0
+		while ((expand("%:p") == "") && (l:c < 10) || (&ft == 'qf') )
 			bn
-			let l:c = 0
-			while ((expand("%:p") == "") && l:c < 10)
-				bn
-				let l:c = l:c + 1
-			endwhile
-		endif
+			let l:c = l:c + 1
+		endwhile
 	endif
 endfunction
 
@@ -679,16 +675,12 @@ function! GoPreBuffer()
 	if &diff
 		exec "normal [c"
 	else
-		if IsQuickfixVisual()
-			cp
-		else
+		bp
+		let l:c = 0
+		while ((expand("%:p") == "") && (l:c < 10) || (&ft == 'qf') )
 			bp
-			let l:c = 0
-			while ((expand("%:p") == "") && l:c < 10)
-				bp
-				let l:c = l:c + 1
-			endwhile
-		endif
+			let l:c = l:c + 1
+		endwhile
 	endif
 endfunction
 
@@ -1704,6 +1696,9 @@ else
 	nnoremap <silent> K 1<C-W>-
 	nnoremap <silent> H 1<C-W><
 	nnoremap <silent> L 1<C-W>>
+
+	nnoremap <silent> n :cn<cr>
+	nnoremap <silent> p :cp<cr>
 endif
 
 nnoremap <silent> ,32 f vt "xx$"xp
