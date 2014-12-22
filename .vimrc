@@ -702,7 +702,7 @@ function! GrepCurWordInCurDir()
 	exec "cd ".l:filepath
 	let l:w = expand("<cword>")
 	let l:w = substitute(l:w, '\n', '', 'g')
-	let l:c = 'mg.sh '.l:w
+	let l:c = 'm.sh '.l:w
 	let l:_resp = system(l:c)
 	call ReadQuickfixFile(0)
 	cclose
@@ -799,7 +799,7 @@ endfunction
 
 function! MultiGrepCurWord(name, bang)
 	exec "norm "."mP"
-	let l:cmd = "mg.sh ".expand("<cword>")
+	let l:cmd = "m.sh ".expand("<cword>")
 	let l:bwn = bufwinnr("%")
 	let l:_resp = system(l:cmd)
 	"silent! exec l:cmd
