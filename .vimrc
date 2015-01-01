@@ -170,7 +170,10 @@ func! AddDebugLine()
 		let l:msg = 'import inspect;print ("karldbg %s %d" %(__file__, inspect.currentframe().f_lineno))'
 	endif
 	if &ft == "sh"
-		let l:msg ='echo karldbg ${BASH_SOURCE[0]} $LINENO'
+		let l:msg = 'echo karldbg ${BASH_SOURCE[0]} $LINENO'
+	endif
+	if &ft == "lua"
+		let l:msg = 'require "MZLog".log(3, debug.getinfo(1).currentline)'
 	endif
 	if l:msg != ''
 		call append(line('.'), l:msg)
