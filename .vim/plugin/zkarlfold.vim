@@ -94,10 +94,10 @@ function! ZKarlBlockFoldFunc()
 	
 	let l:curline = ZKarlFindStartLine(l:curline, l:maxline)
 
-	if getline(l:startline) =~ '#ifdef' || getline(l:startline) =~ '#if defined' || getline(l:startline) =~ '#if ' || getline(l:startline) =~ '#ifndef ' || getline(l:startline) =~ '#else'
-		normal ]#
+	if getline(l:startline) =~ '^\s*#ifdef' || getline(l:startline) =~ '^\s*#if defined' || getline(l:startline) =~ '^\s*#if ' || getline(l:startline) =~ '^\s*#ifndef ' || getline(l:startline) =~ '^\s*#else'
 		let l:start_line = l:curline
-		let l:end_line = line('.') - 1
+		normal ]#
+		let l:end_line = line(".") - 1
 		normal zd
 		exe ":".l:start_line.",".l:end_line."fo"
 	elseif getline(l:curline) =~ '{\s*$'
