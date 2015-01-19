@@ -103,6 +103,7 @@ function! ZKarlBlockFoldFunc()
 		normal zd
 		exe ":".l:start_line.",".l:end_line."fo"
 	elseif getline(l:startline) =~ "^\s*function "
+		exe ":".l:startline
 		normal %
 		normal mz
 		normal ``
