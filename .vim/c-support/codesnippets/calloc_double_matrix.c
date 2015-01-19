@@ -1,5 +1,5 @@
 
-/* 
+/*
  * ===  FUNCTION  ======================================================================
  *         Name:  calloc_double_matrix
  *  Description:  Allocate a dynamic double-matrix of size rows*columns;
@@ -20,7 +20,7 @@ calloc_double_matrix ( int rows, int columns )
   return m;
 }  /* ----------  end of function calloc_double_matrix  ---------- */
 
-/* 
+/*
  * ===  FUNCTION  ======================================================================
  *         Name:  free_matrix_double
  *  Description:  Free a dynamic double-matrix.

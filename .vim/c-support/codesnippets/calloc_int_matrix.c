@@ -1,5 +1,5 @@
 
-/* 
+/*
  * ===  FUNCTION  ======================================================================
  *         Name:  calloc_int_matrix
  *  Description:  Allocate a dynamic int-matrix of size rows*columns; return a pointer.
@@ -19,7 +19,7 @@ calloc_int_matrix ( int rows, int columns )
   return m;
 }  /* ----------  end of function calloc_int_matrix  ---------- */
 
-/* 
+/*
  * ===  FUNCTION  ======================================================================
  *         Name:  free_int_matrix
  *  Description:  Free a dynamic int-matrix.
