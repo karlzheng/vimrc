@@ -25,7 +25,7 @@ cnoremap  <Home>
 cnoremap  <End>
 cnoremap  <Left>
 "cnoremap  <C-\>eEndCmdlineMode()
-cnoremap  <Right>
+"cnoremap  <Right>
 cnoremap  <C-\>eKillTextFromCursorPositionToEnd()
 cnoremap  <C-\>eCopyText()
 cnoremap  <C-\>eBackwardsPositionCursor()
