@@ -444,11 +444,11 @@ function! EditAbsoluteFilePath()
 endfunction
 
 func! EditBashLog()
-	let l:f = g:hDir."/tmp/bash_history"
+	let l:f = g:hDir.'/.bash_history'
 	if filereadable(l:f)
 		exec "e ".l:f
 	endif
-	let l:f = g:hDir.'/.bash_history'
+	let l:f = g:hDir."/tmp/bash_history"
 	if filereadable(l:f)
 		exec "e ".l:f
 	endif
@@ -1705,6 +1705,7 @@ else
 endif
 
 nnoremap <silent> ,32 f vt "xx$"xp
+nnoremap <cr> :nohl<cr><cr>
 nnoremap <leader>ac :call EnterSavedPath()<cr>
 nnoremap <silent> <leader>al :call AddDebugLine()<cr>
 nnoremap <leader>ap :call SaveFilePath()<cr>
