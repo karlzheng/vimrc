@@ -95,7 +95,7 @@ set statusline=\[%{getcwd()}]\[%f]%m%r%h%w\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
 set switchbuf=useopen
 set tabstop=4
 set termencoding=utf-8
-set textwidth=78
+set textwidth=10000
 set whichwrap=b,s,h,l
 set winaltkeys=no
 set wrap
@@ -386,6 +386,14 @@ function! CscopeSeach()
 	cclose
 	vert copen 45
 	exec l:bwn. "wincmd w"
+endfunction
+
+function! DeleteSpaceLine()
+	normal "mo"
+	let l:r=@/
+	exec 'g#^\s*$#d'
+	let @/=l:r
+	normal "`o"
 endfunction
 
 function! DiffSplitFiles()
@@ -1727,6 +1735,7 @@ nnoremap <leader>cw :call OpenQuickfixBuf()<cr>
 nnoremap <silent> <leader>da :%d<cr>
 nnoremap <silent> <leader>db :bdelete<cr>
 nnoremap <leader>ddo :BcloseOthers<cr>
+nnoremap <silent> <leader>de :%s#\s*$##g<cr>:nohl<cr><c-o>
 nnoremap <silent> <leader>df :call DiffSplitFiles()<cr>
 nnoremap <silent> <leader>dl :bdelete #<cr>
 nnoremap <silent> <leader>dk :%s#.*karlzheng_todel.*\n##<cr>
@@ -1734,7 +1743,7 @@ nnoremap <silent> <leader>dm :%s#.*karldbg.*\n##<cr>
 nnoremap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
 nnoremap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
 nnoremap <silent> <leader>dr :%s#\r\n#\r#g<cr>
-nnoremap <silent> <leader>ds :%s#\s*$##g<cr>:nohl<cr><c-o>
+nnoremap <silent> <leader>ds :call DeleteSpaceLine()<cr>
 nnoremap <silent> <leader>dt :Rename! ~/tmp/del_%:t<cr>
 nnoremap <silent> <leader>d# :bd#<cr>
 nnoremap <silent> <leader>e. :e .<cr>
