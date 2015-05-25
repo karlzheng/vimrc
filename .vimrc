@@ -1160,10 +1160,12 @@ endfunc
 
 function! SaveYankText()
 	let l:lines = []
-	let l:line = getline(".")
-	call add(l:lines, l:line)
+	"let l:line = getline(".")
+	let l:w = expand("<cword>")
+	call add(l:lines, l:w)
 	call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
-	exec 'norm yy"+yy"*yy'
+	"exec 'norm yy"+yy"*yy'
+	exec 'norm "+yw"*yw'
 endfunction
 
 function! SaveYankTextInVisual()
