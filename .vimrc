@@ -48,6 +48,7 @@ set ar
 set autoindent
 set aw
 "set clipboard+=unnamed
+set clipboard=unnamedplus
 set cot=menuone
 set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
 set cscopetag
@@ -1829,7 +1830,8 @@ nnoremap <silent> <leader>rt :r ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>sc :set ft=c<cr>
 nnoremap <silent> <leader>sd :call SvnDiffCurrentFile()<cr>
 nnoremap <leader>sf :call SaveFile2Tar()<cr>
-nnoremap <silent> <leader>sl :!svn log %<cr>
+"nnoremap <silent> <leader>sl :!svn log %<cr>
+nnoremap <silent> <leader>sl :s# \+#\r#g<cr>
 nnoremap <silent> <leader>sn :set nu<cr>
 nnoremap <silent> <leader>sm :set ft=make<cr>
 nnoremap <silent> <leader>sp :set paste<cr>
