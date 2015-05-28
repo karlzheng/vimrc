@@ -576,7 +576,9 @@ function! EditScratch()
 		let l:hasScratchBuf = 0
 		for i in range(1,bufnr("$"))
 			if buflisted(i)
-				if bufname(i) == g:hDir."/tmp/scratch"
+				"if bufname(i) == g:hDir."/tmp/scratch"
+				let l:fn = expand("#".i.":t")
+				if l:fn == "scratch"
 					let l:hasScratchBuf = 1
 				endif
 			endif
@@ -1844,7 +1846,8 @@ nnoremap <silent> <leader>tl :TlistToggle<cr>
 nnoremap <silent> <leader>vb :e ~/.bashrc<cr>Gk$
 nnoremap <leader>vl :call EditBashLog()<cr>
 nnoremap <silent> <leader>vs :vs<cr>
-nnoremap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
+nnoremap <silent> <leader>vt :vs ~/tmp/tee.log<cr>
+"nnoremap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wj <C-W>j
 nnoremap <silent> <leader>wk <C-W>k
 nnoremap <silent> <leader>wh <C-W>h

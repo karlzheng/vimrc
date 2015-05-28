@@ -10,4 +10,5 @@ cscope.po.out
 filenametags
 fullfilenametags
 tags
-.vim/.netrwhist
+/.vim/.netrwhist
+/.vim/plugin/totd.vim
