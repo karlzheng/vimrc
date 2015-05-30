@@ -665,6 +665,12 @@ function! Getfilename(name, bang)
 	let @*= expand("%:p")."\n"
 endfunction
 
+function! GetFileNameTail(name, bang)
+	let @"= expand("%:t")."\n"
+	let @+= expand("%:t")."\n"
+	let @*= expand("%:t")."\n"
+endfunction
+
 function! GitDiffLog1()
 	let l:firsttag=@g
 	let l:secondtag = expand("<cword>")
@@ -1187,7 +1193,8 @@ function! SaveRelaPathFileName()
 		let l:f = substitute(l:f, '^/tmp/b/', "", "")
 		let l:f = substitute(l:f, '^a/', "", "")
 		let l:f = substitute(l:f, '^b/', "", "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/relaFn'
+		"let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/relaFn'
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1673,6 +1680,7 @@ endf
 command! -nargs=* -complete=file -bang ExecLineText :call ExecLineText("<args>", "<bang>")
 command! -nargs=+ -complete=dir FindFiles :call FindFiles(<f-args>)
 command! -nargs=* -complete=file -bang Getfilename :call Getfilename("<args>", "<bang>")
+command! -nargs=* -complete=file -bang GetFileNameTail :call GetFileNameTail("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang LookupPartFilenameTag :call LookupPartFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=file -bang M1 :call MakeSession("<args>", "<bang>")
@@ -1770,6 +1778,7 @@ nnoremap <silent> <leader>es :call EditScratch()<cr>
 nnoremap <silent> <leader>et :e ~/tmp/tee.log<cr>
 nnoremap <silent> <leader>ev :e ~/.vimrc<cr>
 nnoremap <leader>ey :call EditYankText()<cr>
+nnoremap          <leader>gm :call GetFileNameTail("", "")<CR>
 nnoremap          <leader>gn :call Getfilename("", "")<CR>
 nnoremap <leader>fa :call SaveAbsPathFileName()<cr>
 nnoremap <leader>fb :call SaveRelaPathFileName()<cr>
