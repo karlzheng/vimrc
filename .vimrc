@@ -1816,6 +1816,7 @@ nnoremap <silent> <leader>jj ggVGJ
 nnoremap <leader>ma :set modifiable<cr>
 nnoremap <silent> <leader>mj :make -j16<cr>
 nnoremap <silent> <leader>mk :MarksBrowser<cr>
+nnoremap <silent> <leader>ml :e /tmp/minicom.log<cr>
 nnoremap <silent> <leader>mz :make zImage -j16<cr>
 nnoremap <silent> <leader>nl :nohl<cr>
 nnoremap <silent> <leader>nn :set nonu<cr>
