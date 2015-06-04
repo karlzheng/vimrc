@@ -1797,6 +1797,7 @@ nnoremap <silent> <leader>gc :git checkout -- %<cr>
 nnoremap <silent> <leader>ge :!gedit %&<cr>
 nnoremap <silent> <leader>gg :call CompileByGcc()<cr>
 nnoremap <silent> <leader>gj ggVGgJ
+nnoremap <silent> <leader>gs :call ZKarl_Find_SpaceLine('next')<cr>
 nnoremap <leader>gw "gyiw
 nnoremap <leader>ih :call InsertIncludeFileN(0)<CR>
 "nnoremap <leader>kb :!p2d.sh % 1>/dev/null 2>&1 &<cr><cr>
@@ -1853,6 +1854,7 @@ nnoremap <leader>sq :call SaveQuickfixToFile()<cr>
 nnoremap <silent> <leader>ss :source %<cr>
 nnoremap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
 nnoremap <silent> <leader>tl :TlistToggle<cr>
+nnoremap <silent> <leader>us :call ZKarl_Find_SpaceLine('pre')<cr>
 nnoremap <silent> <leader>vb :e ~/.bashrc<cr>Gk$
 nnoremap <leader>vl :call EditBashLog()<cr>
 nnoremap <silent> <leader>vs :vs<cr>
