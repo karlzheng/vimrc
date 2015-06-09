@@ -53,6 +53,7 @@ set cot=menuone
 set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
 set cscopetag
 set dictionary+=~/.vim/usr_bin_cmd.txt,~/.vim/bash-support/wordlists/bash.list
+"set &sessionoptions
 "set encoding=prc
 set encoding=utf-8
 set fencs=utf-8,gbk,big5,gb2312,gb18030,euc-jp,utf-16le
