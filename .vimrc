@@ -438,17 +438,24 @@ function! EnterSavedPath()
 endfunction
 
 function! EditAbsoluteFilePath()
-	let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
-	let l:f = system(l:_cmd_)
-	"let l:f = "'".escape(l:f, '%')."'"
-	let l:f = escape(l:f, '%')
-	if filereadable(l:f)
-		exec "e ".l:f
+	let l:absfn = '/dev/shm/'.g:whoami.'/absfn'
+	let l:_cmd_ = 'cat '.l:absfn.'| wc -l'
+	let l:ret = system(l:_cmd_)
+	if l:ret > 1
+		exec "e ".l:absfn
 	else
-		if isdirectory(l:f)
+		let l:_cmd_ = 'cat '.'/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
+		let l:f = system(l:_cmd_)
+		"let l:f = "'".escape(l:f, '%')."'"
+		let l:f = escape(l:f, '%')
+		if filereadable(l:f)
 			exec "e ".l:f
 		else
-			echo "has no file: ". l:f
+			if isdirectory(l:f)
+				exec "e ".l:f
+			else
+				echo "has no file: ". l:f
+			endif
 		endif
 	endif
 endfunction
@@ -1859,7 +1866,7 @@ nnoremap <silent> <leader>us :call ZKarl_Find_SpaceLine('pre')<cr>
 nnoremap <silent> <leader>vb :e ~/.bashrc<cr>Gk$
 nnoremap <leader>vl :call EditBashLog()<cr>
 nnoremap <silent> <leader>vs :vs<cr>
-nnoremap <silent> <leader>vt :vs ~/tmp/tee.log<cr>
+nnoremap <silent> <leader>vt :vs ~/tmp/tee.log<cr><c-w>L
 "nnoremap <silent> <leader>vt :vs ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wj <C-W>j
 nnoremap <silent> <leader>wk <C-W>k
