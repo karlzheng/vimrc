@@ -73,7 +73,7 @@ set history=500
 set hlsearch
 set incsearch
 set isf-==
-set iskeyword-=",/,,
+set iskeyword-=",.,/,,
 " for  # * quick lookup
 set iskeyword+=_
 set laststatus=2
@@ -1700,12 +1700,14 @@ command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
 command! -nargs=* -complete=file -bang S1 :call SourceSession("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
 command! -nargs=* -complete=file -bang S2 :call SourceSessionInCurDir("<args>", "<bang>")
+
 command! Bclose call <SID>BufcloseCloseIt(0)
 command! BcloseDraft call <SID>BufcloseCloseDraft()
 command! BcloseOthers call <SID>BufCloseOthers()
 command! Bwipe  call <SID>BufcloseCloseIt(1)
 command! CG call ReadQuickfixFile(1)
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+command! EditAbsoluteFilePath call EditAbsoluteFilePath()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " normal mode key remap
