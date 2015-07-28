@@ -1296,6 +1296,21 @@ function! ShowGitDiffInBcompare()
 	endif
 endfunc
 
+function! ShowGitDiffInKompare()
+	call GitDiffLog()
+	exec "!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+	call SwitchToBuf("gitdiff.c")
+	q
+	let l:f=expand("%:t")
+	if l:f == "-MiniBufExplorer-"
+		exec "normal! \<C-W>j"
+	endif
+	let l:f=expand("%:t")
+	if l:f == "__Tag_List__"
+		exec "normal! \<C-W>l"
+	endif
+endfunc
+
 function! SourceSession(name, bang)
 	if isdirectory('/dev/shm/'.g:whoami)
 		let l:cmd = "source /dev/shm/".g:whoami."/edit.vim"
@@ -1801,6 +1816,8 @@ nnoremap <leader>fi :setlocal foldmethod=indent<cr>zR
 nnoremap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
 nnoremap <leader>fp :call CDAbsPath()<cr>
 nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
+nnoremap <leader>gd :call GitDiffLog()<cr>
+nnoremap <leader>gf :GitEditFileInLine<cr>
 nnoremap <leader>gi gg/include<cr>
 nnoremap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 nnoremap <silent> <leader>gc :git checkout -- %<cr>
@@ -1910,6 +1927,8 @@ nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
 nnoremap <C-e> <End>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
+nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
+nnoremap <c-g><c-d> :call GitDiffLog()<cr>
 nnoremap <silent> <C-j>  <C-w>j
 nnoremap <silent> <C-k>  <C-w>k
 nnoremap <silent> <C-h>  <c-w>h

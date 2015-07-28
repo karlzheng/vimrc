@@ -114,8 +114,6 @@ function! GitDiffLog_and_bcompare()
 endfunc
 
 "nnoremap <leader>gb :call GitDiffLog_and_bcompare()<cr>
-nnoremap <leader>gd :call GitDiffLog()<cr>
-nnoremap <c-g><c-d> :call GitDiffLog()<cr>
 
 function! <SID>GitEditFileInLine()
 	let l:linetext = getline('.')
@@ -139,5 +137,3 @@ function! <SID>GitEditFileInLine()
 	"exe "wincmd J"
 endfunction
 command! GitEditFileInLine call <SID>GitEditFileInLine()
-nnoremap <leader>gf :GitEditFileInLine<cr>
-
