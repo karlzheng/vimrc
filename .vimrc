@@ -1952,6 +1952,11 @@ nnoremap <silent> d dw
 nnoremap <silent> n :call GoNextQuickfix()<cr>
 nnoremap <silent> p :call GoPreQuickfix()<cr>
 
+" Move to next/previous line with same indentation
+"https://github.com/hmgle/gle_vimrc/blob/master/vimrc
+nnoremap <silent> ]d :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%>' . line('.') . 'l\S', 'e')<CR>
+nnoremap <silent> ]u :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%<' . line('.') . 'l\S', 'be')<CR>
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " insert mode key remap
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
