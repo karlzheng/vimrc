@@ -705,7 +705,7 @@ function! GoPreBuffer()
 	else
 		bp
 		let l:c = 0
-		while ((expand("%:p") == "") && (l:c < 10) || (&ft == 'qf') )
+		while ((expand("%:p") == "") && (l:c < 20) || (&ft == 'qf') )
 			bp
 			let l:c = l:c + 1
 		endwhile
@@ -1281,6 +1281,12 @@ function! SetColorColumnC80()
 	endif
 endfunction
 
+function! SetLineNumber()
+	"for i in range(0,15)
+		"call setline(line('.')+i, i.' '.getline(line('.')+i))
+	"endfor
+endfunction
+
 function! ShowGitDiffInBcompare()
 	call GitDiffLog()
 	exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
@@ -1750,6 +1756,7 @@ else
 	nnoremap <silent> p :cp<cr>
 endif
 
+nnoremap <silent> ,1ea :1sp<cr>:call EditAbsoluteFilePath()<cr>
 nnoremap <silent> ,32 f vt "xx$"xp
 nnoremap <cr> :nohl<cr><cr>
 nnoremap <leader>ac :call EnterSavedPath()<cr>
@@ -1792,6 +1799,7 @@ nnoremap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
 nnoremap <leader>ec :call EditConfig()<cr>
 nnoremap <silent> <leader>ed :call EdCommandProxy()<cr>
 nnoremap <silent> <leader>ee :e!<cr>
+nnoremap <silent> <leader>ef :1sp<cr>:e /tmp/file.log<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
 nnoremap <silent> <leader>ek :call EditKconfig()<cr>
 nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
