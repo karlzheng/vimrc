@@ -1799,7 +1799,8 @@ nnoremap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
 nnoremap <leader>ec :call EditConfig()<cr>
 nnoremap <silent> <leader>ed :call EdCommandProxy()<cr>
 nnoremap <silent> <leader>ee :e!<cr>
-nnoremap <silent> <leader>ef :1sp<cr>:e /tmp/file.log<cr>
+nnoremap <silent> <leader>ef :sp<cr>:wincmd w<cr>:resize 1<cr>:e /tmp/file.log<cr>
+nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/gfile.log<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
 nnoremap <silent> <leader>ek :call EditKconfig()<cr>
 nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
