@@ -1910,6 +1910,7 @@ nnoremap <leader>w2 :w! ~/tmp/tmp_work_file/2.c<cr>
 nnoremap <leader>wt :silent! w! ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wa :wa<cr>
 nnoremap <silent> <leader>wf :w!<cr>
+nnoremap <silent> <leader>wi :wviminfo<cr>
 nnoremap <silent> <leader>wq :wq<cr>
 nnoremap <silent> <leader>ww :w<cr>
 nnoremap <silent> <leader>WW :w<cr>
