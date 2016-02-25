@@ -1872,6 +1872,7 @@ nnoremap <silent> <leader>ra :!./a.out<cr>
 "nnoremap <silent> <leader>rd :r ~/tmp/delay.c<cr>
 nnoremap <silent> <leader>rd :call ReadDate()<cr>
 nnoremap <leader>rf :call ReplaceFilePath4fp()<cr>
+nnoremap <leader>ri :rviminfo<cr>
 nnoremap <silent> <leader>rl :%d<CR>"+p
 nnoremap <silent> <leader>rm :r ~/tmp/main.c<cr>
 nnoremap <leader>rn :call ReplaceMyUserName()<cr>
