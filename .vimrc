@@ -1671,8 +1671,8 @@ vmap <silent> <leader>hr <Plug>MarkRegex
 "let loaded_minibufexplorer = 1         " *** Enable minibuffer plugin
 let g:miniBufExplorerMoreThanOne = 0   " Display when more than 2 buffers
 let g:miniBufExplSplitToEdge = 1       " Always at top
-let g:miniBufExplMaxSize = 3           " The max height is 3 lines
-let g:miniBufExplMinSize = 1
+let g:miniBufExplMaxSize = 4           " The max height is 3 lines
+let g:miniBufExplMinSize = 0
 
 "let g:miniBufExplMapWindowNavVim = 1   " map CTRL-[hjkl]
 let g:miniBufExplUseSingleClick = 1    " select by single click
@@ -1952,6 +1952,7 @@ nnoremap <silent> <F7> :cn<CR>
 "nnoremap <silent> <F7> :SrcExplToggle<CR>
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
+nnoremap <c-a> :call QuickfixToggle()<cr>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
 nnoremap <c-e> :call EditTmpFile()<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
@@ -1965,7 +1966,7 @@ nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
 nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
 nnoremap <c-s> :w!<cr>
 nnoremap <c-t> :Ydc<CR>
-nnoremap <c-q> :call QuickfixToggle()<cr>
+nnoremap <c-q> :q<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
 nnoremap <c-x><c-w> :Bwipe<cr>
