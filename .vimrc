@@ -38,9 +38,9 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader=","
 let g:BASH_Ctrl_j='on'
+let g:EditTmpFilePos = 1
 let g:use_gtags=0
 "let g:use_gtags=1
-
 set nocompatible
 "au BufRead ft=Help set nu
 set ar
@@ -601,6 +601,22 @@ function! EditScratch()
 	endif
 endfunction
 
+function! EditTmpFile()
+	if Is_File_Visual_In_Buf("/tmp/file.log")
+		call SwitchToBuf("/tmp/file.log")
+		let g:EditTmpFilePos = line(".")
+		Bclose
+	else
+		if winheight(0) != 1
+			sp
+			wincmd w
+			resize 1
+		endif
+		e /tmp/file.log
+		exec g:EditTmpFilePos
+	endif
+endfunction
+
 function! EditWorkDiary()
 	let l:f = g:hDir."/tmp/workDiary/diary.txt"
 	if filereadable(l:f)
@@ -758,20 +774,21 @@ function! InsertYankText()
 endfunction
 
 "http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
-function! IsQuickfixVisual()
-	let l:is_quickfix_visual = 0
+function! Is_File_Visual_In_Buf(fn)
+	let l:is_fn_visual = 0
+	let l:fn = a:fn
 	redir => l:buflist
 	silent! ls
 	redir END
 	"for bufnum in filter(split(g:buflist, '\n'), 'v:val =~ "Quickfix List"')
 	""let g:mynr = str2nr(matchstr(bufnum, "\\d\\+"))
-	"let l:is_quickfix_visual = 1
+	"let l:is_fn_visual = 1
 	"endfor
 	"http://rickey-nctu.blogspot.com/2009/02/vim-quickfix.html
-	if match(l:buflist, "[Quickfix List") != -1
-	let l:is_quickfix_visual = 1
+	if match(l:buflist, l:fn) != -1
+		let l:is_fn_visual = 1
 	endif
-	return l:is_quickfix_visual
+	return l:is_fn_visual
 endfunction
 
 func! LookupFullFilenameTag(line, bang)
@@ -981,7 +998,7 @@ endf
 
 func! QuickfixToggle()
 	let l:bwn = bufwinnr("%")
-	if IsQuickfixVisual()
+	if Is_File_Visual_In_Buf("[Quickfix List")
 		cclose
 	else
 		call OpenQuickfixBuf()
@@ -1795,28 +1812,26 @@ nnoremap <silent> <leader>e. :e .<cr>
 nnoremap <silent> <leader>e1 :e ~/tmp/tmp_work_file/1.c<cr>
 nnoremap <silent> <leader>e2 :e ~/tmp/tmp_work_file/2.c<cr>
 nnoremap <silent> <leader>ea :call EditAbsoluteFilePath()<cr>
-nnoremap <silent> <leader>eb :call EditCurFileRelaPath()<cr>
 nnoremap <leader>ec :call EditConfig()<cr>
 nnoremap <silent> <leader>ed :call EdCommandProxy()<cr>
 nnoremap <silent> <leader>ee :e!<cr>
 nnoremap <silent> <leader>ef :sp<cr>:wincmd w<cr>:resize 1<cr>:e /tmp/file.log<cr>
-nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/gfile.log<cr>
+nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/st/<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
 nnoremap <silent> <leader>ek :call EditKconfig()<cr>
 nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
 "nnoremap <silent> <leader>em :e mgrep.mk<cr>
 nnoremap <silent> <leader>em :call EditMakefile()<cr>
 nnoremap <silent> <leader>ep :call EditFilePath()<cr>
-nnoremap <leader>eq :call EditQuickfixList()<cr>
+nnoremap <silent> <leader>eq :call EditQuickfixList()<cr>
+nnoremap <silent> <leader>er :call EditCurFileRelaPath()<cr>
 nnoremap <silent> <leader>es :call EditScratch()<cr>
 nnoremap <silent> <leader>et :e ~/tmp/tee.log<cr>
 nnoremap <silent> <leader>ev :e ~/.vimrc<cr>
-nnoremap <leader>ey :call EditYankText()<cr>
-nnoremap          <leader>gm :call GetFileNameTail("", "")<CR>
-nnoremap          <leader>gn :call Getfilename("", "")<CR>
-nnoremap <leader>fa :call SaveAbsPathFileName()<cr>
-nnoremap <leader>fb :call SaveRelaPathFileName()<cr>
-nnoremap <leader>fc :cs find c
+nnoremap          <leader>ey :call EditYankText()<cr>
+nnoremap          <leader>fa :call SaveAbsPathFileName()<cr>
+nnoremap          <leader>fb :call SaveRelaPathFileName()<cr>
+nnoremap          <leader>fc :cs find c
 nnoremap <silent> <leader>fe :Sexplore!<cr>
 nnoremap <leader>fg :cs find g
 nnoremap <leader>fm :setlocal foldmethod=manual<cr>
@@ -1828,6 +1843,8 @@ nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/nul
 nnoremap <leader>gd :call GitDiffLog()<cr>
 nnoremap <leader>gf :GitEditFileInLine<cr>
 nnoremap <leader>gi gg/include<cr>
+nnoremap <leader>gm :call GetFileNameTail("", "")<CR>
+nnoremap <leader>gn :call Getfilename("", "")<CR>
 nnoremap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 nnoremap <silent> <leader>gc :git checkout -- %<cr>
 nnoremap <silent> <leader>ge :!gedit %&<cr>
@@ -1936,7 +1953,7 @@ nnoremap <silent> <F7> :cn<CR>
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
-nnoremap <C-e> <End>
+nnoremap <c-e> :call EditTmpFile()<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
 nnoremap <c-g><c-d> :call GitDiffLog()<cr>
