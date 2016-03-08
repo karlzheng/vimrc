@@ -1886,7 +1886,7 @@ nnoremap <leader>sf :call SaveFile2Tar()<cr>
 nnoremap <silent> <leader>sl :s# \+#\r#g<cr>
 nnoremap <silent> <leader>sn :set nu<cr>
 nnoremap <silent> <leader>sm :set ft=make<cr>
-nnoremap <silent> <leader>sp :set paste<cr>
+nnoremap <silent> <leader>sp :split<cr>
 nnoremap <leader>sq :call SaveQuickfixToFile()<cr>
 nnoremap <silent> <leader>ss :source %<cr>
 nnoremap <silent> <leader>srv :call SvnRevertCurrentFile()<cr>
@@ -1929,7 +1929,7 @@ cnoremap <silent> <F3> Bgrep
 nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
-nnoremap <silent> <F4> :SrcExplToggle<CR>
+"nnoremap <silent> <F4> :SrcExplToggle<CR>
 nnoremap <silent> <F6> :cp<CR>
 nnoremap <silent> <F7> :cn<CR>
 "nnoremap <silent> <F7> :SrcExplToggle<CR>
