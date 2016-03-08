@@ -1966,7 +1966,7 @@ nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
 nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
 nnoremap <c-s> :w!<cr>
 nnoremap <c-t> :Ydc<CR>
-nnoremap <c-q> :q<cr>
+nnoremap <c-q> :Bclose<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
 nnoremap <c-x><c-w> :Bwipe<cr>
