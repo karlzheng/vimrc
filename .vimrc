@@ -609,6 +609,8 @@ function! EditTmpFile()
 	else
 		if winheight(0) != 1
 			sp
+			wincmd j
+			wincmd j
 			wincmd w
 			resize 1
 		endif
