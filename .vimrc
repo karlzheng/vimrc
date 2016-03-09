@@ -608,8 +608,8 @@ function! EditTmpFile()
 		Bclose
 	else
 		if winheight(0) != 1
-			sp
 			wincmd j
+			sp
 			wincmd j
 			wincmd w
 			resize 1
