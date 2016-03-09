@@ -611,7 +611,6 @@ function! EditTmpFile()
 			wincmd j
 			sp
 			wincmd j
-			wincmd w
 			resize 1
 		endif
 		e /tmp/file.log
