@@ -1671,8 +1671,8 @@ vmap <silent> <leader>hr <Plug>MarkRegex
 "let loaded_minibufexplorer = 1         " *** Enable minibuffer plugin
 let g:miniBufExplorerMoreThanOne = 0   " Display when more than 2 buffers
 let g:miniBufExplSplitToEdge = 1       " Always at top
-let g:miniBufExplMaxSize = 4           " The max height is 3 lines
-let g:miniBufExplMinSize = 0
+let g:miniBufExplMaxSize = 3           " The max height is 3 lines
+let g:miniBufExplMinSize = 1
 
 "let g:miniBufExplMapWindowNavVim = 1   " map CTRL-[hjkl]
 let g:miniBufExplUseSingleClick = 1    " select by single click
@@ -2085,7 +2085,7 @@ au! BufReadPost quickfix  call QuifixBufReadPost_Process()
 autocmd BufWinEnter \[Buf\ List\] setl nonumber
 autocmd BufRead,BufNew :call UMiniBufExplorer
 "autocmd BufWrite *.cpp,*.h,*.c call UpdateCscope()
-autocmd BufWrite *.cpp,*.h,*.c call UpdateTags()
+"autocmd BufWrite *.cpp,*.h,*.c call UpdateTags()
 autocmd VimEnter * call BufPos_Initialize()
 
 
