@@ -601,9 +601,10 @@ function! EditScratch()
 	endif
 endfunction
 
-function! EditTmpFile()
-	if Is_File_Visual_In_Buf("/tmp/file.log")
-		call SwitchToBuf("/tmp/file.log")
+function! EditTmpFile(fn)
+	let l:fn = a:fn
+	if Is_File_Visual_In_Buf(l:fn)
+		call SwitchToBuf(l:fn)
 		let g:EditTmpFilePos = line(".")
 		Bclose
 	else
@@ -611,10 +612,11 @@ function! EditTmpFile()
 		if winheight(0) != 1
 			sp
 			wincmd j
-			resize 1
+			if winheight(0) != 1
+				resize 1
+			endif
 		endif
-		e /tmp/file.log
-		exec g:EditTmpFilePos
+		exec "e".l:fn
 	endif
 endfunction
 
@@ -786,9 +788,16 @@ function! Is_File_Visual_In_Buf(fn)
 	"let l:is_fn_visual = 1
 	"endfor
 	"http://rickey-nctu.blogspot.com/2009/02/vim-quickfix.html
-	if match(l:buflist, l:fn) != -1
-		let l:is_fn_visual = 1
-	endif
+	"echohl l:buflist
+	try
+		let l:fn = escape(l:fn, '\\/.*$^~[]')
+		if match(l:buflist, l:fn) != -1
+			let l:is_fn_visual = 1
+		endif
+	catch
+		echohl ErrorMsg | echo "Exception: " . v:exception | echo v:errmsg | echohl NONE
+		return l:is_fn_visual
+	endtry
 	return l:is_fn_visual
 endfunction
 
@@ -1956,7 +1965,7 @@ nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-a> :call QuickfixToggle()<cr>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
-nnoremap <c-e> :call EditTmpFile()<cr>
+nnoremap <c-e> :call EditTmpFile("/tmp/file.log")<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
 nnoremap <c-g><c-d> :call GitDiffLog()<cr>
@@ -1967,7 +1976,8 @@ nnoremap <silent> <C-l>  <c-w>l
 nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
 nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
 nnoremap <c-s> :w!<cr>
-nnoremap <c-t> :Ydc<CR>
+"nnoremap <c-t> :Ydc<CR>
+nnoremap <c-t> :call EditTmpFile('~/tmp/tee.log')<cr>
 nnoremap <c-q> :Bclose<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
