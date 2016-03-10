@@ -607,8 +607,8 @@ function! EditTmpFile()
 		let g:EditTmpFilePos = line(".")
 		Bclose
 	else
+		wincmd j
 		if winheight(0) != 1
-			wincmd j
 			sp
 			wincmd j
 			resize 1
@@ -1432,7 +1432,8 @@ function! SwitchToBuf(filename)
 			let tab = tab + 1
 		endwhile
 		" not exist, new tab
-		exec "tabnew " . a:filename
+		"exec "tabnew " . a:filename
+		exec "e " . a:filename
 	endif
 endfunction
 
