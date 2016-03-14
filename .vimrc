@@ -617,6 +617,7 @@ function! EditTmpFile(fn)
 			endif
 		endif
 		exec "e".l:fn
+		exec g:EditTmpFilePos
 	endif
 endfunction
 
