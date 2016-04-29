@@ -391,11 +391,11 @@ function! CscopeSeach()
 endfunction
 
 function! DeleteSpaceLine()
-	normal "mo"
+	normal mo
 	let l:r=@/
 	exec 'g#^\s*$#d'
 	let @/=l:r
-	normal "`o"
+	normal `o
 endfunction
 
 function! DiffSplitFiles()
@@ -604,20 +604,30 @@ endfunction
 function! EditTmpFile(fn)
 	let l:fn = a:fn
 	if Is_File_Visual_In_Buf(l:fn)
+		let l:fn = escape(l:fn, '\\/.*$^~[]')
 		call SwitchToBuf(l:fn)
 		let g:EditTmpFilePos = line(".")
 		Bclose
+		resize 1
 	else
-		wincmd j
-		if winheight(0) != 1
-			sp
+		try
 			wincmd j
-			if winheight(0) != 1
+			if winheight(0) > 2
+				sp
+				wincmd j
+				if winheight(0) > 1
+					resize 1
+				endif
+			else
 				resize 1
 			endif
-		endif
-		exec "e".l:fn
-		exec g:EditTmpFilePos
+			exec "e".l:fn
+			resize 1
+			exec "norm ".g:EditTmpFilePos."gg"
+			resize 1
+		catch
+			echohl ErrorMsg | echo "Exception: " . v:exception | echo v:errmsg | echohl NONE
+		endtry
 	endif
 endfunction
 
@@ -1854,7 +1864,7 @@ nnoremap <leader>fp :call CDAbsPath()<cr>
 nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 nnoremap <leader>gd :call GitDiffLog()<cr>
 nnoremap <leader>gf :GitEditFileInLine<cr>
-nnoremap <leader>gi gg/include<cr>
+nnoremap <leader>gi G?#include<cr>
 nnoremap <leader>gm :call GetFileNameTail("", "")<CR>
 nnoremap <leader>gn :call Getfilename("", "")<CR>
 nnoremap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
@@ -1940,7 +1950,7 @@ nnoremap <leader>w2 :w! ~/tmp/tmp_work_file/2.c<cr>
 nnoremap <leader>wt :silent! w! ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wa :wa<cr>
 nnoremap <silent> <leader>wf :w!<cr>
-nnoremap <silent> <leader>wi :wviminfo<cr>
+nnoremap          <leader>wi :wviminfo<cr>
 nnoremap <silent> <leader>wq :wq<cr>
 nnoremap <silent> <leader>ww :w<cr>
 nnoremap <silent> <leader>WW :w<cr>
