@@ -607,8 +607,9 @@ function! EditTmpFile(fn)
 		let l:fn = escape(l:fn, '\\/.*$^~[]')
 		call SwitchToBuf(l:fn)
 		let g:EditTmpFilePos = line(".")
-		Bclose
-		resize 1
+		"Bclose
+		"resize 1
+		Bwipe
 	else
 		try
 			wincmd j
@@ -1439,18 +1440,18 @@ function! SwitchToBuf(filename)
 		return
 	else
 		" find in each tab
-		tabfirst
-		let tab = 1
-		while tab <= tabpagenr("$")
-			let bufwinnr = bufwinnr(a:filename)
-			if bufwinnr != -1
-				exec "normal " . tab . "gt"
-				exec bufwinnr . "wincmd w"
-				return
-			endif
-			tabnext
-			let tab = tab + 1
-		endwhile
+		"tabfirst
+		"let tab = 1
+		"while tab <= tabpagenr("$")
+			"let bufwinnr = bufwinnr(a:filename)
+			"if bufwinnr != -1
+				"exec "normal " . tab . "gt"
+				"exec bufwinnr . "wincmd w"
+				"return
+			"endif
+			"tabnext
+			"let tab = tab + 1
+		"endwhile
 		" not exist, new tab
 		"exec "tabnew " . a:filename
 		exec "e " . a:filename
