@@ -115,8 +115,8 @@ if ! exists("g:root_work_path")
 endif
 
 "user HOME dir.
-if ! exists("g:hDir")
-    let g:hDir = system("echo ${HOME} | tr -d '\r' | tr -d '\n' ")
+if ! exists("g:homedir")
+    let g:homedir = system("echo ${HOME} | tr -d '\r' | tr -d '\n' ")
 endif
 
 if ! exists("g:whoami")
@@ -461,11 +461,11 @@ function! EditAbsoluteFilePath()
 endfunction
 
 func! EditBashLog()
-	let l:f = g:hDir.'/.bash_history'
+	let l:f = g:homedir.'/.bash_history'
 	if filereadable(l:f)
 		exec "e ".l:f
 	endif
-	let l:f = g:hDir."/tmp/bash_history"
+	let l:f = g:homedir."/tmp/bash_history"
 	if filereadable(l:f)
 		exec "e ".l:f
 	endif
@@ -571,20 +571,20 @@ function! EditMakefile()
 endfunction
 
 function! EditQuickfixList()
-	if filereadable(g:hDir."/dev/quickfix.txt")
-	exe 'e '.g:hDir.'/dev/quickfix.txt'
+	if filereadable(g:homedir."/dev/quickfix.txt")
+	exe 'e '.g:homedir.'/dev/quickfix.txt'
 	else
 	exe 'e /dev/shm/'.g:whoami.'/quickfix.txt'
 	endif
 endfunc
 
 function! EditScratch()
-	echo g:hDir
-	if filereadable(g:hDir."/tmp/.scratch.swp")
+	echo g:homedir
+	if filereadable(g:homedir."/tmp/.scratch.swp")
 		let l:hasScratchBuf = 0
 		for i in range(1,bufnr("$"))
 			if buflisted(i)
-				"if bufname(i) == g:hDir."/tmp/scratch"
+				"if bufname(i) == g:homedir."/tmp/scratch"
 				let l:fn = expand("#".i.":t")
 				if l:fn == "scratch"
 					let l:hasScratchBuf = 1
@@ -592,9 +592,9 @@ function! EditScratch()
 			endif
 		endfor
 		if l:hasScratchBuf
-			e ~/tmp/scratch
+			e g:homedir./tmp/scratch
 		else
-			e ~/tmp/scratch2
+			e g:homedir./tmp/scratch2
 		endif
 	else
 		e $HOME/tmp/scratch
@@ -603,7 +603,7 @@ endfunction
 
 function! EditTmpFile(fn)
 	let l:fn = a:fn
-	if Is_File_Visual_In_Buf(l:fn)
+	if Is_File_Open_In_Buf(l:fn)
 		let l:fn = escape(l:fn, '\\/.*$^~[]')
 		call SwitchToBuf(l:fn)
 		let g:EditTmpFilePos = line(".")
@@ -633,11 +633,11 @@ function! EditTmpFile(fn)
 endfunction
 
 function! EditWorkDiary()
-	let l:f = g:hDir."/tmp/workDiary/diary.txt"
+	let l:f = g:homedir."/tmp/workDiary/diary.txt"
 	if filereadable(l:f)
 		exec "e ".l:f
 	else
-		exec "e ~/person_tools/workDiary/diary.txt"
+		exec e g:homedir."/person_tools/workDiary/diary.txt"
 	endif
 	exec "norm G"
 endfunction
@@ -789,6 +789,24 @@ function! InsertYankText()
 endfunction
 
 "http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
+function! Is_File_Open_In_Buf(fn)
+	let l:is_fn_visual = 0
+	let l:fn = a:fn
+	try
+		for i in range(1, bufnr("$"))
+			if buflisted(i)
+				if bufname(i) == l:fn
+					let  l:is_fn_visual = 1
+					break
+				endif
+			endif
+		endfor
+	catch
+		echohl ErrorMsg | echo "Exception: " . v:exception | echo v:errmsg | echohl NONE
+		return l:is_fn_visual
+	endtry
+	return l:is_fn_visual
+endfunction
 function! Is_File_Visual_In_Buf(fn)
 	let l:is_fn_visual = 0
 	let l:fn = a:fn
@@ -1096,10 +1114,10 @@ function! ReadDate()
 endfunction
 
 function! ReadQuickfixFile(onlyOneWindow)
-	if filereadable(g:hDir."/dev/quickfix.txt")
-		"exe 'cg '.g:hDir.'/dev/quickfix.txt'
-		let l:_resp = system('rsync -avurP ' .g:hDir.'/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
-		let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt' .g:hDir.'/dev/quickfix.txt')
+	if filereadable(g:homedir."/dev/quickfix.txt")
+		"exe 'cg '.g:homedir.'/dev/quickfix.txt'
+		let l:_resp = system('rsync -avurP ' .g:homedir.'/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
+		let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt' .g:homedir.'/dev/quickfix.txt')
 	endif
 	exe 'cg /dev/shm/'.g:whoami.'/quickfix.txt'
 	call OpenQuickfixBuf()
@@ -1205,11 +1223,11 @@ function! SaveQuickfixToFile()
 	endif
 	endfor
 	call writefile(l:qf_data_list, "/dev/shm/".g:whoami."/quickfix.txt")
-	if ! isdirectory(g:hDir)
-	call writefile(l:qf_data_list, g:hDir."/quickfix.txt")
+	if ! isdirectory(g:homedir)
+	call writefile(l:qf_data_list, g:homedir."/quickfix.txt")
 	endif
-	if filereadable(g:hDir.'/dev/quickfix.txt')
-	call writefile(l:qf_data_list, g:hDir."/dev/quickfix.txt")
+	if filereadable(g:homedir.'/dev/quickfix.txt')
+	call writefile(l:qf_data_list, g:homedir."/dev/quickfix.txt")
 	endif
 endfunc
 
@@ -1263,7 +1281,7 @@ function! Sdcv(word, bang)
 	let l:BufNum = 0
 	for i in range(1,bufnr("$"))
 		if buflisted(i)
-			if bufname(i) == "diCt-tmp" && l:currentBufNum != i && bufname(l:currentBufNum) != g:hDir."/.stardict/iremember/tofel.txt"
+			if bufname(i) == "diCt-tmp" && l:currentBufNum != i && bufname(l:currentBufNum) != g:homedir."/.stardict/iremember/tofel.txt"
 				"if bufname(i) == "diCt-tmp" && l:currentBufNum != i
 				let l:is_exist_dict_tmp = 1
 				let l:BufNum = i
@@ -1281,7 +1299,7 @@ function! Sdcv(word, bang)
 		3
 	endif
 	call SwitchToBuf(bufname(l:currentBufNum))
-	if bufname(l:currentBufNum) == g:hDir."/.stardict/iremember/tofel.txt"
+	if bufname(l:currentBufNum) == g:homedir."/.stardict/iremember/tofel.txt"
 		"exec "b".l:currentBufNum
 		"call SwitchToBuf(bufname(l:currentBufNum))
 	endif
@@ -1841,7 +1859,7 @@ nnoremap <silent> <leader>ee :e!<cr>
 nnoremap <silent> <leader>ef :sp<cr>:wincmd w<cr>:resize 1<cr>:e /tmp/file.log<cr>
 nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/st/<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
-nnoremap <silent> <leader>ei :call EditTmpFile("~/person_tools/myindex.txt")<cr>
+nnoremap <silent> <leader>ei :call EditTmpFile("g:homedir./person_tools/myindex.txt")<cr>
 nnoremap <silent> <leader>ek :call EditKconfig()<cr>
 nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
 "nnoremap <silent> <leader>em :e mgrep.mk<cr>
@@ -1990,7 +2008,7 @@ nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
 nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
 nnoremap <c-s> :w!<cr>
 "nnoremap <c-t> :Ydc<CR>
-nnoremap <c-t> :call EditTmpFile('~/tmp/tee.log')<cr>
+nnoremap <c-t> :call EditTmpFile(g:homedir.'/tmp/tee.log')<cr>
 nnoremap <c-q> :Bclose<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
