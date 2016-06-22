@@ -592,10 +592,11 @@ function! EditScratch()
 			endif
 		endfor
 		if l:hasScratchBuf
-			e g:homedir./tmp/scratch
+			let l:fn = g:homedir."/tmp/scratch"
 		else
-			e g:homedir./tmp/scratch2
+			let l:fn = g:homedir."/tmp/scratch2"
 		endif
+		exec "e".l:fn
 	else
 		e $HOME/tmp/scratch
 	endif
@@ -1859,7 +1860,7 @@ nnoremap <silent> <leader>ee :e!<cr>
 nnoremap <silent> <leader>ef :sp<cr>:wincmd w<cr>:resize 1<cr>:e /tmp/file.log<cr>
 nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/st/<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
-nnoremap <silent> <leader>ei :call EditTmpFile("g:homedir./person_tools/myindex.txt")<cr>
+nnoremap <silent> <leader>ei :call EditTmpFile(g:homedir."/person_tools/myindex.txt")<cr>
 nnoremap <silent> <leader>ek :call EditKconfig()<cr>
 nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
 "nnoremap <silent> <leader>em :e mgrep.mk<cr>
