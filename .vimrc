@@ -40,6 +40,7 @@ let mapleader=","
 let g:BASH_Ctrl_j='on'
 let g:EditTmpFilePos = 1
 let g:use_gtags=0
+let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:include,sfr:../'
 "let g:use_gtags=1
 set nocompatible
 "au BufRead ft=Help set nu
@@ -1864,7 +1865,8 @@ nnoremap <silent> <leader>ei :call EditTmpFile(g:homedir."/person_tools/myindex.
 nnoremap <silent> <leader>ek :call EditKconfig()<cr>
 nnoremap <silent> <leader>el :call ExecLineText("", "")<cr>
 "nnoremap <silent> <leader>em :e mgrep.mk<cr>
-nnoremap <silent> <leader>em :call EditMakefile()<cr>
+"nnoremap <silent> <leader>em :call EditMakefile()<cr>
+nnoremap <silent> <leader>em :call EditTmpFile(g:homedir."/person_tools/m.ini")<cr>
 nnoremap <silent> <leader>ep :call EditFilePath()<cr>
 nnoremap <silent> <leader>eq :call EditQuickfixList()<cr>
 nnoremap <silent> <leader>er :call EditCurFileRelaPath()<cr>
