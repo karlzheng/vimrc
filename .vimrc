@@ -88,7 +88,7 @@ set noignorecase
 set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
-set pastetoggle=<F4>
+"set pastetoggle=<F4>
 set shiftwidth=4
 set smartindent
 set stal=1
@@ -220,17 +220,18 @@ function! <SID>BufcloseCloseIt(is_buf_wipeout)
 	if bufnr("%") == l:currentBufNum
 		new
 	endif
-	if buflisted(l:currentBufNum)
-		try
-			if (a:is_buf_wipeout)
-				execute("bwipe ".l:currentBufNum)
-			else
+	try
+		if (a:is_buf_wipeout)
+			execute("bwipe! ".l:currentBufNum)
+		else
+			if buflisted(l:currentBufNum)
 				execute("bdelete ".l:currentBufNum)
 			endif
-		catch /.*/
-			return
-		endtry
-	endif
+		endif
+	catch /.*/
+		return
+	endtry
+
 endfunction
 
 function! BufCloseWindow()
@@ -610,7 +611,7 @@ function! EditTmpFile(fn)
 		call SwitchToBuf(l:fn)
 		let g:EditTmpFilePos = line(".")
 		"Bclose
-		"resize 1
+		resize 1
 		Bwipe
 	else
 		try
@@ -629,6 +630,7 @@ function! EditTmpFile(fn)
 			exec "norm ".g:EditTmpFilePos."gg"
 			resize 1
 		catch
+			resize 1
 			echohl ErrorMsg | echo "Exception: " . v:exception | echo v:errmsg | echohl NONE
 		endtry
 	endif
@@ -725,7 +727,7 @@ function! GoNextBuffer()
 	else
 		bn
 		let l:c = 0
-		while ((expand("%:p") == "") && (l:c < 10) || (&ft == 'qf') )
+		while ( ( (expand("%:p") == "") && (l:c < 20) ) || (&ft == 'qf') )
 			bn
 			let l:c = l:c + 1
 		endwhile
@@ -1305,6 +1307,14 @@ function! Sdcv(word, bang)
 		"exec "b".l:currentBufNum
 		"call SwitchToBuf(bufname(l:currentBufNum))
 	endif
+endfunction
+
+func! SepLineToWord()
+	let l:line = getline(".")
+	let l:line = substitute(l:line, ':', ' ', "g")
+	call setline(".", l:line)
+	"exec 'g/\s/exe 's//\r/g''
+	exec "s/\\s/\r/g"
 endfunction
 
 function! SetCFileTabStop()
@@ -1945,7 +1955,8 @@ nnoremap <silent> <leader>sc :set ft=c<cr>
 nnoremap <silent> <leader>sd :call SvnDiffCurrentFile()<cr>
 nnoremap <leader>sf :call SaveFile2Tar()<cr>
 "nnoremap <silent> <leader>sl :!svn log %<cr>
-nnoremap <silent> <leader>sl :s# \+#\r#g<cr>
+"nnoremap <silent> <leader>sl :s#/# #g<cr>:s# \+#\r#g<cr>
+nnoremap <silent> <leader>sl :call SepLineToWord()<cr>
 nnoremap <silent> <leader>sn :set nu<cr>
 nnoremap <silent> <leader>sm :set ft=make<cr>
 nnoremap <silent> <leader>sp :split<cr>
@@ -1987,8 +1998,9 @@ nnoremap <silent> * *N
 nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
-cnoremap <silent> <F3> Bgrep
 nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
+nnoremap <silent> <F4> :Bgrep \<<cword>\> %<CR> <CR>
+cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>
