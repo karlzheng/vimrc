@@ -1999,7 +1999,7 @@ nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
 nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
-nnoremap <silent> <F4> :Bgrep \<<cword>\> %<CR> <CR>
+nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
 cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>

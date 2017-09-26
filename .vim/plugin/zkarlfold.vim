@@ -96,7 +96,10 @@ function! ZKarlBlockFoldFunc()
 
 	"let l:ll = getline(l:startline)
 	"echomsg l:ll
-	if getline(l:startline) =~ '^\s*#ifdef' || getline(l:startline) =~ '^\s*#if defined' || getline(l:startline) =~ '^\s*#if ' || getline(l:startline) =~ '^\s*#ifndef ' || getline(l:startline) =~ '^\s*#else'
+	if &filetype == 'c' && getline(l:curline) =~ '{\s*$'
+		exe ":".l:curline
+		normal $zfi{
+	elseif getline(l:startline) =~ '^\s*#ifdef' || getline(l:startline) =~ '^\s*#if defined' || getline(l:startline) =~ '^\s*#if ' || getline(l:startline) =~ '^\s*#ifndef ' || getline(l:startline) =~ '^\s*#else'= 20060406
 		let l:start_line = l:curline
 		normal ]#
 		let l:end_line = line(".") - 1
