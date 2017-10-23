@@ -1488,6 +1488,24 @@ function! SwitchToBuf(filename)
 	endif
 endfunction
 
+"http://vim.wikia.com/wiki/VimTip431
+function! ToggleSlash(independent) range
+  let from = ''
+  for lnum in range(a:firstline, a:lastline)
+    let line = getline(lnum)
+    let first = matchstr(line, '[/\\]')
+    if !empty(first)
+      if a:independent || empty(from)
+        let from = first
+      endif
+      let opposite = (from == '/' ? '\' : '/')
+      call setline(lnum, substitute(line, from, opposite, 'g'))
+    endif
+  endfor
+endfunction
+command! -bang -range ToggleSlash <line1>,<line2>call ToggleSlash(<bang>1)
+noremap <silent> <F7> :ToggleSlash<CR>
+
 function! VimEnterCallback()
 	 for f in argv()
 		 if fnamemodify(f, ':e') != 'c' && fnamemodify(f, ':e') != 'h'
@@ -1782,15 +1800,15 @@ command! -nargs=* -complete=file -bang Getfilename :call Getfilename("<args>", "
 command! -nargs=* -complete=file -bang GetFileNameTail :call GetFileNameTail("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang LookupFullFilenameTag :call LookupFullFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang LookupPartFilenameTag :call LookupPartFilenameTag("<args>", "<bang>")
-command! -nargs=* -complete=file -bang M1 :call MakeSession("<args>", "<bang>")
+command! -nargs=* -complete=file -bang MK :call MakeSession("<args>", "<bang>")
 command! -nargs=* -complete=file -bang G :call MultiGrepCurWord("<args>", "<bang>")
-command! -nargs=* -complete=file -bang M2 :call MakeSessionInCurDir("<args>", "<bang>")
+command! -nargs=* -complete=file -bang MC :call MakeSessionInCurDir("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=file -bang P2d :!p2d.sh %
 command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
-command! -nargs=* -complete=file -bang S1 :call SourceSession("<args>", "<bang>")
+command! -nargs=* -complete=file -bang SK :call SourceSession("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
-command! -nargs=* -complete=file -bang S2 :call SourceSessionInCurDir("<args>", "<bang>")
+command! -nargs=* -complete=file -bang SC :call SourceSessionInCurDir("<args>", "<bang>")
 
 command! Bclose call <SID>BufcloseCloseIt(0)
 command! BcloseDraft call <SID>BufcloseCloseDraft()
@@ -2004,8 +2022,8 @@ cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>
-nnoremap <silent> <F6> :cp<CR>
-nnoremap <silent> <F7> :cn<CR>
+"nnoremap <silent> <F6> :cp<CR>
+"nnoremap <silent> <F7> :cn<CR>
 "nnoremap <silent> <F7> :SrcExplToggle<CR>
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
