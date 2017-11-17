@@ -124,13 +124,16 @@ if ! exists("g:whoami")
     let g:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
 endif
 
+let g:absfn=g:homedir.'/dev/'.g:whoami.'/absfn'
+let g:shmdir=g:homedir.'/shm/'
+
 function! s:PreSetEnv()
-	let l:d = '/dev/shm/'.g:whoami
+	let l:d = g:shmdir.g:whoami
 	if isdirectory(l:d) == 0
 		let l:c = 'mkdir -p '.l:d
 		let l:r = system(l:c)
 	endif
-	let l:f='/dev/shm/'.g:whoami.'/allBashCommands.txt'
+	let l:f=g:shmdir.g:whoami.'/allBashCommands.txt'
 	if filereadable(l:f) == 0
 		let l:c = 'compgen -c > '.l:f
 		let l:r = system(l:c)
@@ -294,7 +297,7 @@ func! BwipeCurrentBuffer()
 endf
 
 function! CDAbsPath()
-	let l:_cmd_ = 'cat ' . '/dev/shm/'.g:whoami.'/filename'
+	let l:_cmd_ = 'cat ' . g:shmdir.g:whoami.'/filename'
 	let l:_resp = system(l:_cmd_)
 	exec "cd ".l:_resp
 	exec "pwd"
@@ -340,7 +343,7 @@ func! s:CompareQuickfixEntries(i1, i2)
 endf
 
 function! CompareTobcFn1()
-	let _cmd_ = 'cat /dev/shm/bcFn1'
+	let _cmd_ = 'cat '.g:shmdir.'/bcFn1'
 	echo _cmd_
 	let _resp = system(_cmd_)
 	let g:bcFn1 = substitute(_resp, '\n', '', 'g')
@@ -417,7 +420,7 @@ function! DoGitBeyondCompare()
 	let l:ext = expand("%:e")
 	if l:ext == "log"
 		call GitDiffLog()
-		exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+		exec "!p2d.sh ".g:shmdir."/gitdiff.c 1>/dev/null 2>&1 &"
 	else
 		exec "!p2d.sh ".expand("%")." 1>/dev/null 2>&1 &"
 	endif
@@ -429,9 +432,9 @@ function! Escape(dir)
 endfunction
 
 function! EnterSavedPath()
-	let l:f='/dev/shm/'.g:whoami.'/apwdpath'
+	let l:f=g:shmdir.g:whoami.'/apwdpath'
 	if filereadable(l:f)
-		let l:c = 'cat ' . '/dev/shm/'.g:whoami.'/apwdpath'
+		let l:c = 'cat ' . g:shmdir.g:whoami.'/apwdpath'
 		let l:r = system(l:c)
 		let l:r = substitute(l:r, '\n', '', 'g')
 		echo "cd ".l:r
@@ -440,13 +443,12 @@ function! EnterSavedPath()
 endfunction
 
 function! EditAbsoluteFilePath()
-	let l:absfn = '/dev/shm/'.g:whoami.'/absfn'
-	let l:_cmd_ = 'cat '.l:absfn.'| wc -l'
+	let l:_cmd_ = 'cat '.g:absfn.'| wc -l'
 	let l:ret = system(l:_cmd_)
 	if l:ret > 1
-		exec "e ".l:absfn
+		exec "e ".g:absfn
 	else
-		let l:_cmd_ = 'cat '.'/dev/shm/'.g:whoami.'/absfn | tr -d "\r" | tr -d "\n"'
+		let l:_cmd_ = 'cat '.g:absfn.'| tr -d "\r" | tr -d "\n"'
 		let l:f = system(l:_cmd_)
 		"let l:f = "'".escape(l:f, '%')."'"
 		let l:f = escape(l:f, '%')
@@ -512,7 +514,7 @@ func! EditConfig()
 endf
 
 function! EditCurFileRelaPath()
-	let l:_cmd_ = 'cat ' . '/dev/shm/relaFn | tr -d "\r" | tr -d "\n"'
+	let l:_cmd_ = 'cat '.g:shmdir.'/relaFn | tr -d "\r" | tr -d "\n"'
 	let l:_resp = system(l:_cmd_)
 	if filereadable(l:_resp)
 		exec "e ".l:_resp
@@ -530,7 +532,7 @@ function! EditFileWithRelativePath()
 	let l:f = expand("%")
 	let l:df = substitute(l:f, '^/tmp/a/', "", "")
 	let l:df = substitute(l:f, '^/tmp/b/', "", "")
-	let l:cmd = 'cat /dev/shm/'.g:whoami.'/absfn'
+	let l:cmd = 'cat 'g:absfn
 	let l:r = system(l:cmd)
 	let l:r = substitute(l:r, "\r", "", "g")
 	let l:r = substitute(l:r, "\n", "", "g")
@@ -576,7 +578,7 @@ function! EditQuickfixList()
 	if filereadable(g:homedir."/dev/quickfix.txt")
 	exe 'e '.g:homedir.'/dev/quickfix.txt'
 	else
-	exe 'e /dev/shm/'.g:whoami.'/quickfix.txt'
+	exe 'e '.g:shmdir.g:whoami.'/quickfix.txt'
 	endif
 endfunc
 
@@ -647,7 +649,7 @@ function! EditWorkDiary()
 endfunction
 
 function! EditYankText()
-	let l:f = "/dev/shm/".g:whoami."/yank.txt"
+	let l:f = g:shmdir.g:whoami."/yank.txt"
 	if filereadable(l:f)
 		exec 'e '.l:f
 	else
@@ -785,7 +787,7 @@ function! InsertIncludeFileI(is_system_include_file)
 endfunction
 
 function! InsertYankText()
-	let l:f = "/dev/shm/".g:whoami."/yank.txt"
+	let l:f = g:shmdir.g:whoami."/yank.txt"
 	if filereadable(l:f)
 		let l:l = readfile(l:f, '')
 		call append('.', l:l)
@@ -873,10 +875,10 @@ func! LookupPartFilenameTag(line, bang)
 endf
 
 function! MakeSession(name, bang)
-	if isdirectory('/dev/shm/'.g:whoami)
-		let l:cmd = "mks! /dev/shm/".g:whoami."/edit.vim"
+	if isdirectory(g:shmdir.g:whoami)
+		let l:cmd = "mks! ".g:shmdir.g:whoami."/edit.vim"
 	else
-		let l:cmd = "mks! /dev/shm/edit.vim"
+		let l:cmd = "mks! ".g:shmdir."/edit.vim"
 	endif
 	exec l:cmd
 endfunction
@@ -1011,7 +1013,7 @@ python << EEOOFF
 import fileinput
 import vim
 try:
-	input = fileinput.FileInput("/dev/shm/bcFn1")
+	input = fileinput.FileInput(g:shmdir."/bcFn1")
 	bcFn1 = input.readline()
 	vim.command("let g:bcFn1=%s" % bcFn1)
 finally:
@@ -1071,8 +1073,8 @@ func! QuitAllBuffers()
 	endif
 	else
 	"let l:ans = confirm("Quit all buf ?", "&Yes\n&No")
-	if isdirectory('/dev/shm/'.g:whoami)
-		let l:cmd = "mks! /dev/shm/".g:whoami."/edit.vim"
+	if isdirectory(g:shmdir.g:whoami)
+		let l:cmd = "mks! ".g:shmdir.".g:whoami."/edit.vim"
 		exec l:cmd
 	endif
 	exec "qa"
@@ -1120,10 +1122,10 @@ endfunction
 function! ReadQuickfixFile(onlyOneWindow)
 	if filereadable(g:homedir."/dev/quickfix.txt")
 		"exe 'cg '.g:homedir.'/dev/quickfix.txt'
-		let l:_resp = system('rsync -avurP ' .g:homedir.'/dev/quickfix.txt /dev/shm/karlzheng/quickfix.txt')
-		let l:_resp = system('rsync -avurP /dev/shm/karlzheng/quickfix.txt' .g:homedir.'/dev/quickfix.txt')
+		let l:_resp = system('rsync -avurP ' .g:homedir.'/dev/quickfix.txt '.g:shmdir.'/karlzheng/quickfix.txt')
+		let l:_resp = system('rsync -avurP '.g:homedir.'/karlzheng/quickfix.txt' .g:homedir.'/dev/quickfix.txt')
 	endif
-	exe 'cg /dev/shm/'.g:whoami.'/quickfix.txt'
+	exe 'cg '.g:shmdir.g:whoami.'/quickfix.txt'
 	call OpenQuickfixBuf()
 	if a:onlyOneWindow
 		exec "normal \<c-w>\<c-o>"
@@ -1153,7 +1155,7 @@ func! ReplaceFilePath4fp()
 	let l:findstr = matchstr(l:line, l:aRegex)
 	if l:findstr != ""
 		echo "got it"
-		let l:f = '/dev/shm/'.g:whoami.'/absfn'
+		let l:f = g:absfn
 		if filereadable(l:f)
 			let l:l = readfile(l:f, '', 1)
 			let l:str = l:l[0]
@@ -1173,7 +1175,7 @@ endfunction
 function! SaveAbsPathFileName()
 	let l:f = expand("%:p")
 	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > g:absfn
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1183,7 +1185,7 @@ endfunction
 function! SaveBCFn1()
 	let str = expand("%:p")
 	let str = Escape(str)
-	execute ":!echo '".str."' > /dev/shm/bcFn1"
+	execute ":!echo '".str."' > ".g:shmdir."/bcFn1"
 endfunction
 
 function! SaveCurrentFileName()
@@ -1191,7 +1193,7 @@ function! SaveCurrentFileName()
 	let l:str = Escape(str)
 	let @* = l:str
 	let @+ = '"'.l:str.'"'
-	execute ":!echo '".l:str."' > /dev/shm/filename"
+	execute ":!echo '".l:str."' > ".g:shmdir."/filename"
 endfunction
 
 function! SaveFile2Tar()
@@ -1204,7 +1206,7 @@ function! SaveFilePath()
 	let l:f = expand("%:p:h")
 	let l:f = Escape(f)
 	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/apwdpath'
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:shmdir.g:whoami.'/apwdpath'
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1226,7 +1228,7 @@ function! SaveQuickfixToFile()
 		endif
 	endif
 	endfor
-	call writefile(l:qf_data_list, "/dev/shm/".g:whoami."/quickfix.txt")
+	call writefile(l:qf_data_list, g:shmdir.g:whoami."/quickfix.txt")
 	if ! isdirectory(g:homedir)
 	call writefile(l:qf_data_list, g:homedir."/quickfix.txt")
 	endif
@@ -1240,7 +1242,7 @@ function! SaveYankText()
 	"let l:line = getline(".")
 	let l:w = expand("<cword>")
 	call add(l:lines, l:w)
-	call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt")
+	call writefile(l:lines, g:shmdir.g:whoami."/yank.txt")
 	"exec 'norm yy"+yy"*yy'
 	exec 'norm "+yw"*yw'
 endfunction
@@ -1252,7 +1254,7 @@ function! SaveYankTextInVisual()
 	let l:lines = getline(l:fl, l:ll)
 	let @*=@"
 	let @+=@"
-	call writefile(l:lines, "/dev/shm/".g:whoami."/yank.txt", "b")
+	call writefile(l:lines, g:shmdir.g:whoami."/yank.txt", "b")
 endfunction
 
 function! SaveRelaPathFileName()
@@ -1262,8 +1264,8 @@ function! SaveRelaPathFileName()
 		let l:f = substitute(l:f, '^/tmp/b/', "", "")
 		let l:f = substitute(l:f, '^a/', "", "")
 		let l:f = substitute(l:f, '^b/', "", "")
-		"let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/relaFn'
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > /dev/shm/'.g:whoami.'/absfn'
+		"let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:shmdir.'/relaFn'
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > g:absfn
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1358,7 +1360,7 @@ endfunction
 
 function! ShowGitDiffInBcompare()
 	call GitDiffLog()
-	exec "!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+	exec "!p2d.sh ".g:shmdir."/gitdiff.c 1>/dev/null 2>&1 &"
 	call SwitchToBuf("gitdiff.c")
 	q
 	let l:f=expand("%:t")
@@ -1373,7 +1375,7 @@ endfunc
 
 function! ShowGitDiffInKompare()
 	call GitDiffLog()
-	exec "!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &"
+	exec "!kompare ".g:shmdir."/gitdiff.c 1>/dev/null 2>&1 &"
 	call SwitchToBuf("gitdiff.c")
 	q
 	let l:f=expand("%:t")
@@ -1387,8 +1389,8 @@ function! ShowGitDiffInKompare()
 endfunc
 
 function! SourceSession(name, bang)
-	if isdirectory('/dev/shm/'.g:whoami)
-		let l:cmd = "source /dev/shm/".g:whoami."/edit.vim"
+	if isdirectory(g:shmdir.g:whoami)
+		let l:cmd = "source ".g:shmdir.g:whoami."/edit.vim"
 		exec l:cmd
 	endif
 endfunction
@@ -1912,13 +1914,13 @@ nnoremap <leader>fs :cs find s
 nnoremap <leader>fi :setlocal foldmethod=indent<cr>zR
 nnoremap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
 nnoremap <leader>fp :call CDAbsPath()<cr>
-nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
+nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh g:shmdir/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 nnoremap <leader>gd :call GitDiffLog()<cr>
 nnoremap <leader>gf :GitEditFileInLine<cr>
 nnoremap <leader>gi G?#include<cr>
 nnoremap <leader>gm :call GetFileNameTail("", "")<CR>
 nnoremap <leader>gn :call Getfilename("", "")<CR>
-nnoremap <leader>go :call GitDiffLog()<CR>:!kompare /dev/shm/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
+nnoremap <leader>go :call GitDiffLog()<CR>:!kompare g:shmdir/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 nnoremap <silent> <leader>gc :git checkout -- %<cr>
 nnoremap <silent> <leader>ge :!gedit %&<cr>
 nnoremap <silent> <leader>gg :call CompileByGcc()<cr>
