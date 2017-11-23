@@ -1175,7 +1175,7 @@ endfunction
 function! SaveAbsPathFileName()
 	let l:f = expand("%:p")
 	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > g:absfn
+		let l:_cmd_ = 'echo ' . '"' . l:f . '"' > g:absfn
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
