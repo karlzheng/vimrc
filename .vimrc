@@ -1813,7 +1813,7 @@ command! -nargs=* -complete=file -bang MC :call MakeSessionInCurDir("<args>", "<
 command! -nargs=* -complete=tag -bang ParseFilenameTag :call ParseFilenameTag("<args>", "<bang>")
 command! -nargs=* -complete=file -bang P2d :!p2d.sh %
 command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
-command! -nargs=* -complete=file -bang SK :call SourceSession("<args>", "<bang>")
+command! -nargs=* -complete=file -bang SS :call SourceSession("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
 command! -nargs=* -complete=file -bang SC :call SourceSessionInCurDir("<args>", "<bang>")
 
