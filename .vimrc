@@ -104,6 +104,10 @@ set winaltkeys=no
 set wrap
 ""http://blog.xuyu.org/?p=1215
 "set nowrapscan
+
+" settings
+syntax on
+
 "http://askubuntu.com/questions/67/how-do-i-enable-full-color-support-in-terminal
 if $COLORTERM == 'gnome-terminal'
 	set t_Co=256
@@ -1572,12 +1576,13 @@ let g:indent_guides_guide_size = 1
 "map <silent><F2> :NEXTCOLOR<cr>
 "map <silent><F3> :PREVCOLOR<cr>
 if has("gui_running")
-	"colorscheme borland
-	colorscheme breeze
+	colorscheme borland
+	"colorscheme breeze
 	"colorscheme 256_adaryn
 	"hi normal guibg=#294d4a
 else
 	colorscheme 256_adaryn
+	"colorscheme blue2
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
