@@ -84,7 +84,7 @@ else
 	set makeprg=make\ \-j24
 en
 set nocp
-set noignorecase
+set ignorecase
 set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
