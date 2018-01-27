@@ -48,8 +48,8 @@ set ar
 "set autochdir
 set autoindent
 set aw
-"set clipboard+=unnamed
-set clipboard=unnamedplus
+set clipboard=unnamed
+"set clipboard=unnamedplus
 set cot=menuone
 set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
 set cscopetag
