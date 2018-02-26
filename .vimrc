@@ -647,7 +647,7 @@ function! EditWorkDiary()
 	if filereadable(l:f)
 		exec "e ".l:f
 	else
-		exec e g:homedir."/person_tools/workDiary/diary.txt"
+		exec "e ".g:homedir."/person_tools/workDiary/diary.txt"
 	endif
 	exec "norm G"
 endfunction
