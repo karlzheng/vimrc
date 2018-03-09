@@ -753,6 +753,33 @@ function! GoPreBuffer()
 	endif
 endfunction
 
+function! SwitchToNextBuffer(incr)
+	let help_buffer = (&filetype == 'help')
+	let current = bufnr("%")
+	let last = bufnr("$")
+	let new = current + a:incr
+	while 1
+		if (new != 0 && bufexists(new) && (getbufvar(new, "&ft") != 'netrw') && (getbufvar(new, "&ft") != 'qf') && (getbufvar(new, "&ft") != 'help') && (getbufvar(new, "&bt") != 'nofile'))
+			execute ":buffer ".new
+			if getbufvar("%", "&ft") != "netrw"
+				break
+			else
+				let new = new + a:incr
+			endif
+		else
+			let new = new + a:incr
+			if new < 1
+				let new = last
+			elseif new > last
+				let new = 1
+			endif
+			if new == current
+				break
+			endif
+		endif
+	endwhile
+endfunction
+
 function! GoPreQuickfix()
 	cp
 endfunction
