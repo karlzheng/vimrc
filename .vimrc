@@ -737,32 +737,6 @@ function! GitDiffLog1()
 	let _resp = system(l:_cmd_)
 endfunc
 
-function! GoNextBuffer()
-	if &diff
-		exec "normal ]c"
-	else
-		bn
-		let l:c = 0
-		while ( ( (expand("%:p") == "") && (l:c < 20) ) || (&ft == 'qf') )
-			bn
-			let l:c = l:c + 1
-		endwhile
-	endif
-endfunction
-
-function! GoPreBuffer()
-	if &diff
-		exec "normal [c"
-	else
-		bp
-		let l:c = 0
-		while ((expand("%:p") == "") && (l:c < 20) || (&ft == 'qf') )
-			bp
-			let l:c = l:c + 1
-		endwhile
-	endif
-endfunction
-
 function! SwitchToNextBuffer(incr)
 	let help_buffer = (&filetype == 'help')
 	let current = bufnr("%")
@@ -790,6 +764,22 @@ function! SwitchToNextBuffer(incr)
 			endif
 		endif
 	endwhile
+endfunction
+
+function! GoNextBuffer()
+	if &diff
+		exec "normal ]c"
+	else
+		call SwitchToNextBuffer(1)
+	endif
+endfunction
+
+function! GoPreBuffer()
+	if &diff
+		exec "normal [c"
+	else
+		call SwitchToNextBuffer(-1)
+	endif
 endfunction
 
 function! GoPreQuickfix()
