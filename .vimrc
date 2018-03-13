@@ -41,6 +41,7 @@ let g:BASH_Ctrl_j='on'
 let g:EditTmpFilePos = 1
 let g:use_gtags=0
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:include,sfr:../'
+let g:OS = system("uname | tr -d '\r' | tr -d '\n' ")
 "let g:use_gtags=1
 set nocompatible
 "au BufRead ft=Help set nu
@@ -130,6 +131,15 @@ endif
 
 let g:absfn=g:homedir.'/dev/'.g:whoami.'/absfn'
 let g:shmdir=g:homedir.'/shm/'
+
+let g:tmpfile="file.log"
+if g:OS == 'Darwin'
+	let g:tmpfile="/private/tmp/file.log"
+else
+	if g:OS == 'Linux'
+		let g:tmpfile="/tmp/file.log"
+	endif
+endif
 
 function! s:PreSetEnv()
 	let l:d = g:shmdir.g:whoami
@@ -759,8 +769,10 @@ function! SwitchToNextBuffer(incr)
 	let last = bufnr("$")
 	let new = current + a:incr
 	while 1
-		if (new != 0 && bufexists(new) && (getbufvar(new, "&ft") != 'netrw') && (getbufvar(new, "&ft") != 'qf') && (getbufvar(new, "&ft") != 'help') && (getbufvar(new, "&bt") != 'nofile'))
-			execute ":buffer ".new
+		if (new != 0 && buflisted(new) && bufexists(new) && (getbufvar(new, "&ft") != 'netrw') && (getbufvar(new, "&ft") != 'qf') && (getbufvar(new, "&ft") != 'help') && (getbufvar(new, "&bt") != 'nofile'))
+			if buflisted(new)
+				execute ":buffer ".new
+			endif
 			if getbufvar("%", "&ft") != "netrw"
 				break
 			else
@@ -844,6 +856,7 @@ function! Is_File_Open_In_Buf(fn)
 	endtry
 	return l:is_fn_visual
 endfunction
+
 function! Is_File_Visual_In_Buf(fn)
 	let l:is_fn_visual = 0
 	let l:fn = a:fn
@@ -1922,7 +1935,6 @@ nnoremap <silent> <leader>ea :call EditAbsoluteFilePath()<cr>
 nnoremap <leader>ec :call EditConfig()<cr>
 nnoremap <silent> <leader>ed :call EdCommandProxy()<cr>
 nnoremap <silent> <leader>ee :e!<cr>
-nnoremap <silent> <leader>ef :sp<cr>:wincmd w<cr>:resize 1<cr>:e /tmp/file.log<cr>
 nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/st/<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
 nnoremap <silent> <leader>ei :call EditTmpFile(g:homedir."/person_tools/myindex.mk")<cr>
@@ -2065,7 +2077,7 @@ nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-a> :call QuickfixToggle()<cr>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
-nnoremap <c-e> :call EditTmpFile("/tmp/file.log")<cr>
+nnoremap <c-e> :call EditTmpFile(g:tmpfile)<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
 nnoremap <c-g><c-d> :call GitDiffLog()<cr>
