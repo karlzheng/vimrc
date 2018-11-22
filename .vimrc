@@ -1242,7 +1242,7 @@ function! SaveFilePath()
 	let l:f = expand("%:p:h")
 	let l:f = Escape(f)
 	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:shmdir.g:whoami.'/apwdpath'
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:absfn
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -2206,4 +2206,7 @@ autocmd VimEnter * call BufPos_Initialize()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"let &termencoding=&encoding
+"set termencoding=utf-8
+"set encoding=prc
 let g:my_vimrc_is_loaded = 1
