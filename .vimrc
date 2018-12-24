@@ -9,7 +9,7 @@
 "        AUTHOR: Karl Zheng (), ZhengKarl#gmail.com
 "          BLOG: http://blog.csdn.net/zhengkarl
 "         WEIBO: http://weibo.com/zhengkarl
-"       COMPANY: Meizu
+"       COMPANY: LinkCM
 "       CREATED: 2012年05月21日 19时12分43秒 CST
 "      REVISION:  ---
 "
