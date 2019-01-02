@@ -1078,7 +1078,7 @@ endf
 
 func! QuickfixToggle()
 	let l:bwn = bufwinnr("%")
-	if Is_File_Visual_In_Buf("[Quickfix List")
+	if Is_File_Visual_In_Buf("[Quickfix ")
 		cclose
 	else
 		call OpenQuickfixBuf()
