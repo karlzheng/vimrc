@@ -1280,7 +1280,11 @@ function! SaveYankText()
 	call add(l:lines, l:w)
 	call writefile(l:lines, g:shmdir.g:whoami."/yank.txt")
 	"exec 'norm yy"+yy"*yy'
-	exec 'norm "+yw"*yw'
+	if has('clipboard')
+		exec 'norm "+yw"*yw'
+	else
+		exec 'norm "Yyw'
+	endif
 endfunction
 
 function! SaveYankTextInVisual()
@@ -1288,8 +1292,13 @@ function! SaveYankTextInVisual()
 	let l:ll = line("'>")
 	silen exec 'norm gvy'
 	let l:lines = getline(l:fl, l:ll)
-	let @*=@"
-	let @+=@"
+	" yankring.vim http://www.vim.org/scripts/script.php?script_id=1234
+	if has('clipboard')
+		let @*=@"
+		let @+=@"
+	else
+		let @Y=@"
+	endif
 	call writefile(l:lines, g:shmdir.g:whoami."/yank.txt", "b")
 endfunction
 
