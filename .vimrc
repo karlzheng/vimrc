@@ -720,14 +720,22 @@ endfunc
 
 function! Getfilename(name, bang)
 	let @"= expand("%:p")."\n"
-	let @+= expand("%:p")."\n"
-	let @*= expand("%:p")."\n"
+	if has('clipboard')
+		let @+= expand("%:p")."\n"
+		let @*= expand("%:p")."\n"
+	else
+		let @Y=expand("%:p")."\n"
+	endif
 endfunction
 
 function! GetFileNameTail(name, bang)
 	let @"= expand("%:t")."\n"
-	let @+= expand("%:t")."\n"
-	let @*= expand("%:t")."\n"
+	if has('clipboard')
+		let @+= expand("%:t")."\n"
+		let @*= expand("%:t")."\n"
+	else
+		let @Y=expand("%:t")."\n"
+	endif
 endfunction
 
 function! GitDiffLog1()
