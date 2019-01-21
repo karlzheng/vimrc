@@ -379,6 +379,16 @@ function! CompileByGcc()
   endif
 endfunction
 
+"http://vim.wikia.com/wiki/Copy_search_matches
+"https://www.vim.org/scripts/script.php?script_id=4795
+function! CopyMatches(reg)
+  let hits = []
+  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+  let reg = empty(a:reg) ? '+' : a:reg
+  execute 'let @'.reg.' = join(hits, "\n") . "\n"'
+endfunction
+command! -register CopyMatches call CopyMatches(<q-reg>)
+
 "http://stackoverflow.com/questions/2250011/can-i-have-vim-ignore-a-license-block-at-the-top-of-a-file
 function! CreateCopyrightFold()
 	let InCopyright = 0
