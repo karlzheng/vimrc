@@ -9,7 +9,7 @@
 "        AUTHOR: Karl Zheng (), ZhengKarl#gmail.com
 "          BLOG: http://blog.csdn.net/zhengkarl
 "         WEIBO: http://weibo.com/zhengkarl
-"       COMPANY: Meizu
+"       COMPANY: LinkCM
 "       CREATED: 2012年05月21日 19时12分43秒 CST
 "      REVISION:  ---
 "
@@ -41,6 +41,7 @@ let g:BASH_Ctrl_j='on'
 let g:EditTmpFilePos = 1
 let g:use_gtags=0
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:include,sfr:../'
+let g:OS = system("uname | tr -d '\r' | tr -d '\n' ")
 "let g:use_gtags=1
 set nocompatible
 "au BufRead ft=Help set nu
@@ -88,7 +89,7 @@ set ignorecase
 set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
-"set pastetoggle=<F4>
+set pastetoggle=<F4>
 set shiftwidth=4
 set smartindent
 set stal=1
@@ -130,6 +131,15 @@ endif
 
 let g:absfn=g:homedir.'/dev/'.g:whoami.'/absfn'
 let g:shmdir=g:homedir.'/shm/'
+
+let g:tmpfile="file.log"
+if g:OS == 'Darwin'
+	let g:tmpfile="/private/tmp/file.log"
+else
+	if g:OS == 'Linux'
+		let g:tmpfile="/tmp/file.log"
+	endif
+endif
 
 function! s:PreSetEnv()
 	let l:d = g:shmdir.g:whoami
@@ -368,6 +378,16 @@ function! CompileByGcc()
 	exec "!gcc ".expand("%")
   endif
 endfunction
+
+"http://vim.wikia.com/wiki/Copy_search_matches
+"https://www.vim.org/scripts/script.php?script_id=4795
+function! CopyMatches(reg)
+  let hits = []
+  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+  let reg = empty(a:reg) ? '+' : a:reg
+  execute 'let @'.reg.' = join(hits, "\n") . "\n"'
+endfunction
+command! -register CopyMatches call CopyMatches(<q-reg>)
 
 "http://stackoverflow.com/questions/2250011/can-i-have-vim-ignore-a-license-block-at-the-top-of-a-file
 function! CreateCopyrightFold()
@@ -710,14 +730,22 @@ endfunc
 
 function! Getfilename(name, bang)
 	let @"= expand("%:p")."\n"
-	let @+= expand("%:p")."\n"
-	let @*= expand("%:p")."\n"
+	if has('clipboard')
+		let @+= expand("%:p")."\n"
+		let @*= expand("%:p")."\n"
+	else
+		let @Y=expand("%:p")."\n"
+	endif
 endfunction
 
 function! GetFileNameTail(name, bang)
 	let @"= expand("%:t")."\n"
-	let @+= expand("%:t")."\n"
-	let @*= expand("%:t")."\n"
+	if has('clipboard')
+		let @+= expand("%:t")."\n"
+		let @*= expand("%:t")."\n"
+	else
+		let @Y=expand("%:t")."\n"
+	endif
 endfunction
 
 function! GitDiffLog1()
@@ -727,16 +755,40 @@ function! GitDiffLog1()
 	let _resp = system(l:_cmd_)
 endfunc
 
+function! SwitchToNextBuffer(incr)
+	let help_buffer = (&filetype == 'help')
+	let current = bufnr("%")
+	let last = bufnr("$")
+	let new = current + a:incr
+	while 1
+		if (new != 0 && buflisted(new) && bufexists(new) && (getbufvar(new, "&ft") != 'netrw') && (getbufvar(new, "&ft") != 'qf') && (getbufvar(new, "&ft") != 'help') && (getbufvar(new, "&bt") != 'nofile'))
+			if buflisted(new)
+				execute ":buffer ".new
+			endif
+			if getbufvar("%", "&ft") != "netrw"
+				break
+			else
+				let new = new + a:incr
+			endif
+		else
+			let new = new + a:incr
+			if new < 1
+				let new = last
+			elseif new > last
+				let new = 1
+			endif
+			if new == current
+				break
+			endif
+		endif
+	endwhile
+endfunction
+
 function! GoNextBuffer()
 	if &diff
 		exec "normal ]c"
 	else
-		bn
-		let l:c = 0
-		while ( ( (expand("%:p") == "") && (l:c < 20) ) || (&ft == 'qf') )
-			bn
-			let l:c = l:c + 1
-		endwhile
+		call SwitchToNextBuffer(1)
 	endif
 endfunction
 
@@ -744,12 +796,7 @@ function! GoPreBuffer()
 	if &diff
 		exec "normal [c"
 	else
-		bp
-		let l:c = 0
-		while ((expand("%:p") == "") && (l:c < 20) || (&ft == 'qf') )
-			bp
-			let l:c = l:c + 1
-		endwhile
+		call SwitchToNextBuffer(-1)
 	endif
 endfunction
 
@@ -817,6 +864,7 @@ function! Is_File_Open_In_Buf(fn)
 	endtry
 	return l:is_fn_visual
 endfunction
+
 function! Is_File_Visual_In_Buf(fn)
 	let l:is_fn_visual = 0
 	let l:fn = a:fn
@@ -1048,7 +1096,6 @@ endf
 
 func! QuickfixToggle()
 	let l:bwn = bufwinnr("%")
-	"if Is_File_Visual_In_Buf("[Quickfix List")
 	if Is_File_Visual_In_Buf('[Quickfix ')
 		cclose
 	else
@@ -1115,7 +1162,9 @@ func! QuifixBufReadPost_Process()
 			call setqflist(g:Quickfix_uniqedList)
 		endif
 	endif
-	cclose | vert copen 45
+	"if Is_File_Visual_In_Buf("[Quickfix List")
+		"cclose | vert copen 45
+	"endif
 	exec "normal! \<C-W>L"
 	exec "normal! 45\<C-W>|"
 endf
@@ -1211,7 +1260,7 @@ function! SaveFilePath()
 	let l:f = expand("%:p:h")
 	let l:f = Escape(f)
 	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:shmdir.g:whoami.'/apwdpath'
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:absfn
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1249,7 +1298,11 @@ function! SaveYankText()
 	call add(l:lines, l:w)
 	call writefile(l:lines, g:shmdir.g:whoami."/yank.txt")
 	"exec 'norm yy"+yy"*yy'
-	exec 'norm "+yw"*yw'
+	if has('clipboard')
+		exec 'norm "+yw"*yw'
+	else
+		exec 'norm "Yyw'
+	endif
 endfunction
 
 function! SaveYankTextInVisual()
@@ -1257,8 +1310,13 @@ function! SaveYankTextInVisual()
 	let l:ll = line("'>")
 	silen exec 'norm gvy'
 	let l:lines = getline(l:fl, l:ll)
-	let @*=@"
-	let @+=@"
+	" yankring.vim http://www.vim.org/scripts/script.php?script_id=1234
+	if has('clipboard')
+		let @*=@"
+		let @+=@"
+	else
+		let @Y=@"
+	endif
 	call writefile(l:lines, g:shmdir.g:whoami."/yank.txt", "b")
 endfunction
 
@@ -1894,7 +1952,6 @@ nnoremap <silent> <leader>ea :call EditAbsoluteFilePath()<cr>
 nnoremap <leader>ec :call EditConfig()<cr>
 nnoremap <silent> <leader>ed :call EdCommandProxy()<cr>
 nnoremap <silent> <leader>ee :e!<cr>
-nnoremap <silent> <leader>ef :sp<cr>:wincmd w<cr>:resize 1<cr>:e /tmp/file.log<cr>
 nnoremap <silent> <leader>eg :sp<cr>:wincmd w<cr>:resize 2<cr>:e /tmp/st/<cr>
 nnoremap <silent> <leader>eh :e %:h<cr>
 nnoremap <silent> <leader>ei :call EditTmpFile(g:homedir."/person_tools/myindex.mk")<cr>
@@ -2025,7 +2082,7 @@ nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
 nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
-nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
+"nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
 cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
@@ -2037,7 +2094,7 @@ nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-a> :call QuickfixToggle()<cr>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
-nnoremap <c-e> :call EditTmpFile("/tmp/file.log")<cr>
+nnoremap <c-e> :call EditTmpFile(g:tmpfile)<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
 nnoremap <c-g><c-d> :call GitDiffLog()<cr>
@@ -2177,4 +2234,7 @@ autocmd VimEnter * call BufPos_Initialize()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"let &termencoding=&encoding
+"set termencoding=utf-8
+"set encoding=prc
 let g:my_vimrc_is_loaded = 1
