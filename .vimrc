@@ -1048,7 +1048,8 @@ endf
 
 func! QuickfixToggle()
 	let l:bwn = bufwinnr("%")
-	if Is_File_Visual_In_Buf("[Quickfix List")
+	"if Is_File_Visual_In_Buf("[Quickfix List")
+	if Is_File_Visual_In_Buf('[Quickfix ')
 		cclose
 	else
 		call OpenQuickfixBuf()
@@ -2109,6 +2110,7 @@ inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
 vmap <silent> j 4j
 vmap <silent> k 4k
 vmap <leader>cl :!column -t<CR>
+vnoremap <silent> p "0p
 vmap <leader>w1 :w! ~/tmp/tmp_work_file/1.txt<cr>
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call SpecialVisualSearch('f', 1)<CR>
