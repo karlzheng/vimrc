@@ -42,6 +42,10 @@ let g:EditTmpFilePos = 1
 let g:use_gtags=0
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:include,sfr:../'
 let g:OS = system("uname | tr -d '\r' | tr -d '\n' ")
+
+let g:pydiction_location = '~/.vim/py_complete-dict'
+let g:pydiction_menu_height = 3
+
 "let g:use_gtags=1
 set nocompatible
 "au BufRead ft=Help set nu
