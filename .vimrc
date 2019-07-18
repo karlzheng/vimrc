@@ -133,6 +133,10 @@ if ! exists("g:whoami")
     let g:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
 endif
 
+if isdirectory(g:homedir.."/tabnine-vim")
+	set rtp+=~/tabnine-vim
+endif
+
 let g:absfn=g:homedir.'/dev/'.g:whoami.'/absfn'
 let g:shmdir=g:homedir.'/shm/'
 
