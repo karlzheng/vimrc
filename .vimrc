@@ -46,6 +46,8 @@ let g:OS = system("uname | tr -d '\r' | tr -d '\n' ")
 let g:pydiction_location = '~/.vim/py_complete-dict'
 let g:pydiction_menu_height = 3
 
+let g:ycm_key_list_stop_completion = ['<cr>']
+
 "let g:use_gtags=1
 set nocompatible
 "au BufRead ft=Help set nu
