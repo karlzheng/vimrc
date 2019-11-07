@@ -2108,6 +2108,7 @@ nnoremap <c-e> :call EditTmpFile(g:tmpfile)<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
 nnoremap <c-g><c-d> :call GitDiffLog()<cr>
+nnoremap <silent> <C-i> :call EditScratch()<cr>
 nnoremap <silent> <C-j>  <C-w>j
 nnoremap <silent> <C-k>  <C-w>k
 nnoremap <silent> <C-h>  <c-w>h
@@ -2156,7 +2157,6 @@ inoremap <c-f> <ESC>lli
 inoremap <C-h> <ESC>"_s
 inoremap <c-i><c-h> <ESC>:call InsertIncludeFileI(0)<CR>
 inoremap <C-k> <ESC>l"_Da
-inoremap <C-l> <ESC>l"_s
 inoremap <C-o> <C-c>
 inoremap <c-s> <ESC>:w!<cr>li
 inoremap <c-u> <c-g>u<c-u>
