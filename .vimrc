@@ -2108,13 +2108,13 @@ nnoremap <c-e> :call EditTmpFile(g:tmpfile)<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
 nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
 nnoremap <c-g><c-d> :call GitDiffLog()<cr>
-nnoremap <silent> <C-i> :call EditScratch()<cr>
 nnoremap <silent> <C-j>  <C-w>j
 nnoremap <silent> <C-k>  <C-w>k
 nnoremap <silent> <C-h>  <c-w>h
 nnoremap <silent> <C-l>  <c-w>l
 nnoremap <silent> <c-n> :call GoNextBuffer()<cr>
 nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
+nnoremap <silent> <C-u> :call EditScratch()<cr>
 nnoremap <c-s> :w!<cr>
 "nnoremap <c-t> :Ydc<CR>
 nnoremap <c-t> :call EditTmpFile(g:homedir.'/tmp/tee.log')<cr>
