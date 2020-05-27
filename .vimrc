@@ -9,7 +9,7 @@
 "        AUTHOR: Karl Zheng (), ZhengKarl#gmail.com
 "          BLOG: http://blog.csdn.net/zhengkarl
 "         WEIBO: http://weibo.com/zhengkarl
-"       COMPANY: LinkCM
+"       COMPANY: Anker
 "       CREATED: 2012年05月21日 19时12分43秒 CST
 "      REVISION:  ---
 "
@@ -43,6 +43,7 @@ let g:use_gtags=0
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:include,sfr:../'
 let g:OS = system("uname | tr -d '\r' | tr -d '\n' ")
 
+let g:DoxygenToolkit_authorName = "KarlZheng"
 let g:pydiction_location = '~/.vim/py_complete-dict'
 let g:pydiction_menu_height = 3
 
