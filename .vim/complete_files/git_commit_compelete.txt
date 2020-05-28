@@ -1,10 +1,10 @@
-Modify:
+[Feat]
 [Build]
+[Type]
 [Chore]
 [Docs]
-[Feat]
 [Fix]
 [Refactor]
 [Style]
 [Test]
-[Type]
+Modify:
