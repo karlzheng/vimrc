@@ -84,7 +84,7 @@ set hlsearch
 set incsearch
 set infercase
 set isf-==
-set iskeyword-=",.,/,,
+set iskeyword-=",.,/,,,-
 " for  # * quick lookup
 set iskeyword+=_
 set laststatus=2
@@ -138,10 +138,6 @@ if ! exists("g:whoami")
     let g:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
 endif
 
-if isdirectory(g:homedir."/tabnine-vim")
-	set rtp+=~/tabnine-vim
-endif
-
 let g:absfn=g:homedir.'/dev/'.g:whoami.'/absfn'
 let g:shmdir=g:homedir.'/shm/'
 
@@ -165,7 +161,24 @@ function! s:PreSetEnv()
 		"let l:c = 'compgen -c > '.l:f
 		"let l:r = system(l:c)
 	"endif
-	let l:fs = ['~/.vim/complete_files/allBashCommands.txt', '~/.vim/complete_files/allBashCommands.txt', '~/.vim/complete_files/usr_bin_cmd.txt']
+	let l:f = expand("%:t")
+	if (l:f == "COMMIT_EDITMSG")
+		"set iskeyword
+		set complete+=k
+		set isk+=[
+		set isk+=]
+		set isk+=:
+		let l:f = "~/.vim/complete_files/git_commit_compelete.txt"
+		let l:ef = expand(l:f)
+		if filereadable(l:ef)
+			exec 'set '. 'dictionary+='.l:ef
+		endif
+	else
+		if isdirectory(g:homedir."/tabnine-vim")
+			set rtp+=~/tabnine-vim
+		endif
+	endif
+	let l:fs = [ '~/.vim/complete_files/usr_bin_cmd.txt', '~/.vim/complete_files/allBashCommands.txt', '~/.vim/complete_files/bash.list' ]
 	for l:f in l:fs
 		let l:ef = expand(l:f)
 		if filereadable(l:ef)
@@ -206,7 +219,7 @@ func! AddDebugLine()
 		let l:msg = '$(warning "karldbg")'
 	endif
 	if &ft == "python"
-		let l:msg = 'import inspect;print ("karldbg %s %d" %(__file__, inspect.currentframe().f_lineno))'
+		let l:msg = 'import inspect;print ("karldbg %s %d" %("__file__", inspect.currentframe().f_lineno))'
 	endif
 	if &ft == "sh"
 		let l:msg = 'echo karldbg ${BASH_SOURCE[0]} $LINENO'

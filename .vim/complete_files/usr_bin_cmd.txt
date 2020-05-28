@@ -1,3 +1,12 @@
+[Build]
+[Type]
+[Feat]
+[Fix]
+[Docs]
+[Style]
+[Refactor]
+[Test]
+[Chore]
 a2p
 a2ping
 a2x
@@ -1371,7 +1380,6 @@ mmount
 mmove
 mmroff
 Modify:
-modify:
 mogrify
 mono
 montage
