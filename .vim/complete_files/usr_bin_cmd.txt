@@ -1370,6 +1370,8 @@ mmencode
 mmount
 mmove
 mmroff
+Modify:
+modify:
 mogrify
 mono
 montage

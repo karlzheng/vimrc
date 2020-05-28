@@ -61,7 +61,8 @@ set clipboard=unnamed
 set cot=menuone
 set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
 set cscopetag
-set dictionary+=~/.vim/usr_bin_cmd.txt,~/.vim/bash-support/wordlists/bash.list
+set complete-=k
+set complete+=k
 "set &sessionoptions
 "set encoding=prc
 set encoding=utf-8
@@ -81,6 +82,7 @@ set hid
 set history=500
 set hlsearch
 set incsearch
+set infercase
 set isf-==
 set iskeyword-=",.,/,,
 " for  # * quick lookup
@@ -90,7 +92,7 @@ if isdirectory('arch/arm/configs/')
 	set makeprg=make\ zImage\ \-j24
 else
 	set makeprg=make\ \-j24
-en
+endif
 set nocp
 set ignorecase
 set noexpandtab
@@ -153,17 +155,23 @@ else
 endif
 
 function! s:PreSetEnv()
-	let l:d = g:shmdir.g:whoami
-	if isdirectory(l:d) == 0
-		let l:c = 'mkdir -p '.l:d
-		let l:r = system(l:c)
-	endif
-	let l:f=g:shmdir.g:whoami.'/allBashCommands.txt'
-	if filereadable(l:f) == 0
-		let l:c = 'compgen -c > '.l:f
-		let l:r = system(l:c)
-	endif
-	exec 'set '. 'dictionary+='.l:f
+	"let l:d = g:shmdir.g:whoami
+	"if isdirectory(l:d) == 0
+		"let l:c = 'mkdir -p '.l:d
+		"let l:r = system(l:c)
+	"endif
+	"let l:f=g:shmdir.g:whoami.'/allBashCommands.txt'
+	"if filereadable(l:f) == 0
+		"let l:c = 'compgen -c > '.l:f
+		"let l:r = system(l:c)
+	"endif
+	let l:fs = ['~/.vim/complete_files/allBashCommands.txt', '~/.vim/complete_files/allBashCommands.txt', '~/.vim/complete_files/usr_bin_cmd.txt']
+	for l:f in l:fs
+		let l:ef = expand(l:f)
+		if filereadable(l:ef)
+			exec 'set '. 'dictionary+='.l:ef
+		endif
+	endfor
 endfunc
 
 call s:PreSetEnv()
