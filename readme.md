@@ -7,8 +7,6 @@
 
 - TODO:
 
-	- COMMIT_EDITMSG  keyword - []
-
 	- custom Omini Complement function for whole line complement
 
 		
