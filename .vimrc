@@ -233,6 +233,17 @@ func! AddDebugLine()
 	endif
 endfunction
 
+func! AddErrorDebugLine()
+	let l:msg = ''
+	if &ft == "c" || &ft == "cpp"
+		let l:msg = '#error "karldbg"'
+	endif
+	if l:msg != ''
+		call append(line('.'), l:msg)
+		exec "normal Vj=j"
+	endif
+endfunction
+
 function! <SID>BufCloseOthers()
 	let l:currentBufNum   = bufnr("%")
 	let l:alternateBufNum = bufnr("#")
@@ -1946,6 +1957,7 @@ nnoremap <silent> ,1ea :1sp<cr>:call EditAbsoluteFilePath()<cr>
 nnoremap <silent> ,32 f vt "xx$"xp
 nnoremap <cr> :nohl<cr><cr>
 nnoremap <leader>ac :call EnterSavedPath()<cr>
+nnoremap <silent> <leader>ae :call AddErrorDebugLine()<cr>
 nnoremap <silent> <leader>al :call AddDebugLine()<cr>
 nnoremap <leader>ap :call SaveFilePath()<cr>
 nnoremap <silent> <leader>ba :call SaveBCFn1()<cr><cr>
