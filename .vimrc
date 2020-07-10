@@ -95,7 +95,7 @@ else
 endif
 set nocp
 set ignorecase
-set expandtab
+set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
 set pastetoggle=<F4>
