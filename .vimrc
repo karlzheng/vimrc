@@ -138,7 +138,8 @@ if ! exists("g:whoami")
     let g:whoami = system("whoami | tr -d '\r' | tr -d '\n' ")
 endif
 
-let g:absfn=g:homedir.'/dev/'.g:whoami.'/absfn'
+let g:absfa=g:homedir.'/dev/'.g:whoami.'/absfa'
+let g:absfb=g:homedir.'/dev/'.g:whoami.'/absfb'
 let g:shmdir=g:homedir.'/shm/'
 
 let g:tmpfile="file.log"
@@ -510,12 +511,12 @@ function! EnterSavedPath()
 endfunction
 
 function! EditAbsoluteFilePath()
-	let l:_cmd_ = 'cat '.g:absfn.'| wc -l'
+	let l:_cmd_ = 'cat '.g:absfa.'| wc -l'
 	let l:ret = system(l:_cmd_)
 	if l:ret > 1
-		exec "e ".g:absfn
+		exec "e ".g:absfa
 	else
-		let l:_cmd_ = 'cat '.g:absfn.'| tr -d "\r" | tr -d "\n"'
+		let l:_cmd_ = 'cat '.g:absfa.'| tr -d "\r" | tr -d "\n"'
 		let l:f = system(l:_cmd_)
 		"let l:f = "'".escape(l:f, '%')."'"
 		let l:f = escape(l:f, '%')
@@ -599,7 +600,7 @@ function! EditFileWithRelativePath()
 	let l:f = expand("%")
 	let l:df = substitute(l:f, '^/tmp/a/', "", "")
 	let l:df = substitute(l:f, '^/tmp/b/', "", "")
-	let l:cmd = 'cat 'g:absfn
+	let l:cmd = 'cat 'g:absfa
 	let l:r = system(l:cmd)
 	let l:r = substitute(l:r, "\r", "", "g")
 	let l:r = substitute(l:r, "\n", "", "g")
@@ -1252,7 +1253,7 @@ func! ReplaceFilePath4fp()
 	let l:findstr = matchstr(l:line, l:aRegex)
 	if l:findstr != ""
 		echo "got it"
-		let l:f = g:absfn
+		let l:f = g:absfa
 		if filereadable(l:f)
 			let l:l = readfile(l:f, '', 1)
 			let l:str = l:l[0]
@@ -1269,10 +1270,11 @@ func! ReplaceMyUserName()
 	call setline(".", l:line)
 endfunction
 
-function! SaveAbsPathFileName()
+function! SaveAbsPathFileName(fn)
 	let l:f = expand("%:p")
+
 	if (l:f != "")
-		let l:_cmd_ = 'echo "' . l:f . '" > ' . g:absfn
+		let l:_cmd_ = 'echo "' . l:f . '" > ' . a:fn
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1303,7 +1305,7 @@ function! SaveFilePath()
 	let l:f = expand("%:p:h")
 	let l:f = Escape(f)
 	if (l:f != "")
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:absfn
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:absfa
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -1371,7 +1373,7 @@ function! SaveRelaPathFileName()
 		let l:f = substitute(l:f, '^a/', "", "")
 		let l:f = substitute(l:f, '^b/', "", "")
 		"let l:_cmd_ = 'echo ' . '"' . l:f . '" > '.g:shmdir.'/relaFn'
-		let l:_cmd_ = 'echo ' . '"' . l:f . '" > g:absfn
+		let l:_cmd_ = 'echo ' . '"' . l:f . '" > g:absfa
 		let l:_resp = system(l:_cmd_)
 	else
 		echo "Current file is noname."
@@ -2011,8 +2013,9 @@ nnoremap <silent> <leader>es :call EditScratch()<cr>
 nnoremap <silent> <leader>et :e ~/tmp/tee.log<cr>
 nnoremap <silent> <leader>ev :e ~/.vimrc<cr>
 nnoremap          <leader>ey :call EditYankText()<cr>
-nnoremap          <leader>fa :call SaveAbsPathFileName()<cr>
-nnoremap          <leader>fb :call SaveRelaPathFileName()<cr>
+nnoremap          <leader>fa :call SaveAbsPathFileName(g:absfa)<cr>
+nnoremap          <leader>fb :call SaveAbsPathFileName(g:absfb)<cr>
+"nnoremap          <leader>fb :call SaveRelaPathFileName()<cr>
 nnoremap          <leader>fc :cs find c
 nnoremap <silent> <leader>fe :Sexplore!<cr>
 nnoremap <leader>fg :cs find g
