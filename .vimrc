@@ -39,6 +39,7 @@ endfunction
 let mapleader=","
 let g:BASH_Ctrl_j='on'
 let g:EditTmpFilePos = 1
+let g:formatterpath = ['/usr/local/bin/astyle']
 let g:use_gtags=0
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:include,sfr:../'
 let g:OS = system("uname | tr -d '\r' | tr -d '\n' ")
@@ -99,6 +100,7 @@ set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
 set pastetoggle=<F4>
+set rtp +=~/.vim/bundle/vundle.vim
 set shiftwidth=4
 set smartindent
 set stal=1
@@ -1660,13 +1662,19 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugin setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 filetype plugin indent on
 let g:searchfold_do_maps = 0
 "让Vim在图形界面与终端中的Alt组合键相同
 "http://lilydjwg.is-programmer.com/posts/23574.html
 let g:EchoFuncKeyPrev="-"
 let g:EchoFuncKeyNext="="
+
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+call vundle#end()
+"Plugin 'Chiel92/vim-autoformat'
+Plugin 'rhysd/vim-clang-format'
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   colorcolumn setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -2284,4 +2292,5 @@ autocmd VimEnter * call BufPos_Initialize()
 "let &termencoding=&encoding
 "set termencoding=utf-8
 "set encoding=prc
+
 let g:my_vimrc_is_loaded = 1
