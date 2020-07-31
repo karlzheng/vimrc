@@ -2265,6 +2265,10 @@ if has("autocmd") && exists("+omnifunc")
 	\		setlocal omnifunc=syntaxcomplete#Complete |
 	\	endif
 endif
+
+autocmd FileType c,cpp setlocal formatprg=clang-format
+autocmd FileType c,cpp setlocal equalprg=clang-format
+
 autocmd! bufwritepost .vimrc source ~/.vimrc
 au BufRead,BufNewFile *.txt setlocal ft=txt
 au BufRead,BufNewFile *.rc setlocal ft=make
