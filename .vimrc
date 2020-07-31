@@ -1674,6 +1674,8 @@ Plugin 'VundleVim/Vundle.vim'
 call vundle#end()
 "Plugin 'Chiel92/vim-autoformat'
 Plugin 'rhysd/vim-clang-format'
+"https://github.com/editorconfig/editorconfig-vim#readme
+Plugin 'editorconfig/editorconfig-vim'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   colorcolumn setting
