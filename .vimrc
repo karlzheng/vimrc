@@ -101,14 +101,14 @@ set nu
 "set ofu=syntaxcomplete#Complete
 set pastetoggle=<F4>
 set rtp +=~/.vim/bundle/vundle.vim
-set shiftwidth=4
+set shiftwidth=8
 set smartindent
 set stal=1
 set statusline=\[%{getcwd()}]\[%f]%m%r%h%w\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
 "setlocal noswapfile
 "set noswf
 set switchbuf=useopen
-set tabstop=4
+set tabstop=8
 set termencoding=utf-8
 set textwidth=10000
 set whichwrap=b,s,h,l
@@ -1434,8 +1434,8 @@ function! SetCFileTabStop()
 		set shiftwidth=8
 		set tabstop=8
 	else
-		set shiftwidth=4
-		set tabstop=4
+		set shiftwidth=8
+		set tabstop=8
 	endif
 	set iskeyword-=-,>()
 	set fo-=l
