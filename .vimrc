@@ -100,7 +100,7 @@ set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
 set pastetoggle=<F4>
-set rtp +=~/.vim/bundle/vundle.vim
+set rtp +=~/.vim/bundle/Vundle.vim
 set shiftwidth=8
 set smartindent
 set stal=1
