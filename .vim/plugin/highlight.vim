@@ -119,7 +119,7 @@ if !exists('g:lcolor_fg')
 endif
 
 if !exists('g:lcolor_bg_cterm')
-   let g:lcolor_bg_cterm = "Blue,Green,Cyan,Red,Yellow,Magenta,Brown,LightGray"
+   let g:lcolor_bg_cterm = "Blue,Green,Cyan,Red,Magenta,Yellow,Brown,LightGray"
 endif
 
 if !exists('g:lcolor_fg_cterm')
@@ -128,7 +128,7 @@ endif
 
 " Define colors for Pattern highlight
 if !exists('g:pcolor_bg')
-   let g:pcolor_bg = "yellow,blue,green,magenta,cyan,brown,orange,red"
+   let g:pcolor_bg = "blue,yellow,green,magenta,cyan,brown,orange,red"
 endif
 
 if !exists('g:pcolor_fg')
@@ -136,7 +136,7 @@ if !exists('g:pcolor_fg')
 endif
 
 if !exists('g:pcolor_bg_cterm')
-   let g:pcolor_bg_cterm = "DarkBlue,DarkGreen,DarkCyan,DarkRed,Yellow,Magenta,Brown,LightGray"
+   let g:pcolor_bg_cterm = "DarkBlue,DarkGreen,DarkCyan,DarkRed,Magenta,Brown,Yellow,LightGray"
 endif
 
 if !exists('g:pcolor_fg_cterm')
@@ -285,8 +285,41 @@ function! s:HighlightInitP()
    endw
 endfunction
 
+function! BES_Highlight(mode, sw)
+   if a:mode == 'h'
+      let match_pat = '.*\%'.line(".").'l.*'
+      exec 'syn match '. s:lcolor_grp . s:lcolor_n . ' "' . match_pat . '" containedin=ALL'
+   else
+   endif
+
+   let cur_word = a:mode == 's' || a:mode == 'j' ? @/ : a:sw
+
+   if cur_word == ""
+      " do nothing
+   elseif a:mode == 'l'
+      let s:pcolor_n = s:pcolor_n == s:pcolor_max - 1 ?  1 : s:pcolor_n + 1
+      exec 'syn match ' . s:pcolor_grp . s:pcolor_n . ' ".*\<' . cur_word . '\>.*" containedin=ALL'
+   endif
+
+   " Clean all
+   if a:mode == 'n'
+      let ccol = 0
+      while ccol < s:lcolor_max
+         exec 'syn clear '. s:lcolor_grp . ccol
+         let ccol = ccol + 1
+      endw
+
+      let ccol = 0
+      while ccol < s:pcolor_max
+         exec 'syn clear '. s:pcolor_grp . ccol
+         let ccol = ccol + 1
+      endw
+
+      let s:lcolor_n = 0
+      let s:pcolor_n = 0
+   else
+   endif
+endfunction
 
 call s:HighlightInitL()
 call s:HighlightInitP()
-
-

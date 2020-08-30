@@ -2299,4 +2299,17 @@ autocmd VimEnter * call BufPos_Initialize()
 "set termencoding=utf-8
 "set encoding=prc
 
+let g:bes_keyword = g:homedir."/log.keyword.txt"
+"let s:loaded_bes_keyword = 0
+
+function! Search_BES_Keywords()
+	if filereadable(g:bes_keyword)
+		for line in readfile(g:bes_keyword)
+			call BES_Highlight("l", line)
+		endfor
+	endif
+endfunction
+
+command! -nargs=* -complete=tag -bang BESHighlight :call Search_BES_Keywords()
+
 let g:my_vimrc_is_loaded = 1
