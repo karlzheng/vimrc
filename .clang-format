@@ -11,11 +11,16 @@
 ---
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
+#AlignAfterOpenBracket: DontAlign
+#AlignAfterOpenBracket: AlwaysBreak
+#AlignConsecutiveAssignments: false
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Right
 #AlignEscapedNewlines: Left # Unknown to clang-format-4.0
 AlignOperands: true
-AlignTrailingComments: false
+AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
@@ -26,8 +31,10 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
-BinPackArguments: true
-BinPackParameters: true
+#BinPackArguments: true
+#BinPackParameters: true
+BinPackArguments: false
+BinPackParameters: false
 BraceWrapping:
   AfterClass: false
   AfterControlStatement: false
@@ -47,6 +54,7 @@ BraceWrapping:
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 #BreakBeforeInheritanceComma: false # Unknown to clang-format-4.0
+BreakBeforeInheritanceComma: true
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: false
 #BreakConstructorInitializers: BeforeComma # Unknown to clang-format-4.0
@@ -502,6 +510,7 @@ ObjCSpaceBeforeProtocolList: true
 # Taken from git's rules
 #PenaltyBreakAssignment: 10 # Unknown to clang-format-4.0
 PenaltyBreakBeforeFirstCallParameter: 30
+#PenaltyBreakBeforeFirstCallParameter: 100
 PenaltyBreakComment: 10
 PenaltyBreakFirstLessLess: 0
 PenaltyBreakString: 10
@@ -529,4 +538,10 @@ SpacesInSquareBrackets: false
 Standard: Cpp03
 TabWidth: 8
 UseTab: Always
+#BreakBeforeBraces: Allman
+BreakBeforeBraces: Linux
+#AlignAfterOpenBracket: DontAlign
+#
+#MaxEmptyLinesToKeep: 0
+#BreakBeforeBraces: Attach
 ...
