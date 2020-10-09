@@ -1848,6 +1848,11 @@ hi ShowMarksHLo ctermbg=Yellow   ctermfg=Black  guibg=#FFDB72    guifg=Black
 hi ShowMarksHLm ctermbg=Magenta  ctermfg=Black  guibg=#FFB3FF    guifg=Black
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" easy motion: https://github.com/easymotion/vim-easymotion
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap em <Plug>(easymotion-w)
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " mark setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <silent> <leader>hl <Plug>MarkSet
