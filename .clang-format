@@ -36,17 +36,17 @@ AlwaysBreakTemplateDeclarations: false
 BinPackArguments: false
 BinPackParameters: false
 BraceWrapping:
-  AfterClass: true
-  AfterControlStatement: true
+  AfterClass: false
+  AfterControlStatement: false
   AfterEnum: false
   AfterFunction: true
   AfterNamespace: true
-  AfterObjCDeclaration: true
-  AfterStruct: true
-  AfterUnion: true
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
   #AfterExternBlock: false # Unknown to clang-format-5.0
   BeforeCatch: false
-  BeforeElse: true
+  BeforeElse: false
   IndentBraces: false
   #SplitEmptyFunction: true # Unknown to clang-format-4.0
   #SplitEmptyRecord: true # Unknown to clang-format-4.0
@@ -60,8 +60,7 @@ BreakConstructorInitializersBeforeComma: false
 #BreakConstructorInitializers: BeforeComma # Unknown to clang-format-4.0
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: false
-#ColumnLimit: 80
-ColumnLimit: 150
+ColumnLimit: 80
 CommentPragmas: '^ IWYU pragma:'
 #CompactNamespaces: false # Unknown to clang-format-4.0
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
@@ -540,7 +539,7 @@ Standard: Cpp03
 TabWidth: 8
 UseTab: Always
 #BreakBeforeBraces: Allman
-#BreakBeforeBraces: Linux
+BreakBeforeBraces: Linux
 #AlignAfterOpenBracket: DontAlign
 #
 #MaxEmptyLinesToKeep: 0
