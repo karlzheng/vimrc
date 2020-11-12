@@ -8,6 +8,8 @@
 #   https://clang.llvm.org/docs/ClangFormat.html
 #   https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 #
+#   https://raw.githubusercontent.com/torvalds/linux/master/.clang-format
+#
 ---
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
