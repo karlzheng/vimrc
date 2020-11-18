@@ -653,27 +653,24 @@ function! EditQuickfixList()
 endfunc
 
 function! EditScratch()
-	echo g:homedir
+	let l:fn = g:homedir."/tmp/scratch"
+
 	if filereadable(g:homedir."/tmp/.scratch.swp")
 		let l:hasScratchBuf = 0
 		for i in range(1,bufnr("$"))
 			if buflisted(i)
-				"if bufname(i) == g:homedir."/tmp/scratch"
 				let l:fn = expand("#".i.":t")
 				if l:fn == "scratch"
 					let l:hasScratchBuf = 1
 				endif
 			endif
 		endfor
-		if l:hasScratchBuf
-			let l:fn = g:homedir."/tmp/scratch"
-		else
+		if ! l:hasScratchBuf
 			let l:fn = g:homedir."/tmp/scratch2"
 		endif
-		exec "e".l:fn
-	else
-		e $HOME/tmp/scratch
 	endif
+
+	exec "e".l:fn
 endfunction
 
 function! EditTmpFile(fn)
