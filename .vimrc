@@ -2167,7 +2167,8 @@ nnoremap <silent> <c-p> :call GoPreBuffer()<cr>
 nnoremap <silent> <C-u> :call EditScratch()<cr>
 nnoremap <c-s> :w!<cr>
 "nnoremap <c-t> :Ydc<CR>
-nnoremap <c-t> :call EditTmpFile(g:homedir.'/tmp/tee.log')<cr>
+"nnoremap <c-t> :call EditTmpFile(g:homedir.'/tmp/tee.log')<cr>
+nnoremap <c-t> :e $HOME/tmp/tee.log<cr>
 nnoremap <c-q> :Bclose<cr>
 nnoremap <c-x><c-c> :call QuitAllBuffers()<cr>
 nnoremap <c-x><c-d> :Bclose<cr>
