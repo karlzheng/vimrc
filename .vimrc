@@ -653,24 +653,28 @@ function! EditQuickfixList()
 endfunc
 
 function! EditScratch()
-	let l:fn = g:homedir."/tmp/scratch"
+	let l:scratch_file = g:homedir."/tmp/scratch"
+	let l:is_scratch_loaded = 0
+	let l:use_scratch2 = 0
 
 	if filereadable(g:homedir."/tmp/.scratch.swp")
-		let l:hasScratchBuf = 0
 		for i in range(1,bufnr("$"))
 			if buflisted(i)
 				let l:fn = expand("#".i.":t")
 				if l:fn == "scratch"
-					let l:hasScratchBuf = 1
+					let l:is_scratch_loaded = 1
 				endif
 			endif
 		endfor
-		if ! l:hasScratchBuf
-			let l:fn = g:homedir."/tmp/scratch2"
+		if (l:is_scratch_loaded == 0)
+			let l:scratch_file = g:homedir."/tmp/scratch2"
 		endif
 	endif
-
-	exec "e".l:fn
+	if l:is_scratch_loaded == 1
+		call SwitchToBuf(l:scratch_file)
+	else
+		exec "e ".l:scratch_file
+	endif
 endfunction
 
 function! EditTmpFile(fn)
