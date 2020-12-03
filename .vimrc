@@ -197,24 +197,23 @@ call s:PreSetEnv()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 func! AddDebugLine()
 	let l:msg = ''
-	if &ft == "c"
+
+	if &ft == "c" || &ft == "cpp"
 		if isdirectory(g:root_work_path."/arch/arm/configs")
 			let l:msg = 'pr_err("karldbg %s %d\n", __func__, __LINE__);'
 		else
-			if (filereadable(g:root_work_path."/build/envsetup.sh") || filereadable(g:root_work_path."/Android.mk") || filereadable(g:root_work_path."/is_android.txt"))
-				let l:msg = 'ALOGE("karldbg %s %d", __func__, __LINE__);'
+			if isdirectory(g:root_work_path."/apps/anc")
+					let l:msg = 'TRACE(1, "AKLOG %s %d\r\n", __func__, __LINE__);'
 			else
-				let l:msg = 'printf("karldbg %s %d\n", __func__, __LINE__);'
+				if (filereadable(g:root_work_path."/build/envsetup.sh") || filereadable(g:root_work_path."/Android.mk") || filereadable(g:root_work_path."/is_android.txt"))
+					let l:msg = 'ALOGE("karldbg %s %d", __func__, __LINE__);'
+				else
+					let l:msg = 'printf("karldbg %s %d\n", __func__, __LINE__);'
+				endif
 			endif
 		endif
 	endif
-	if &ft == "cpp"
-		if (filereadable(g:root_work_path."/build/envsetup.sh") || filereadable(g:root_work_path."/Android.mk") || filereadable(g:root_work_path."/is_android.txt"))
-			let l:msg = 'ALOGE("karldbg %s %d", __func__, __LINE__);'
-		else
-			let l:msg = 'printf("karldbg %s %d\n", __func__, __LINE__);'
-		endif
-	endif
+
 	if &ft == "java"
 		let l:msg = 'System.err.println("karldbg " + Thread.currentThread().getStackTrace()[1].getLineNumber());'
 	endif
@@ -232,7 +231,10 @@ func! AddDebugLine()
 	endif
 	if l:msg != ''
 		call append(line('.'), l:msg)
-		exec "normal Vj=j"
+		exec "normal J"
+		"exec "normal jJi<cr><ESC>"
+		"exec "normal $Ji"
+		"exec "normal Vj=j"
 	endif
 endfunction
 
@@ -1977,7 +1979,7 @@ nnoremap <silent> ,32 f vt "xx$"xp
 nnoremap <cr> :nohl<cr><cr>
 nnoremap <leader>ac :call EnterSavedPath()<cr>
 nnoremap <silent> <leader>ae :call AddErrorDebugLine()<cr>
-nnoremap <silent> <leader>al :call AddDebugLine()<cr>
+nnoremap <silent> <leader>al :call AddDebugLine()<cr>i<cr><ESC>
 nnoremap <leader>ap :call SaveFilePath()<cr>
 nnoremap <silent> <leader>ba :call SaveBCFn1()<cr><cr>
 nnoremap <silent> <leader>bb :call CompareTobcFn1()<cr><cr>
