@@ -1680,6 +1680,7 @@ Plugin 'rhysd/vim-clang-format'
 "https://github.com/editorconfig/editorconfig-vim#readme
 Plugin 'editorconfig/editorconfig-vim'
 
+Plugin 'neoclide/coc.nvim', {'branch': 'release'}
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   colorcolumn setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
