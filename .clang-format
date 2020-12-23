@@ -33,10 +33,10 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
-BinPackArguments: true
-BinPackParameters: true
-#BinPackArguments: false
-#BinPackParameters: false
+#BinPackArguments: true
+#BinPackParameters: true
+BinPackArguments: false
+BinPackParameters: false
 BraceWrapping:
   AfterClass: false
   AfterControlStatement: false
