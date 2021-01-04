@@ -240,9 +240,15 @@ endfunction
 
 func! AddErrorDebugLine()
 	let l:msg = ''
+
 	if &ft == "c" || &ft == "cpp"
 		let l:msg = '#error "karldbg"'
+	else
+		if &ft == "make"
+			let l:msg = '$(error "karldbg")'
+		endif
 	endif
+
 	if l:msg != ''
 		call append(line('.'), l:msg)
 		exec "normal Vj=j"
