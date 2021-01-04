@@ -2163,8 +2163,9 @@ nnoremap <c-a> :call QuickfixToggle()<cr>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
 nnoremap <c-e> :call EditTmpFile(g:tmpfile)<cr>
 nnoremap <c-g><c-b> :call ShowGitDiffInBcompare()<CR><cr>
-nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
-nnoremap <c-g><c-d> :call GitDiffLog()<cr>
+"nnoremap <c-g><c-c> :call ShowGitDiffInKompare()<CR><cr>
+"nnoremap <c-g><c-d> :call GitDiffLog()<cr>
+nnoremap <c-g><c-d> :GitkCurCommit<cr>
 nnoremap <silent> <C-j>  <C-w>j
 nnoremap <silent> <C-k>  <C-w>k
 nnoremap <silent> <C-h>  <c-w>h

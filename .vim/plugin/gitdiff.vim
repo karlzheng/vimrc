@@ -117,6 +117,7 @@ endfunc
 
 function! <SID>GitEditFileInLine()
 	let l:linetext = getline('.')
+
 	if matchstr(l:linetext, "^--- a/") != ""
 		let l:linetext = "sp ".substitute(l:linetext, "--- a/", "", "")
 		let l:nextlinetext = getline(line('.') + 2)
@@ -136,4 +137,17 @@ function! <SID>GitEditFileInLine()
 	exec "normal ".l:linenu."gg"
 	"exe "wincmd J"
 endfunction
+
 command! GitEditFileInLine call <SID>GitEditFileInLine()
+
+function! <SID>GitkCurCommit()
+	 let l:ln = getline('.')
+
+	 if matchstr(l:ln, "^commit ") != ""
+		 let l:tag= strpart(l:ln, 7, 40)
+		 let l:cmd = "gitk ".l:tag." &"
+		 let _resp = system(l:cmd)
+	 endif
+endfunc
+
+command! GitkCurCommit call <SID>GitkCurCommit()
