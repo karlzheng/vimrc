@@ -1,0 +1,38 @@
+01 05 04
+04 03 0B
+04 05 04
+CHIP=best2300p
+ChargeBox
+FULL_CHARGING
+HAL_SW_BOOTMODE_CLEAR_PAIRED_INFO
+HANGUPCALL PROMPT
+HFP_KEY_HANGUP_CALL
+HF_EVENT_AUDIO_DISCONNECTED
+METAL_ID
+PLC bad frame
+START_IBRT
+accept
+activeCons
+app_bt_profile_connect_manager_hf
+app_ibrt_customif_tws_connected_ind
+app_ibrt_nvrecord_update_ibrt_mode_tws
+app_ibrt_ui_event_entry
+app_start_10_second_timer
+app_status_indication_set
+bt_sco_player
+bt_stack_init_done
+except
+hal_sw_bootmode_clear
+ibrt_ui_log:power on unknow mode
+local_role
+media_PlayAudio_standalone
+record_linkKey
+stack init done
+system_shutdown
+twsif_mobile_disconnected
+twsif_tws_connected
+twsif_tws_disconnected
+ui_anker_power_on
+ui_anker_pwron_reboot
+ui_App_Box_Event_Handler
+
