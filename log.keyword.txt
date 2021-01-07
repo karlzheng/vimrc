@@ -1,38 +1,94 @@
+01 04 08
 01 05 04
 04 03 0B
 04 05 04
+80 85 8c
+A2DP SEQ ERR
+A2DP_EVENT_STREAM_SUSPENDED
+BT addr is
+BTIF_SPP_EVENT_REMDEV_CONNECTED
+BTIF_SPP_EVENT_REMDEV_DISCONNECTED
 CHIP=best2300p
 ChargeBox
+CreateAudioLink
+DUT rssi
 FULL_CHARGING
 HAL_SW_BOOTMODE_CLEAR_PAIRED_INFO
+HANDER AUTH
 HANGUPCALL PROMPT
 HFP_KEY_HANGUP_CALL
+HF_EVENT_AUDIO_CONNECTED
 HF_EVENT_AUDIO_DISCONNECTED
+HF_EVENT_CALL_IND
 METAL_ID
+OTA_IMAGE_BUFF
 PLC bad frame
+RECONNECT_EVENT
+ROLE_CHANGE
+Received SUSPEND_CMD
+SCO ongoing
+SHARE_TWS_INFO
 START_IBRT
+SYNC_HFP_STATUS
 accept
 activeCons
+app_anc_switch
 app_bt_profile_connect_manager_hf
+app_factorymode_bt_signalingtest
+app_hfp_siri_switch
 app_ibrt_customif_tws_connected_ind
+app_ibrt_if_config_keeper_mobile_update
+app_ibrt_if_config_keeper_tws_update
 app_ibrt_nvrecord_update_ibrt_mode_tws
 app_ibrt_ui_event_entry
+app_only_report_anc_mode
+app_report_local_anc_mode
+app_set_wear_status
 app_start_10_second_timer
 app_status_indication_set
+app_stop_10_second_timer
+app_tws_ibrt_audio_analysis frame mismatch
+app_tws_ibrt_audio_sync_mismatch_resume_request
+app_tws_if_tws_role_switch_complete_handler
+avrcp_key
+bt_key_handle_left_right
+bt_sbc_player
 bt_sco_player
 bt_stack_init_done
+controller successive rx seq error
+current hfcall machine
 except
+factory_section_open
+find_tws_peer_device_start
 hal_sw_bootmode_clear
+hfp get vol raw
+hfp_ibrt_sync_set_status
+ibrt_handle
+ibrt_ui_log:A2DP profile connected
+ibrt_ui_log:AVRCP profile connected
+ibrt_ui_log:HFP profile connected
 ibrt_ui_log:power on unknow mode
+ibrt_ui_log:search tws direactly
+iqs269a_thread
 local_role
 media_PlayAudio_standalone
+mobile_constate
+mobile_handle
 record_linkKey
+remd
+send_notify_to_app
 stack init done
+synchronize ok
 system_shutdown
+tws switch needed
+tws_handle
+twsif_ibrt_connected
 twsif_mobile_disconnected
 twsif_tws_connected
 twsif_tws_disconnected
+ui_App_Box_Event_Handler
 ui_anker_power_on
 ui_anker_pwron_reboot
-ui_App_Box_Event_Handler
-
+ui_bt_key_handler
+ui_close_earphone_hook
+vendor event,subcode
