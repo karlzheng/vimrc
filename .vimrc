@@ -99,7 +99,7 @@ set ignorecase
 set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
-set pastetoggle=<F4>
+"set pastetoggle=<F4>
 set rtp +=~/.vim/bundle/Vundle.vim
 set shiftwidth=8
 set smartindent
@@ -1462,7 +1462,7 @@ function! SetColorColumn()
 endfunction
 
 function! SetColorColumnC80()
-	let col_num = 80
+	let col_num = 81
 	let cc_list = split(&cc, ',')
 	if count(cc_list, string(col_num)) <= 0
 		execute "set cc+=".col_num
@@ -1946,6 +1946,8 @@ command! -nargs=* -complete=file -bang Rename :call Rename("<args>", "<bang>")
 command! -nargs=* -complete=file -bang SS :call SourceSession("<args>", "<bang>")
 command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
 command! -nargs=* -complete=file -bang SC :call SourceSessionInCurDir("<args>", "<bang>")
+command! -nargs=* -complete=file -bang T1 :e ~/tmp/t1.log
+command! -nargs=* -complete=file -bang T2 :e ~/tmp/t2.log
 
 command! Bclose call <SID>BufcloseCloseIt(0)
 command! BcloseDraft call <SID>BufcloseCloseDraft()
@@ -2155,7 +2157,7 @@ nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
 nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
-"nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
+nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
 cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>

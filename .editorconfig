@@ -16,8 +16,10 @@ insert_final_newline = false
 
 [*.c]
 ;max_line_length = 80
-max_line_length = 130
+;max_line_length = 130
+max_line_length = 150
 
 [*.cpp]
 ;max_line_length = 80
-max_line_length = 130
+;max_line_length = 130
+max_line_length = 150
