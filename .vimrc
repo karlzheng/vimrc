@@ -1862,6 +1862,7 @@ hi ShowMarksHLm ctermbg=Magenta  ctermfg=Black  guibg=#FFB3FF    guifg=Black
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap E <Plug>(easymotion-prefix)
 nmap em <Plug>(easymotion-w)
+nmap eb <Plug>(easymotion-b)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " mark setting
