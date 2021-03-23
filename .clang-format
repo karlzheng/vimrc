@@ -63,7 +63,6 @@ BreakConstructorInitializersBeforeComma: false
 #BreakConstructorInitializers: BeforeComma # Unknown to clang-format-4.0
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: false
-#ColumnLimit: 80
 #ColumnLimit: 100
 ColumnLimit: 150
 CommentPragmas: '^ IWYU pragma:'
