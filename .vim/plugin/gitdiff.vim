@@ -17,6 +17,8 @@
 function! GitDiffLog()
 	 let l:curline = line('.')
 	 let l:maxline = line('$')
+	 let l:gitdiff_filename = "/tmp/gitdiff.c"
+
 	 "find the firsttag
 	 let l:line = l:curline + 1
 	 while l:line <= l:maxline
@@ -42,18 +44,17 @@ function! GitDiffLog()
 		 endif
 		 let l:line = l:line - 1
 	 endwhile
-	 let l:gitdiff_filename = ""
-	 let l:gitdiff_filename = "/dev/shm/gitdiff.c"
+
 	 if l:curline == 1
 		 let l:_cmd_ = 'git diff > ' . l:gitdiff_filename
 	 else
-		 "let l:gitdiff_filename = 'gitdiff_'.l:firsttag.'_'.l:secondtag.'.c'
-		 "let l:gitdiff_filename = '/dev/shm/gitdiff_'.l:firsttag.'_'.l:secondtag.'.c'
-		 "let l:_cmd_ = 'git diff '.l:firsttag.' '.l:secondtag.' > ' .  l:gitdiff_filename
-		 let l:_cmd_ = 'git diff '.l:secondtag.'^ '.l:secondtag.' -p -U100000 --raw > ' .  l:gitdiff_filename
+		 let l:_cmd_ = 'git diff '.l:secondtag.'^ '.l:secondtag.' -p -U10 --raw > ' .  l:gitdiff_filename
 	 endif
+	 let g:ccc = l:_cmd_
+
 	 let _resp = system(l:_cmd_)
-	 "exec ":e ".'gitdiff_'.l:firsttag.'_'.l:secondtag.'.c'
+	 let g:rrr = _resp
+
 	 if ! isdirectory("~/person_tools/")
 		 let l:_cmd_ = 'git diff '.l:secondtag.'^ '.l:secondtag.' -p -U100000 --raw > ' . "~/diff.patch"
 		 let _resp = system(l:_cmd_)
@@ -62,8 +63,8 @@ function! GitDiffLog()
 	let l:dict = {}
 	let l:gitdiffbuf = 0 
 	let l:gitdiffwnd = 0 
+
 	redir => g:mymsg
-	"echo range(1, bufnr("$"))                                        
 	for i in range(1, bufnr("$"))                                        
 		let l:buffilename = bufname(i)
 		let l:wn = bufwinnr(l:buffilename)
@@ -76,22 +77,17 @@ function! GitDiffLog()
 			endif
 		endif
 	endfor
-	"echo l:dict
-	"echo "len:" len(l:dict)
-	"echo "git:" l:gitdiffbuf 
+
 	if l:gitdiffbuf != 0 
 		if l:gitdiffwnd != 0
 			exe l:gitdiffwnd . "wincmd w"
 		endif
-		"exe "buffer " . l:gitdiffbuf
 		exe "e " . l:gitdiff_filename
 	else
-		"new
 		exe "vs"
 		exe "wincmd L"
 		exe "e " . l:gitdiff_filename
 	endif
-	" go to the line start with "---a/" that contains a filename
 	 let l:maxline = line('$')
 	 let l:line = 1
 	 while l:line <= l:maxline
@@ -102,10 +98,8 @@ function! GitDiffLog()
 		 let l:line = l:line + 1
 	 endwhile
 	exe "normal ".l:line."gg"
-	"go back to git diff log window"
 	exe "wincmd h"
 	redir END
-	"echo g:mymsg
 endfunc
 
 function! GitDiffLog_and_bcompare()
@@ -151,3 +145,5 @@ function! <SID>GitkCurCommit()
 endfunc
 
 command! GitkCurCommit call <SID>GitkCurCommit()
+
+command! GitDiffLog call GitDiffLog()
