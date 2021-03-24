@@ -1958,6 +1958,9 @@ command! CG call ReadQuickfixFile(1)
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! EditAbsoluteFilePath call EditAbsoluteFilePath()
 
+"https://github.com/yaohunzhanyue/collcetion/issues/36
+command! -range=% Markmap CocCommand markmap.create <line1> <line2>
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " normal mode key remap
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
