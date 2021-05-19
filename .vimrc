@@ -1439,6 +1439,7 @@ func! SepLineToWord()
 endfunction
 
 function! SetCFileTabStop()
+	set noexpandtab
 	if isdirectory(g:root_work_path."/arch/arm/configs")
 		set shiftwidth=8
 		set tabstop=8
@@ -2290,14 +2291,16 @@ if has("autocmd") && exists("+omnifunc")
 	\	endif
 endif
 
-autocmd FileType c,cpp setlocal formatprg=clang-format
-autocmd FileType c,cpp setlocal equalprg=clang-format
+autocmd FileType h,c,hpp,cpp,cxx setlocal formatprg=clang-format
+autocmd FileType h,c,hpp,cpp,cxx setlocal equalprg=clang-format
 
 autocmd! bufwritepost .vimrc source ~/.vimrc
+
 au BufRead,BufNewFile *.txt setlocal ft=txt
 au BufRead,BufNewFile *.rc setlocal ft=make
+
 au FileType help set nu
-au FileType c,cpp,h,hpp call SetCFileTabStop()
+au FileType c,cpp,h,hpp,py call SetCFileTabStop()
 "au FileType c,cpp,h,hpp set shiftwidth=8 |set tabstop=8 | set iskeyword-=-,>()
 "au FileType c,cpp,h,hpp set fo-=l | set textwidth=80
 "http://easwy.com/blog/archives/advanced-vim-skills-advanced-move-method/
@@ -2335,5 +2338,6 @@ function! Search_BES_Keywords()
 endfunction
 
 command! -nargs=* -complete=tag -bang BESHighlight :call Search_BES_Keywords()
+command! -nargs=* -complete=tag -bang CFileTabStop :call SetCFileTabStop()
 
 let g:my_vimrc_is_loaded = 1
