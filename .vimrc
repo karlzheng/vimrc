@@ -1990,7 +1990,7 @@ endif
 
 nnoremap <silent> ,1ea :1sp<cr>:call EditAbsoluteFilePath()<cr>
 nnoremap <silent> ,32 f vt "xx$"xp
-nnoremap <cr> :nohl<cr><cr>
+"nnoremap <cr> :nohl<cr><cr>
 nnoremap <leader>ac :call EnterSavedPath()<cr>
 nnoremap <silent> <leader>ae :call AddErrorDebugLine()<cr>
 nnoremap <silent> <leader>al :call AddDebugLine()<cr>i<cr><ESC>
