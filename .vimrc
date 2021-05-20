@@ -2021,7 +2021,6 @@ nnoremap <silent> <leader>dm :%s#.*karldbg.*\n##<cr>
 nnoremap <silent> <leader>do :windo diffoff!<cr>:bufdo diffoff!<cr>
 nnoremap <silent> <leader>dp :%d<cr>"+P:1,/^\S/-2d<cr>:w<cr>/karldbg<cr>
 nnoremap <silent> <leader>dr :%s#\r\n#\r#g<cr>
-nnoremap <silent> <leader>ds :call DeleteSpaceLine()<cr>
 nnoremap <silent> <leader>dt :Rename! ~/tmp/del_%:t<cr>
 nnoremap <silent> <leader>d# :bd#<cr>
 nnoremap <silent> <leader>e. :e .<cr>
@@ -2112,7 +2111,8 @@ nnoremap <silent> <leader>rl :%d<CR>"+p
 nnoremap <silent> <leader>rm :r ~/tmp/main.c<cr>
 nnoremap <leader>rn :call ReplaceMyUserName()<cr>
 nnoremap <silent> <leader>rr :reg<cr>
-nnoremap <silent> <leader>rs :20 vs ~/.stardict/iremember/tofel.txt<CR>
+"nnoremap <silent> <leader>rs :20 vs ~/.stardict/iremember/tofel.txt<CR>
+nnoremap <silent> <leader>rs :call DeleteSpaceLine()<cr>
 nnoremap <silent> <leader>rt :r ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>sc :set ft=c<cr>
 nnoremap <silent> <leader>sd :call SvnDiffCurrentFile()<cr>
