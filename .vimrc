@@ -1776,15 +1776,24 @@ endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SrcExpl settings
+" https://www.vim.org/scripts/script.php?script_id=2179
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:SrcExpl_isUpdateTags = 0
-let g:SrcExpl_gobackKey = ""
 let g:SrcExpl_pluginList = ["Source_Explorer"]
+"let g:SrcExpl_jumpKey = "<ENTER>"
+"let g:SrcExpl_nextDefKey = "<SPACE>"
+let g:SrcExpl_searchLocalDef = 1
+nnoremap <c-i> <C-W>j:call g:SrcExpl_Jump()<CR>
+nmap <C-O> :call g:SrcExpl_GoBack()<CR>
+"let g:SrcExpl_gobackKey = ""
+let g:SrcExpl_prevDefKey = "<F3>"
+let g:SrcExpl_nextDefKey = "<F4>"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " lookupfile setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:LookupFile_LookupFunc = 'LookupFuncIgnoreCase'
+let g:LookupFile_DisableDefaultMap = 1
 let g:LookupFile_MinPatLength = 4
 let g:LookupFile_PreserveLastPattern = 1
 let g:LookupFile_PreservePatternHistory = 1
@@ -2161,9 +2170,9 @@ nnoremap <silent> * *N
 nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
-nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
-nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
-cnoremap <silent> <F3> Bgrep
+nnoremap <silent> <F4> :Grep \<<cword>\> %<CR> <CR>
+nnoremap <silent> <F5> :exec 'Bgrep '.expand("<cword>")<cr>
+"cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>
@@ -2301,6 +2310,13 @@ au BufRead,BufNewFile *.rc setlocal ft=make
 
 au FileType help set nu
 au FileType c,cpp,h,hpp,py call SetCFileTabStop()
+"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx let Tlist_Auto_Open = 1
+"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx TlistOpen
+"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx SrcExpl
+autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx SrcExpl
+"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx TlistToggle
+
+" All of your Plugins must be added before the following line
 "au FileType c,cpp,h,hpp set shiftwidth=8 |set tabstop=8 | set iskeyword-=-,>()
 "au FileType c,cpp,h,hpp set fo-=l | set textwidth=80
 "http://easwy.com/blog/archives/advanced-vim-skills-advanced-move-method/
