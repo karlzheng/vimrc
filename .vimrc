@@ -1783,8 +1783,9 @@ let g:SrcExpl_pluginList = ["Source_Explorer"]
 "let g:SrcExpl_jumpKey = "<ENTER>"
 "let g:SrcExpl_nextDefKey = "<SPACE>"
 let g:SrcExpl_searchLocalDef = 1
-nnoremap <c-i> <C-W>j:call g:SrcExpl_Jump()<CR>
-nmap <C-O> :call g:SrcExpl_GoBack()<CR>
+"use ALT + i and ALT + o to do SrcExpl_Jump()
+nnoremap i <C-W>j:call g:SrcExpl_Jump()<CR>
+nnoremap o :call g:SrcExpl_GoBack()<CR>
 "let g:SrcExpl_gobackKey = ""
 let g:SrcExpl_prevDefKey = "<F3>"
 let g:SrcExpl_nextDefKey = "<F4>"
@@ -2170,8 +2171,8 @@ nnoremap <silent> * *N
 nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
-nnoremap <silent> <F4> :Grep \<<cword>\> %<CR> <CR>
-nnoremap <silent> <F5> :exec 'Bgrep '.expand("<cword>")<cr>
+nnoremap <silent> <F5> :Grep \<<cword>\> %<CR> <CR>
+nnoremap <silent> <F6> :exec 'Bgrep '.expand("<cword>")<cr>
 "cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
 "nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
