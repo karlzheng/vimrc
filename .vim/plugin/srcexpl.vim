@@ -346,7 +346,9 @@ endfunction " }}}
 function! g:SrcExpl_UpdateTags()
 
     " Go to the current work directory
-    silent! exe "cd " . expand('%:p:h')
+    "silent! exe "cd " . expand('%:p:h')
+	silent! exe "cd " . `pwd`
+
     " Get the amount of all files named 'tags'
     let l:tmp = len(tagfiles())
 
@@ -523,6 +525,10 @@ function! <SID>SrcExpl_Refresh()
     if <SID>SrcExpl_GetSymbol()
         return -4
     endif
+
+    if bufname("%") == "__Tag_List__"
+        return -5
+	endif
 
     let l:expr = '\<' . s:SrcExpl_symbol . '\>' . '\C'
 
@@ -1647,7 +1653,7 @@ function! <SID>SrcExpl()
             return -2
         endif
         " Already running
-        call <SID>SrcExpl_ReportErr("Source Explorer is running")
+        "call <SID>SrcExpl_ReportErr("Source Explorer is running")
         return -3
     endif
 
