@@ -100,7 +100,7 @@ set noexpandtab
 set nu
 "set ofu=syntaxcomplete#Complete
 "set pastetoggle=<F4>
-set rtp +=~/.vim/bundle/Vundle.vim
+set rtp +=$HOME/.vim/bundle/Vundle.vim
 set shiftwidth=8
 set smartindent
 set stal=1
@@ -1688,6 +1688,10 @@ Plugin 'rhysd/vim-clang-format'
 Plugin 'editorconfig/editorconfig-vim'
 
 Plugin 'neoclide/coc.nvim', {'branch': 'release'}
+"Plugin 'sillybun/vim-repl'
+call plug#begin('~/.vim/plugged')
+Plug 'sillybun/vim-repl'
+call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   colorcolumn setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
