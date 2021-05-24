@@ -38,6 +38,9 @@
 " NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 " EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+" Tutor:
+"http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+
 " Abort if running in vi-compatible mode or the user doesn't want us.
 if &cp || exists('g:tabular_loaded')
   if &cp && &verbose
