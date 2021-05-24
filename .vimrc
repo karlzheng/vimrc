@@ -1691,6 +1691,7 @@ Plugin 'neoclide/coc.nvim', {'branch': 'release'}
 "Plugin 'sillybun/vim-repl'
 call plug#begin('~/.vim/plugged')
 Plug 'sillybun/vim-repl'
+Plug 'junegunn/vim-easy-align'
 call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   colorcolumn setting
@@ -2070,6 +2071,8 @@ nnoremap <leader>fs :cs find s
 nnoremap <leader>fi :setlocal foldmethod=indent<cr>zR
 nnoremap <silent> <leader>fn :call SaveCurrentFileName()<cr><cr>
 nnoremap <leader>fp :call CDAbsPath()<cr>
+"nmap ga <Plug>(EasyAlign)
+"xmap ga <Plug>(EasyAlign)
 nnoremap <leader>gb :call GitDiffLog()<CR>:!p2d.sh g:shmdir/gitdiff.c 1>/dev/null 2>&1 &<CR><CR>
 nnoremap <leader>gd :call GitDiffLog()<cr>
 nnoremap <leader>gf :GitEditFileInLine<cr>
