@@ -1626,7 +1626,7 @@ function! ToggleSlash(independent) range
   endfor
 endfunction
 command! -bang -range ToggleSlash <line1>,<line2>call ToggleSlash(<bang>1)
-noremap <silent> <F7> :ToggleSlash<CR>
+"noremap <silent> <F7> :ToggleSlash<CR>
 
 function! VimEnterCallback()
 	 for f in argv()
@@ -1692,6 +1692,7 @@ Plugin 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#begin('~/.vim/plugged')
 Plug 'sillybun/vim-repl'
 Plug 'junegunn/vim-easy-align'
+"Plug 'justinmk/vim-sneak'
 call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   colorcolumn setting
@@ -1718,7 +1719,6 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       taglist setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:Tlist_Show_One_File = 1
 let tlist_txt_settings = 'txt;c:content;f:figures;t:tables'
 if MySys() == "windows"
 	let Tlist_Ctags_Cmd = 'ctags'
@@ -1727,6 +1727,9 @@ elseif MySys() == "linux"
 endif
 let Tlist_Exit_OnlyWindow = 1
 let Tlist_Use_Right_Window = 0
+let g:Tlist_Show_One_File = 1
+let Tlist_Auto_Open = 1
+let Tlist_GainFocus_On_ToggleOpen = 0
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ctags
@@ -1785,15 +1788,12 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:SrcExpl_isUpdateTags = 0
 let g:SrcExpl_pluginList = ["Source_Explorer"]
-"let g:SrcExpl_jumpKey = "<ENTER>"
-"let g:SrcExpl_nextDefKey = "<SPACE>"
 let g:SrcExpl_searchLocalDef = 1
 "use ALT + i and ALT + o to do SrcExpl_Jump()
 nnoremap i <C-W>j:call g:SrcExpl_Jump()<CR>
 nnoremap o :call g:SrcExpl_GoBack()<CR>
-"let g:SrcExpl_gobackKey = ""
-let g:SrcExpl_prevDefKey = "<F3>"
-let g:SrcExpl_nextDefKey = "<F4>"
+"let g:SrcExpl_prevDefKey = "<F3>"
+"let g:SrcExpl_nextDefKey = "<F4>"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " lookupfile setting
@@ -1876,9 +1876,9 @@ hi ShowMarksHLm ctermbg=Magenta  ctermfg=Black  guibg=#FFB3FF    guifg=Black
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " easy motion: https://github.com/easymotion/vim-easymotion
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap E <Plug>(easymotion-prefix)
-nmap em <Plug>(easymotion-w)
-nmap eb <Plug>(easymotion-b)
+"nmap E <Plug>(easymotion-prefix)
+nmap em <Plug>(easymotion-bd-w)
+"nmap eb <Plug>(easymotion-b)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " mark setting
@@ -2005,7 +2005,7 @@ endif
 
 nnoremap <silent> ,1ea :1sp<cr>:call EditAbsoluteFilePath()<cr>
 nnoremap <silent> ,32 f vt "xx$"xp
-"nnoremap <cr> :nohl<cr><cr>
+nnoremap <cr> :nohl<cr><cr>
 nnoremap <leader>ac :call EnterSavedPath()<cr>
 nnoremap <silent> <leader>ae :call AddErrorDebugLine()<cr>
 nnoremap <silent> <leader>al :call AddDebugLine()<cr>i<cr><ESC>
@@ -2178,16 +2178,14 @@ nnoremap <silent> * *N
 nnoremap <silent> <leader># :e#<cr>
 "http://hi.baidu.com/denmeng/blog/item/b6d482fc59f4c81e09244dce.html
 nnoremap <leader><space> @=((foldclosed(line('.')) < 0) ? ((foldlevel('.') > 0) ? 'zc':'zfi{') : 'zo')<CR>
-nnoremap <silent> <F5> :Grep \<<cword>\> %<CR> <CR>
-nnoremap <silent> <F6> :exec 'Bgrep '.expand("<cword>")<cr>
+nnoremap <silent> <F3> :Grep \<<cword>\> %<CR> <CR>
+nnoremap <silent> <F4> :exec 'Bgrep '.expand("<cword>")<cr>
 "cnoremap <silent> <F3> Bgrep
 "nnoremap <silent> <F4> :Grep \<<cword>\s*= %<CR> <CR>
-"nnoremap <silent> <F4> :SrcExplToggle<CR>:nunmap g:SrcExpl_jumpKey<cr>
-"nnoremap <silent> <F4> :SrcExplToggle<CR>
 "nnoremap <silent> <F6> :cp<CR>
 "nnoremap <silent> <F7> :cn<CR>
-"nnoremap <silent> <F7> :SrcExplToggle<CR>
 nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <F9> :SrcExplToggle<CR>
 nnoremap <silent> <C-6> <C-S-6>
 nnoremap <c-a> :call QuickfixToggle()<cr>
 nnoremap <c-d> :call QuitAllBuffers_key()<cr>
@@ -2321,7 +2319,6 @@ au FileType c,cpp,h,hpp,py call SetCFileTabStop()
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx let Tlist_Auto_Open = 1
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx TlistOpen
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx SrcExpl
-autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx SrcExpl
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx TlistToggle
 
 " All of your Plugins must be added before the following line
@@ -2363,5 +2360,4 @@ endfunction
 
 command! -nargs=* -complete=tag -bang BESHighlight :call Search_BES_Keywords()
 command! -nargs=* -complete=tag -bang CFileTabStop :call SetCFileTabStop()
-
 let g:my_vimrc_is_loaded = 1
