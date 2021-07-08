@@ -2160,7 +2160,7 @@ nnoremap <silent> <leader>WK <C-W>k
 nnoremap <silent> <leader>WL <C-W>l
 nnoremap <silent> <leader>wm :WMToggle<cr>
 nnoremap <leader>w1 :w! ~/tmp/tmp_work_file/1.c<cr>
-nnoremap <leader>w2 :w! ~/tmp/tmp_work_file/2.c<cr>
+nnoremap <leader>w2 :silent! w! ~/tmp/tmp_work_file/2.c<cr>
 nnoremap <leader>wt :silent! w! ~/tmp/tmp_work_file/%:t<cr>
 nnoremap <silent> <leader>wa :wa<cr>
 nnoremap <silent> <leader>wf :w!<cr>
@@ -2314,8 +2314,11 @@ autocmd! bufwritepost .vimrc source ~/.vimrc
 au BufRead,BufNewFile *.txt setlocal ft=txt
 au BufRead,BufNewFile *.rc setlocal ft=make
 
-au FileType help set nu
 au FileType c,cpp,h,hpp,py call SetCFileTabStop()
+au FileType help set nu
+
+autocmd BufRead *.lds set filetype=ld
+autocmd BufRead *.md set filetype=markdown
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx let Tlist_Auto_Open = 1
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx TlistOpen
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx SrcExpl
@@ -2347,7 +2350,7 @@ autocmd VimEnter * call BufPos_Initialize()
 "set termencoding=utf-8
 "set encoding=prc
 
-let g:bes_keyword = g:homedir."/log.keyword.txt"
+let g:bes_keyword = g:homedir."/log.keyword.mk"
 "let s:loaded_bes_keyword = 0
 
 function! Search_BES_Keywords()
