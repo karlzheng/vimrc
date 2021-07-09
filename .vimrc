@@ -2351,6 +2351,7 @@ autocmd VimEnter * call BufPos_Initialize()
 "set encoding=prc
 
 let g:bes_keyword = g:homedir."/log.keyword.mk"
+"let g:bes_keyword = g:homedir."/tmp/tee.log"
 "let s:loaded_bes_keyword = 0
 
 function! Search_BES_Keywords()
