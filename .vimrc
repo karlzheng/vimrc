@@ -203,7 +203,7 @@ func! AddDebugLine()
 			let l:msg = 'pr_err("karldbg %s %d\n", __func__, __LINE__);'
 		else
 			if isdirectory(g:root_work_path."/apps/anc")
-					let l:msg = 'TRACE(1, "AKLOG %s %d\r\n", __func__, __LINE__);'
+					let l:msg = 'TRACE(1, "AKLOG %s %d", __func__, __LINE__);'
 			else
 				if (filereadable(g:root_work_path."/build/envsetup.sh") || filereadable(g:root_work_path."/Android.mk") || filereadable(g:root_work_path."/is_android.txt"))
 					let l:msg = 'ALOGE("karldbg %s %d", __func__, __LINE__);'
@@ -1965,6 +1965,8 @@ command! -nargs=* -complete=tag -bang Sdcv :call Sdcv("<args>", "<bang>")
 command! -nargs=* -complete=file -bang SC :call SourceSessionInCurDir("<args>", "<bang>")
 command! -nargs=* -complete=file -bang T1 :e ~/tmp/t1.log
 command! -nargs=* -complete=file -bang T2 :e ~/tmp/t2.log
+command! -nargs=* -complete=file -bang T3 :e ~/tmp/t3.log
+command! -nargs=* -complete=file -bang T4 :e ~/tmp/t4.log
 
 command! Bclose call <SID>BufcloseCloseIt(0)
 command! BcloseDraft call <SID>BufcloseCloseDraft()
@@ -2365,3 +2367,34 @@ endfunction
 command! -nargs=* -complete=tag -bang BESHighlight :call Search_BES_Keywords()
 command! -nargs=* -complete=tag -bang CFileTabStop :call SetCFileTabStop()
 let g:my_vimrc_is_loaded = 1
+
+"https://vim.fandom.com/wiki/Super_retab#Script
+
+" Return indent (all whitespace at start of a line), converted from
+" tabs to spaces if what = 1, or from spaces to tabs otherwise.
+" When converting to tabs, result has no redundant spaces.
+function! Indenting(indent, what, cols)
+	let spccol = repeat(' ', a:cols)
+	let result = substitute(a:indent, spccol, '\t', 'g')
+	let result = substitute(result, '\+\ze\t', '', 'g')
+	if a:what == 1
+		let result = substitute(result, '\t', spccol, 'g')
+	endif
+	return result
+endfunction
+
+" Convert whitespace used for indenting (before first non-whitespace).
+" what = 0 (convert spaces to tabs), or 1 (convert tabs to spaces).
+" cols = string with number of columns per tab, or empty to use 'tabstop'.
+" The cursor position is restored, but the cursor will be in a different
+" column when the number of characters in the indent of the line is changed.
+function! IndentConvert(line1, line2, what, cols)
+	let savepos = getpos('.')
+	let cols = empty(a:cols) ? &tabstop : a:cols
+	execute a:line1 . ',' . a:line2 . 's/^\s\+/\=Indenting(submatch(0), a:what, cols)/e'
+	call histdel('search', -1)
+	call setpos('.', savepos)
+endfunction
+command! -nargs=? -range=% Space2Tab call IndentConvert(<line1>   , <line2> , 0   , <q-args>)
+command! -nargs=? -range=% Tab2Space call IndentConvert(<line1>   , <line2> , 1   , <q-args>)
+command! -nargs=? -range=% RetabIndent call IndentConvert(<line1> , <line2> , &et , <q-args>)
