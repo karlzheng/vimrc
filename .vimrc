@@ -38,6 +38,7 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let mapleader=","
 let g:BASH_Ctrl_j='on'
+let g:coc_disable_startup_warning = 1
 let g:EditTmpFilePos = 1
 let g:formatterpath = ['/usr/local/bin/astyle']
 let g:use_gtags=0
