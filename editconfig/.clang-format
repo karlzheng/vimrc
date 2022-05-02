@@ -541,7 +541,8 @@ SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard: Cpp03
 TabWidth: 8
-UseTab: Always
+#UseTab: Always
+UseTab: ForIndentation
 #BreakBeforeBraces : Allman
 #BreakBeforeBraces : Linux
 #AlignAfterOpenBracket : DontAlign
