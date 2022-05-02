@@ -26,11 +26,15 @@
 " Platform
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! MySys()
-  if has("win32")
-    return "windows"
-  else
-    return "linux"
-  endif
+	if g:OS == 'Darwin'
+		return "OSX"
+	else
+		if has("win32")
+			return "windows"
+		else
+			return "linux"
+		endif
+	endif
 endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -110,6 +114,9 @@ set statusline=\[%{getcwd()}]\[%f]%m%r%h%w\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
 "set noswf
 set switchbuf=useopen
 set tabstop=8
+if &ft == "python"
+	set tabstop=4
+endif
 set termencoding=utf-8
 set textwidth=10000
 set whichwrap=b,s,h,l
@@ -1463,8 +1470,8 @@ function! SetColorColumn()
 	endif
 endfunction
 
-function! SetColorColumnC80()
-	let col_num = 81
+function! SetColorColumnC100()
+	let col_num = 101
 	let cc_list = split(&cc, ',')
 	if count(cc_list, string(col_num)) <= 0
 		execute "set cc+=".col_num
@@ -1721,6 +1728,7 @@ endif
 "                       taglist setting
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let tlist_txt_settings = 'txt;c:content;f:figures;t:tables'
+let Tlist_Ctags_Cmd="/usr/local/bin/ctags"
 if MySys() == "windows"
 	let Tlist_Ctags_Cmd = 'ctags'
 elseif MySys() == "linux"
@@ -2018,7 +2026,7 @@ nnoremap <silent> <leader>bb :call CompareTobcFn1()<cr><cr>
 nnoremap <silent> <leader>bc :call Python4CompareToFileName()<cr><cr>
 nnoremap <leader>bd :Bclose<cr>
 nnoremap <leader>bw :Bwipe<cr>
-nnoremap <silent> <leader>c8 :call SetColorColumnC80()<CR>
+nnoremap <silent> <leader>c8 :call SetColorColumnC100()<CR>
 "nnoremap <leader>cc :botright lw 10<cr>
 nnoremap <leader>cd :call CDFilePath()<cr>
 nnoremap <silent> <leader>ch :call SetColorColumn()<CR>
