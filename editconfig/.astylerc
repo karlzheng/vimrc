@@ -2,8 +2,9 @@
 --style=1tbs
 --indent=tab
 --align-pointer=name
---max-code-length=150
 #--max-code-length=80
+--max-code-length=100
+
 --indent=force-tab=8
 #--add-brackets
 --remove-brackets
@@ -29,3 +30,7 @@
 				    #
 #--delete-empty-lines
 --break-after-logical
+
+#date: 2021/04/25 日 02:14:56 下午
+# commnet below
+#--break-blocks
