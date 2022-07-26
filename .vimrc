@@ -109,7 +109,7 @@ set rtp +=$HOME/.vim/bundle/Vundle.vim
 set shiftwidth=8
 set smartindent
 set stal=1
-set statusline=\[%{getcwd()}]\[%f]%m%r%h%w\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
+"set statusline=\[%{getcwd()}]\[%f]%m%r%h%w\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
 "setlocal noswapfile
 "set noswf
 set switchbuf=useopen
@@ -1457,7 +1457,7 @@ function! SetCFileTabStop()
 	endif
 	set iskeyword-=-,>()
 	set fo-=l
-	set textwidth=80
+	set textwidth=100
 endfunction
 
 function! SetColorColumn()
@@ -1765,6 +1765,7 @@ if g:use_gtags && filereadable("/usr/bin/gtags")
 	let s:mycstags="cs add " . getcwd() . "/GTAGS"
 	exe s:mycstags
 else
+	set nocsverb
 	if filereadable("cscope.out")
 		let s:mycstags="cs add " . "cscope.out "
 		exe s:mycstags
@@ -1773,6 +1774,7 @@ else
 		let s:mycstags="cs add " . "newcscope.out"
 		exe s:mycstags
 	endif
+	set csverb
 endif
 
 if has("cscope")
