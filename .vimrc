@@ -54,6 +54,7 @@ let g:pydiction_location = '~/.vim/py_complete-dict'
 let g:pydiction_menu_height = 3
 
 let g:ycm_key_list_stop_completion = ['<cr>']
+"let g:loaded_matchit = 1
 
 "let g:use_gtags=1
 set nocompatible
@@ -110,6 +111,7 @@ set shiftwidth=8
 set smartindent
 set stal=1
 "set statusline=\[%{getcwd()}]\[%f]%m%r%h%w\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
+set statusline=\[%{getcwd()}]\[HEX=\%02.2B]\[DEC=\%b]\[P=%l,%v]
 "setlocal noswapfile
 "set noswf
 set switchbuf=useopen
