@@ -118,6 +118,8 @@ set switchbuf=useopen
 set tabstop=8
 if &ft == "python"
 	set tabstop=4
+	set shiftwidth=4
+	set expandtab
 endif
 set termencoding=utf-8
 set textwidth=10000
@@ -2356,7 +2358,6 @@ autocmd BufRead,BufNew :call UMiniBufExplorer
 "autocmd BufWrite *.cpp,*.h,*.c call UpdateCscope()
 "autocmd BufWrite *.cpp,*.h,*.c call UpdateTags()
 autocmd VimEnter * call BufPos_Initialize()
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " the end of my .vimrc
