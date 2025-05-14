@@ -118,6 +118,7 @@ set switchbuf=useopen
 set tabstop=8
 if &ft == "python"
 	set tabstop=4
+	set softtabstop=4
 	set shiftwidth=4
 	set expandtab
 endif
@@ -233,7 +234,7 @@ func! AddDebugLine()
 		let l:msg = '$(warning "karldbg")'
 	endif
 	if &ft == "python"
-		let l:msg = 'import inspect;print ("karldbg %s %d" %("__file__", inspect.currentframe().f_lineno))'
+		let l:msg = 'import inspect;print ("karldbg %s %d" %(__file__, inspect.currentframe().f_lineno))'
 	endif
 	if &ft == "sh"
 		let l:msg = 'echo karldbg ${BASH_SOURCE[0]} $LINENO'
@@ -1755,6 +1756,14 @@ if filereadable("./tags")
 	if filereadable("./newtags")
 		let mytags=mytags . ",./newtags"
 	endif
+	exe "set " . mytags
+endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" pytags
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if filereadable("./pytags")
+	let mytags=" tags+=" . "./pytags"
 	exe "set " . mytags
 endif
 
