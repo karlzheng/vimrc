@@ -957,6 +957,67 @@ function! Is_File_Visual_In_Buf(fn)
 	return l:is_fn_visual
 endfunction
 
+function! KeepMatchesAndFollowingLines()
+  let pattern = input('Enter search pattern: ')
+  if empty(pattern)
+    echohl ErrorMsg | echom "Error: Pattern cannot be empty" | echohl None
+    return
+  endif
+  
+  let num_lines_str = input('Enter number of following lines to keep: ')
+  let num_lines = str2nr(num_lines_str)
+  if num_lines <= 0
+    echohl ErrorMsg | echom "Error: Number of lines must be a positive integer" | echohl None
+    return
+  endif
+  
+  let save_cursor = getpos('.')
+  let save_view = winsaveview()
+  
+  let matches = []
+  let line_num = 1
+  let total_lines = line('$')
+  
+  while line_num <= total_lines
+    let line_content = getline(line_num)
+    if line_content =~# pattern  " Case-sensitive match
+      call add(matches, line_num)
+    endif
+    let line_num = line_num + 1
+  endwhile
+  
+  if empty(matches)
+    echom "No matches found for: " . pattern
+    call setpos('.', save_cursor)
+    return
+  endif
+  
+  let keep_lines = {}
+  for m in matches
+    let end_line = m + num_lines
+    if end_line > total_lines
+      let end_line = total_lines
+    endif
+    for i in range(m, end_line + 1)
+      let keep_lines[i] = 1
+    endfor
+  endfor
+  
+  let keep_text = []
+  for line in sort(keys(keep_lines))
+    call add(keep_text, getline(line))
+  endfor
+  %d
+  if !empty(keep_text)
+    call append(0, keep_text)
+  endif
+  
+  call winrestview(save_view)
+  call setpos('.', [bufnr('%'), save_cursor[1], 0, 0])
+  
+  echom "Kept " . len(matches) . " matches with " . num_lines . " following lines"
+endfunction
+
 func! LookupFullFilenameTag(line, bang)
 	let g:use_LookupFile_FullNameTagExpr = 1
 	exec "LUTags"
@@ -1780,8 +1841,9 @@ if g:use_gtags && filereadable("/usr/bin/gtags")
 else
 	set nocsverb
 	if filereadable("cscope.out")
-		let s:mycstags="cs add " . "cscope.out "
-		exe s:mycstags
+		"let s:mycstags="cs add " . "cscope.out "
+		"exe s:mycstags
+		cs add cscope.out
 	endif
 	if filereadable("newcscope.out")
 		let s:mycstags="cs add " . "newcscope.out"
@@ -2421,3 +2483,4 @@ endfunction
 command! -nargs=? -range=% Space2Tab call IndentConvert(<line1>   , <line2> , 0   , <q-args>)
 command! -nargs=? -range=% Tab2Space call IndentConvert(<line1>   , <line2> , 1   , <q-args>)
 command! -nargs=? -range=% RetabIndent call IndentConvert(<line1> , <line2> , &et , <q-args>)
+command! KeepMatches call KeepMatchesAndFollowingLines()
